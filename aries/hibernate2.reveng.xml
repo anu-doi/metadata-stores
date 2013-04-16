@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-reverse-engineering PUBLIC "-//Hibernate/Hibernate Reverse Engineering DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-reverse-engineering-3.0.dtd" >
+
+<hibernate-reverse-engineering>
+  <table-filter match-catalog="aries_dev1_db" match-name="research_outputs_conferences"/>
+  <table-filter match-catalog="aries_dev1_db" match-name="research_outputs_data1"/>
+  <table-filter match-catalog="aries_dev1_db" match-name="research_outputs_data_authors"/>
+  <table-filter match-catalog="aries_dev1_db" match-name="research_outputs_journals"/>
+</hibernate-reverse-engineering>

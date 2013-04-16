@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+		"-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+		"http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+    <session-factory>
+        <property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
+        <!-- 
+        <property name="hibernate.connection.url">jdbc:postgresql://localhost:9432/metadatastoresdb</property>
+         -->
+        <property name="hibernate.connection.url">jdbc:postgresql:metadatastoresdb</property>
+        <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
+        <property name="hibernate.connection.username">msuser</property>
+        <property name="hibernate.connection.password">mspassword</property>
+        
+        <mapping class="au.edu.anu.metadatastores.datamodel.store.Item" />
+        <mapping class="au.edu.anu.metadatastores.store.people.PersonItem" />
+        <mapping class="au.edu.anu.metadatastores.store.publication.PublicationItem" />
+        <mapping class="au.edu.anu.metadatastores.store.datacommons.DataCommonsItem" />
+        <mapping class="au.edu.anu.metadatastores.store.digitalcollections.DigitalCollectionsItem" />
+        <mapping class="au.edu.anu.metadatastores.store.grants.GrantItem" />
+        <mapping class="au.edu.anu.metadatastores.datamodel.store.ItemAttribute" />
+        <mapping class="au.edu.anu.metadatastores.datamodel.store.ItemRelation" />
+        <mapping class="au.edu.anu.metadatastores.datamodel.store.PotentialRelation" />
+        <mapping class="au.edu.anu.metadatastores.datamodel.store.RelationMapping" />
+        <mapping class="au.edu.anu.metadatastores.datamodel.store.HistItemAttribute" />
+		
+    </session-factory>
+</hibernate-configuration>

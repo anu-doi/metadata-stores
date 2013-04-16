@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+		"-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+		"http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+	<session-factory>
+		<property name="hibernate.connection.driver_class">net.sourceforge.jtds.jdbc.Driver</property>
+		<!-- 
+		<property name="hibernate.connection.url"></property>
+		<property name="hibernate.connection.username"></property>
+		<property name="hibernate.connection.password"></property>
+		 -->
+		<property name="hibernate.connection.url"></property>
+		<property name="hibernate.dialect">org.hibernate.dialect.SQLServerDialect</property>
+		
+		<mapping class="au.edu.anu.metadatastores.datamodel.aries.grants.ContractsGrantsCountries" />
+		<mapping class="au.edu.anu.metadatastores.datamodel.aries.grants.ContractsGrantsDepartments" />
+		<mapping class="au.edu.anu.metadatastores.datamodel.aries.grants.ContractsGrantsInvestigators" />
+		<mapping class="au.edu.anu.metadatastores.datamodel.aries.grants.ContractsGrantsMain" />
+		<mapping class="au.edu.anu.metadatastores.datamodel.aries.grants.ContractsGrantsStatus" />
+		<mapping class="au.edu.anu.metadatastores.datamodel.aries.grants.Departments" />
+		<mapping class="au.edu.anu.metadatastores.datamodel.aries.grants.Facultyschoolcentre" />
+		<mapping class="au.edu.anu.metadatastores.datamodel.aries.grants.PicklistChrrouteChrstatus" />
+		<mapping class="au.edu.anu.metadatastores.datamodel.aries.grants.Useraccounts" />
+		<mapping class="au.edu.anu.metadatastores.datamodel.aries.grants.ExternalUsers" />
+		<mapping class="au.edu.anu.metadatastores.datamodel.aries.grants.ForCodes" />
+		
+		<mapping class="au.edu.anu.metadatastores.datamodel.aries.publications.ResearchOutputsConferences" />
+		<mapping class="au.edu.anu.metadatastores.datamodel.aries.publications.ResearchOutputsData1" />
+		<mapping class="au.edu.anu.metadatastores.datamodel.aries.publications.ResearchOutputsDataAuthors" />
+		<mapping class="au.edu.anu.metadatastores.datamodel.aries.publications.ResearchOutputsJournals" />
+		<mapping class="au.edu.anu.metadatastores.datamodel.aries.publications.ResearchOutputsBooks" />
+		<mapping class="au.edu.anu.metadatastores.datamodel.aries.publications.ResearchOutputsLevel2" />
+		
+	</session-factory>
+</hibernate-configuration>
