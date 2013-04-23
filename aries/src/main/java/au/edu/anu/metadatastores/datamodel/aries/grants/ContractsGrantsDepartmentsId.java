@@ -33,6 +33,7 @@ import javax.persistence.Embeddable;
  * 
  * Id class for the ContractsGrantsDepartments entity
  * 
+ * @author Rainbow Cai
  * @author Genevieve Turner
  *
  */

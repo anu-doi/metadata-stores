@@ -1,3 +1,24 @@
+/*******************************************************************************
+ * Australian National University Metadata Stores
+ * Copyright (C) 2013  The Australian National University
+ * 
+ * This file is part of Australian National University Metadata Stores.
+ * 
+ * Australian National University Metadata Stores is free software: you
+ * can redistribute it and/or modify it under the terms of the GNU
+ * General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ ******************************************************************************/
+
 package au.edu.anu.metadatastores.services.aries;
 
 import java.io.UnsupportedEncodingException;
@@ -20,14 +41,32 @@ import au.edu.anu.metadatastores.datamodel.aries.grants.Useraccounts;
 import au.edu.anu.metadatastores.datamodel.aries.publications.ResearchOutputsData1;
 import au.edu.anu.metadatastores.datamodel.aries.publications.ResearchOutputsDataAuthors;
 
+/**
+ * StaffId
+ * 
+ * The Australian National University
+ * 
+ * Class to retrieve associated staff information
+ * 
+ * @Rainbow Cai
+ * @author Genevieve Turner
+ *
+ */
 public class StaffId {
 	static final Logger LOGGER = LoggerFactory.getLogger(StaffId.class);
 	private static StaffId singleton_;
 	
+	/**
+	 * Constructor
+	 */
 	private StaffId() {
 		
 	}
 	
+	/**
+	 * Get the StaffId singleton
+	 * @return
+	 */
 	public static synchronized StaffId getSingleton() {
 		if (singleton_ == null) {
 			singleton_ = new StaffId();
@@ -277,6 +316,12 @@ public class StaffId {
 		return anuStaff.toArray(new ANUStaff[0]);
 	}
 	
+	/**
+	 * Find staff by their surname
+	 * 
+	 * @param surname The surname of the people to find
+	 * @return Staff members with the given surname
+	 */
 	public ANUStaff[] findStaffBySurname(String surname) {
 		Session session = AriesHibernateUtil.getSessionFactory().openSession();
 		
@@ -296,6 +341,12 @@ public class StaffId {
 		return anuStaff.toArray(new ANUStaff[0]);
 	}
 	
+	/**
+	 * Find staff by their given name
+	 * 
+	 * @param givenName The given name of the people to find
+	 * @return Staff members with the provided given name
+	 */
 	public ANUStaff[] findStaffByGivenName(String givenName) {
 		Session session = AriesHibernateUtil.getSessionFactory().openSession();
 		
@@ -315,6 +366,13 @@ public class StaffId {
 		return anuStaff.toArray(new ANUStaff[0]);
 	}
 	
+	/**
+	 * Populates the ANUStaff object with the staff information from aries
+	 * 
+	 * @param userAccount The useraccount
+	 * @param session The hibernate session object
+	 * @return The ANUStaff information
+	 */
 	private ANUStaff setStaffInformation(Useraccounts userAccount, Session session) {
 
 		ANUStaff staff = new ANUStaffImpl();
@@ -345,6 +403,13 @@ public class StaffId {
 		return staff;
 	}
 	
+	/**
+	 * Find external staff by their name
+	 * 
+	 * @param surname The surname of the person to find
+	 * @param givenName The given name of the person to find
+	 * @return A list of external staff members who match the provided name
+	 */
 	public ExternalStaff[] findExternalStaff(String surname, String givenName) {
 		Session session = AriesHibernateUtil.getSessionFactory().openSession();
 		List<ExternalStaff> externalStaff = new ArrayList<ExternalStaff>();
@@ -365,6 +430,12 @@ public class StaffId {
 		return externalStaff.toArray(new ExternalStaff[0]);
 	}
 	
+	/**
+	 * Find external staff by their surname
+	 * 
+	 * @param surname The surname to search on
+	 * @return The external staff members with the provided surname
+	 */
 	public ExternalStaff[] findExternalStaffBySurname(String surname) {
 		Session session = AriesHibernateUtil.getSessionFactory().openSession();
 		List<ExternalStaff> externalStaff = new ArrayList<ExternalStaff>();
@@ -384,6 +455,12 @@ public class StaffId {
 		return externalStaff.toArray(new ExternalStaff[0]);
 	}
 	
+	/**
+	 * Find external staff by their given name
+	 * 
+	 * @param givenName The given name to search on
+	 * @return The external staff members with the provided given name
+	 */
 	public ExternalStaff[] findExternalStaffByGivenName(String givenName) {
 		Session session = AriesHibernateUtil.getSessionFactory().openSession();
 		List<ExternalStaff> externalStaff = new ArrayList<ExternalStaff>();
@@ -403,6 +480,12 @@ public class StaffId {
 		return externalStaff.toArray(new ExternalStaff[0]);
 	}
 	
+	/**
+	 * Set the external staff information
+	 * 
+	 * @param externalUser The external user information
+	 * @return The ExternalStaff object with its information populated
+	 */
 	public ExternalStaff setExternalStaffInformation(ExternalUsers externalUser) {
 		ExternalStaff externalStaff = new ExternalStaffImpl();
 		externalStaff.setAriesStaffId(externalUser.getChrCode());

@@ -1,3 +1,24 @@
+/*******************************************************************************
+ * Australian National University Metadata Stores
+ * Copyright (C) 2013  The Australian National University
+ * 
+ * This file is part of Australian National University Metadata Stores.
+ * 
+ * Australian National University Metadata Stores is free software: you
+ * can redistribute it and/or modify it under the terms of the GNU
+ * General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ ******************************************************************************/
+
 package au.edu.anu.metadatastores.services.aries;
 
 import java.util.ArrayList;
@@ -8,13 +29,32 @@ import org.hibernate.Transaction;
 
 import au.edu.anu.metadatastores.datamodel.aries.publications.ResearchOutputsData1;
 
+/**
+ * OutputId
+ * 
+ * The Australian National University
+ * 
+ * Class to provide research outputs information
+ * 
+ * @author Rainbow Cai
+ * @author Genevieve Turner
+ *
+ */
 public class OutputId {
 	private static OutputId singleton_;
 	
+	/**
+	 * Constructor
+	 */
 	private OutputId() {
 		
 	}
 	
+	/**
+	 * Get the OutputId singleton
+	 * 
+	 * @return The OutputId
+	 */
 	public static synchronized OutputId getSingleton() {
 		if (singleton_ == null) {
 			singleton_ = new OutputId();
@@ -22,33 +62,11 @@ public class OutputId {
 		return singleton_;
 	}
 	
-	/*public String[] getInvestigatorsUniID(String contractId) {
-		Session session = AriesHibernateUtil.getSessionFactory().openSession();
-		Transaction transaction = session.beginTransaction();
-		
-		Query query = session.createQuery("from ContractsGrantsInvestigators where chrContractCode = :contractId");
-		query.setParameter("contractId", contractId);
-		List<ContractsGrantsInvestigators> investigators = query.list();
-		List<String> staffIds = new ArrayList<String>();
-		
-		for (ContractsGrantsInvestigators investigator : investigators) {
-			if (investigator != null && investigator.getId().getChrStaffNumber() != null) {
-				staffIds.add(investigator.getId().getChrStaffNumber());
-			}
-		}
-		
-		transaction.commit();
-		session.flush();
-		session.close();
-		
-		return staffIds.toArray(new String[0]);
-	}*/
-	//TODO implement getANUActivityIDsforByParty
-	/*
-	public String[] getANUActivityIDsByParty(String name) {
-		
-	}*/
-	
+	/**
+	 * Returns all the output 6 codes found in Aries
+	 * 
+	 * @return The output 6 codes
+	 */
 	public String[] getAllOutput6Codes() {
 		Session session = AriesHibernateUtil.getSessionFactory().openSession();
 		Transaction transaction = session.beginTransaction();

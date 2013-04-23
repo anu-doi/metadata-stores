@@ -12,7 +12,10 @@
         <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
         <property name="hibernate.connection.username">msuser</property>
         <property name="hibernate.connection.password">mspassword</property>
-        
+        <!-- <property name="connection.provider_class">org.jasypt.hibernate4.connectionprovider.EncryptedPasswordDriverManagerConnectionProvider</property>
+        <property name="connection.encryptor_registered_name">strongHibernateStringEncryptor</property> -->
+        <!-- <property name="hibernate.connection.password">ENC(FqOMMFRSvpkaHpz5S5jQrN/WEBTbAE7kHI9QkAZbAtg=)</property>
+        <property name="hibernate.connection.password">ENC(mspassword)</property> -->
         <mapping class="au.edu.anu.metadatastores.datamodel.store.Item" />
         <mapping class="au.edu.anu.metadatastores.store.people.PersonItem" />
         <mapping class="au.edu.anu.metadatastores.store.publication.PublicationItem" />

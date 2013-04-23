@@ -37,6 +37,7 @@ import javax.persistence.Table;
  * 
  * Entity class for mapping the contracts_grants_countries table
  * 
+ * @author Rainbow Cai
  * @author Genevieve Turner
  *
  */

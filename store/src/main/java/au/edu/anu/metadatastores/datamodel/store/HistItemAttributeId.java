@@ -1,3 +1,24 @@
+/*******************************************************************************
+ * Australian National University Metadata Stores
+ * Copyright (C) 2013  The Australian National University
+ * 
+ * This file is part of Australian National University Metadata Stores.
+ * 
+ * Australian National University Metadata Stores is free software: you
+ * can redistribute it and/or modify it under the terms of the GNU
+ * General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ ******************************************************************************/
+
 package au.edu.anu.metadatastores.datamodel.store;
 
 import java.util.Date;
@@ -5,6 +26,16 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
+/**
+ * HistItemAttributeId
+ * 
+ * The Australian National University
+ * 
+ * Id class for the HistItemAttribute class
+ * 
+ * @author Genevieve Turner
+ *
+ */
 @Embeddable
 public class HistItemAttributeId implements java.io.Serializable {
 	private static final long serialVersionUID = 1L;
@@ -12,29 +43,58 @@ public class HistItemAttributeId implements java.io.Serializable {
 	private Long aid;
 	private Date histDatetime;
 
+	/**
+	 * Constructor
+	 */
 	public HistItemAttributeId() {
 		
 	}
 	
+	/**
+	 * Constructor
+	 * 
+	 * @param aid The item attribute id
+	 * @param histDatetime The date of the history occurence
+	 */
 	public HistItemAttributeId(Long aid, Date histDatetime) {
 		this.aid = aid;
 		this.histDatetime = histDatetime;
 	}
 
+	/**
+	 * Get the item attribute id
+	 * 
+	 * @return The item attribute id
+	 */
 	@Column(name="aid")
 	public Long getAid() {
 		return aid;
 	}
 
+	/**
+	 * Set the item attribute id
+	 * 
+	 * @param aid The item attribute id
+	 */
 	public void setAid(Long aid) {
 		this.aid = aid;
 	}
 
+	/**
+	 * Get the history date/time
+	 * 
+	 * @return The date/time
+	 */
 	@Column(name="hist_datetime")
 	public Date getHistDatetime() {
 		return histDatetime;
 	}
 
+	/**
+	 * Set the history date/time
+	 * 
+	 * @param histDatetime The date/time
+	 */
 	public void setHistDatetime(Date histDatetime) {
 		this.histDatetime = histDatetime;
 	}

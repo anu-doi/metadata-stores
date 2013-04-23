@@ -61,9 +61,10 @@ public class HarvestContentService {
 	}
 	
 	/**
+	 * Get the next row of harvest content to process
 	 * 
-	 * @param system
-	 * @return
+	 * @param system The system to get the harvest content for
+	 * @return The harvest content record
 	 */
 	public HarvestContent getNextHarvestContent(String system) {
 		Session session = HarvesterHibernateUtil.getSessionFactory().openSession();
@@ -78,6 +79,11 @@ public class HarvestContentService {
 		return content;
 	}
 	
+	/**
+	 * Delete the harvest content row
+	 * 
+	 * @param content The harvest content row to delete
+	 */
 	public void deleteHarvestContent(HarvestContent content) {
 		Session session = HarvesterHibernateUtil.getSessionFactory().openSession();
 		session.beginTransaction();
@@ -88,6 +94,11 @@ public class HarvestContentService {
 		session.close();
 	}
 	
+	/**
+	 * Get the harvest locations
+	 * 
+	 * @return The harvest locations
+	 */
 	public List<Location> getHarvestLocations() {
 		Session session = HarvesterHibernateUtil.getSessionFactory().openSession();
 		

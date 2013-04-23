@@ -1,3 +1,24 @@
+/*******************************************************************************
+ * Australian National University Metadata Stores
+ * Copyright (C) 2013  The Australian National University
+ * 
+ * This file is part of Australian National University Metadata Stores.
+ * 
+ * Australian National University Metadata Stores is free software: you
+ * can redistribute it and/or modify it under the terms of the GNU
+ * General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ ******************************************************************************/
+
 package au.edu.anu.metadatastores.ldap;
 
 import java.io.IOException;
@@ -16,9 +37,14 @@ import org.slf4j.LoggerFactory;
 import au.edu.anu.metadatastores.util.properties.PropertyLoader;
 
 /**
+ * 
+ * LdapSearch
+ * 
+ * The Australian National University
+ * 
  * Class that generates and executes search methods for LdapService
  * 
- * @author u5125986
+ * @author Genevieve Turner
  *
  */
 public class LdapSearch {
@@ -30,6 +56,9 @@ public class LdapSearch {
 	private static LdapConnectionData peopleConnectionData_;
 	private static LdapConnection ldapConnection_ = LdapConnection.getSingleton();
 	
+	/**
+	 * Constructor
+	 */
 	private LdapSearch() {
 		properties_ = PropertyLoader.loadProperties("ldap.properties");
 		
@@ -74,21 +103,11 @@ public class LdapSearch {
 			query.addApproximateAttribute(LdapAttribute.FIRSTNAME, givenName);
 		}
 		
-		//String[] returnFields = {LdapAttribute.UNIVERSITY_ID, LdapAttribute.FIRSTNAME, LdapAttribute.SURNAME, LdapAttribute.EMAIL};
 		String[] returnFields = {LdapAttribute.UID};
 		List<String> combinedResults = new ArrayList<String>();
 		Attributes[] results = ldapConnection_.search(peopleConnectionData_, query.toString(), returnFields);
 		combineResults(results, combinedResults);
-		/*String[] uniIds = new String[results.length];
-		String uniId = null;
-		Attribute attribute = null;
-		for (int i = 0; i < results.length; i++) {
-			attribute = results[i].get(LdapAttribute.UID);
-			if (attribute != null && attribute.size() > 0) {
-				uniId = (String) attribute.get(0);
-				uniIds[i] = uniId;
-			}
-		}*/
+		
 		if (combinedResults.size() == 0) {
 			query.clear();
 			if (surname != null && surname.length() > 0 && givenName != null && givenName.length() > 0) {
@@ -201,9 +220,7 @@ public class LdapSearch {
 	 */
 	public String[] searchUniversityId(String uniID) throws NamingException {
 		LdapQuery query = new LdapQuery();
-		//query.addAttribute(LdapAttribute.SURNAME, surname);
 		query.addAttribute(LdapAttribute.UID, uniID);
-		//String[] returnFields = {LdapAttribute.UNIVERSITY_ID};
 		String[] returnFields = {LdapAttribute.UID, LdapAttribute.FIRSTNAME, LdapAttribute.SURNAME, LdapAttribute.EMAIL};
 		Attributes[] results = ldapConnection_.search(peopleConnectionData_, query.toString(), returnFields);
 		String[] names = new String[results.length];
@@ -259,6 +276,13 @@ public class LdapSearch {
 		return value.toString();
 	}
 	
+	/**
+	 * Get the person information with the given university id
+	 * 
+	 * @param uniID The university id
+	 * @return The information about the person associated with the given id
+	 * @throws NamingException
+	 */
 	public LdapPerson getUserAttributes(String uniID) throws NamingException {
 		LdapQuery query = new LdapQuery();
 		query.addAttribute("uid", uniID);
@@ -267,7 +291,6 @@ public class LdapSearch {
 		if (results != null && results.length > 0) {
 			person = new LdapPerson(results[0]);
 		}
-		//LdapPerson.getAttributes();
 		return person;
 	}
 	
@@ -282,15 +305,11 @@ public class LdapSearch {
 		String[] returnFields = {LdapAttribute.UID};
 		
 		LdapQuery query = new LdapQuery();
-		//query.addAttribute(LdapAttribute.UID, "*");
 		query.addAttribute(LdapAttribute.OBJECT_CLASS, "*");
 		
-		//Attributes[] results = ldapConnection_.pagedSearch(peopleConnectionData_, query.toString(), returnFields);
-
-		//Attributes[] results = ldapConnection_.search(peopleConnectionData_, query.toString(), returnFields);
-		LOGGER.info("Before find ids");
+		LOGGER.debug("Before find ids");
 		Attributes[] results = ldapConnection_.search(peopleConnectionData_, query.toString(), returnFields, 0, 0, SearchControls.ONELEVEL_SCOPE);
-		LOGGER.info("After find ids");
+		LOGGER.debug("After find ids");
 		if (results != null) {
 			LOGGER.info("Number of results: {}", results.length);
 		}
@@ -305,7 +324,6 @@ public class LdapSearch {
 						ids.append(";");
 					}
 					ids.append(uid);
-					//uniIDs[i] = (String) uid.get(0);
 				}
 				uniIDs[i] = ids.toString();
 			}

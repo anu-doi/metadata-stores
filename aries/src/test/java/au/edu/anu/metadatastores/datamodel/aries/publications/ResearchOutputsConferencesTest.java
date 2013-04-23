@@ -10,6 +10,16 @@ import org.slf4j.LoggerFactory;
 
 import au.edu.anu.metadatastores.services.aries.AriesHibernateUtil;
 
+/**
+ * ResearchOutputsConferencesTest
+ * 
+ * The Australian National University
+ * 
+ * Test class for ResearchOutputsConferencesTest
+ * 
+ * @author Genevieve Turner
+ *
+ */
 public class ResearchOutputsConferencesTest {
 	static final Logger LOGGER = LoggerFactory.getLogger(ResearchOutputsConferencesTest.class);
 

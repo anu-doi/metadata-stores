@@ -1,3 +1,24 @@
+/*******************************************************************************
+ * Australian National University Metadata Stores
+ * Copyright (C) 2013  The Australian National University
+ * 
+ * This file is part of Australian National University Metadata Stores.
+ * 
+ * Australian National University Metadata Stores is free software: you
+ * can redistribute it and/or modify it under the terms of the GNU
+ * General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ ******************************************************************************/
+
 package au.edu.anu.metadatastores.services.ldap;
 
 import java.io.IOException;
@@ -8,19 +29,31 @@ import au.edu.anu.metadatastores.ldap.LdapPerson;
 import au.edu.anu.metadatastores.ldap.LdapSearch;
 
 /**
- * LDAP Service method
+ * LdapService
  * 
- * @author u5125986
+ * The Australian National University
+ * 
+ * Service class that provides information from ldap to external parties
+ * 
+ * @author Genevieve Turner
  *
  */
 public class LdapService {
 	private static LdapService singleton_;
 	private static LdapSearch ldapSearch_ = LdapSearch.getSingleton();
 	
+	/**
+	 * Constructor
+	 */
 	private LdapService() {
 		
 	}
 	
+	/**
+	 * Get the singleton for LdapService
+	 * 
+	 * @return The LdapService
+	 */
 	public static synchronized LdapService getSingleton() {
 		if (singleton_ == null) {
 			singleton_ = new LdapService();
@@ -100,9 +133,14 @@ public class LdapService {
 		return results;
 	}
 	
+	/**
+	 * Get information about a person given the specified univeresity id
+	 * 
+	 * @param uniID The university id
+	 * @return The information about the person associated with the universeity id
+	 * @throws NamingException
+	 */
 	public LdapPerson getANUPartyLdapInfo(String uniID) throws NamingException {
-		//return ldapSearch_.getUserAttributes(uniID);
 		return ldapSearch_.getUserAttributes(uniID);
-	//	return null;
 	}
 }

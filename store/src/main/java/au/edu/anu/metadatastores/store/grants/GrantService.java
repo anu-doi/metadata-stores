@@ -1,3 +1,24 @@
+/*******************************************************************************
+ * Australian National University Metadata Stores
+ * Copyright (C) 2013  The Australian National University
+ * 
+ * This file is part of Australian National University Metadata Stores.
+ * 
+ * Australian National University Metadata Stores is free software: you
+ * can redistribute it and/or modify it under the terms of the GNU
+ * General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ ******************************************************************************/
+
 package au.edu.anu.metadatastores.store.grants;
 
 import java.util.ArrayList;
@@ -41,6 +62,11 @@ public class GrantService extends AbstractItemService {
 	private AriesService ariesService_ = AriesService.getSingleton();
 	private PersonService personService_ = PersonService.getSingleton();
 	
+	/**
+	 * Main class to execute grants
+	 * 
+	 * @param args Arguments
+	 */
 	public static void main(String[] args) {
 		GrantService grantService = GrantService.getSingleton();
 		for (int i = 0; i < args.length; i++) {
@@ -54,10 +80,18 @@ public class GrantService extends AbstractItemService {
 		}
 	}
 	
+	/**
+	 * Constructor
+	 */
 	private GrantService() {
 		
 	}
 	
+	/**
+	 * Get the GrantService instance
+	 * 
+	 * @return  The GrantService
+	 */
 	public static GrantService getSingleton() {
 		if (singleton_ == null) {
 			singleton_ = new GrantService();
@@ -80,7 +114,6 @@ public class GrantService extends AbstractItemService {
 		for (ANUActivity activity : activities) {
 			grant = new Grant();
 			grant.setContractCode(activity.getActivityId());
-			//grant.setStartDate(activity.getStartDate());
 			grant.setTitle(activity.getActivityTitle());
 			Person firstInvestigator = new Person();
 			firstInvestigator.setExtId(activity.getFirstInvestigatorId());
@@ -128,6 +161,13 @@ public class GrantService extends AbstractItemService {
 		return saveGrant(grant, Boolean.FALSE);
 	}
 
+	/**
+	 * Save the grant information
+	 * 
+	 * @param grant The grant to save
+	 * @param userUpdated Indicator of whether it is user updated or system updated
+	 * @return The GrantItem that has been created/updated
+	 */
 	public GrantItem saveGrant(Grant grant, Boolean userUpdated) {
 		Session session = StoreHibernateUtil.getSessionFactory().openSession();
 		session.enableFilter("attributes");
@@ -191,9 +231,10 @@ public class GrantService extends AbstractItemService {
 	
 	/**
 	 * Add the people involved with the grant
-	 * @param item
-	 * @param grant
-	 * @param session
+	 * 
+	 * @param item The grant item to add people to
+	 * @param grant The grant that holds the people who need to be associated
+	 * @param session The session
 	 */
 	private void associatePeople(GrantItem item, Grant grant, Session session) {
 		//TODO add the removing of people who are no longer associated
@@ -203,7 +244,6 @@ public class GrantService extends AbstractItemService {
 			if (personItem != null) {
 				if (grant.getFirstInvestigator() != null && person.getExtId().equals(grant.getFirstInvestigator().getExtId())) {
 					relationId = new ItemRelationId(item.getIid(), "hasPrincipalInvestigator", personItem.getIid());
-					
 				}
 				else {
 					relationId = new ItemRelationId(item.getIid(), "hasAssociationWith", personItem.getIid());

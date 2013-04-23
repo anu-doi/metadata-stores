@@ -1,3 +1,24 @@
+/*******************************************************************************
+ * Australian National University Metadata Stores
+ * Copyright (C) 2013  The Australian National University
+ * 
+ * This file is part of Australian National University Metadata Stores.
+ * 
+ * Australian National University Metadata Stores is free software: you
+ * can redistribute it and/or modify it under the terms of the GNU
+ * General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ ******************************************************************************/
+
 package au.edu.anu.metadatastores.ldap;
 
 import java.util.ArrayList;
@@ -17,8 +38,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Connection class that searches ldaps
- * @author u5125986
+ * LdapConnection
+ * 
+ * The Australian National University
+ * 
+ * Connection classs that searches ldap
+ * 
+ * @author Genevieve Turner
  *
  */
 public class LdapConnection {
@@ -28,7 +54,9 @@ public class LdapConnection {
 	
 	private static LdapConnection singleton_;
 	
-	
+	/**
+	 * Constructor
+	 */
 	private LdapConnection () {
 	}
 	
@@ -99,69 +127,5 @@ public class LdapConnection {
 		}
 		
 		return attributesList.toArray(new Attributes[0]);
-	}
-
-	/**
-	 * Searches LDAP given the specified criteria.  Recommended for queries where it is expected that a large number 
-	 * of results are returned as it will page the results and thus get around limitations of some LDAP servers (such as
-	 * Active Directory).
-	 * 
-	 * @param connectionData
-	 * @param query
-	 * @param returnFields
-	 * @return
-	 * @throws NamingException
-	 * @throws IOException
-	 */
-	/*public Attributes[] pagedSearch(LdapConnectionData connectionData, String query, String[] returnFields)
-			throws NamingException, IOException {
-		LdapContext ldapContext = new InitialLdapContext(connectionData.getConnectionProperties(), null);
-		
-		SearchControls searchControls = new SearchControls();
-		searchControls.setReturningAttributes(returnFields);
-		
-		byte[] cookie = null;
-		Control[] controls = new Control[]{new PagedResultsControl(pageSize, Control.CRITICAL)};
-		ldapContext.setRequestControls(controls);
-		
-		//TODO remove maxLoops and i
-		int maxLoops = 5;
-		int i = 0;
-		List<Attributes> attributes = new ArrayList<Attributes>();
-		
-		do {
-			i++;
-			NamingEnumeration<SearchResult> results = ldapContext.search(connectionData.getBaseDN(), query, searchControls);
-			while (results != null && results.hasMore()) {
-				SearchResult entry = (SearchResult) results.next();
-				attributes.add(entry.getAttributes());
-			}
-			
-			cookie = getPagedResultsControlCookie(ldapContext.getResponseControls());
-			
-			ldapContext.setRequestControls(new Control[] {new PagedResultsControl(pageSize, cookie, Control.CRITICAL)});
-		}
-		while (cookie != null && i < maxLoops);
-		
-		return attributes.toArray(new Attributes[0]);
-	}*/
-	
-	/**
-	 * Retrieves the cookie from the given controls
-	 * 
-	 * @param controls Controls generally from the response of a LDAP query
-	 * @return The byte array of the cookies
-	 */
-	private byte[] getPagedResultsControlCookie(Control[] controls) {
-		byte[] cookie = null;
-		if (controls != null) {
-			for (int i = 0; i < controls.length; i++) {
-				if (controls[i] instanceof PagedResultsResponseControl) {
-					PagedResultsResponseControl prrc = (PagedResultsResponseControl) controls[i];
-					cookie = prrc.getCookie();
-				}
-			}
-		}
-		return cookie;
 	}
 }

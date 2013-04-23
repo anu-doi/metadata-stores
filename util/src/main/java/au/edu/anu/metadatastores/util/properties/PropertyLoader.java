@@ -6,6 +6,14 @@ import java.util.Locale;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
+/**
+ * PropertyLoader
+ * 
+ * The Australian National University
+ * 
+ * @author Rainbow Cai
+ *
+ */
 public class PropertyLoader {
 	private static final String SUFFIX = ".properties";
 	

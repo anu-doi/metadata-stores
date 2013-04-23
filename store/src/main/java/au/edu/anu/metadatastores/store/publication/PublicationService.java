@@ -1,3 +1,24 @@
+/*******************************************************************************
+ * Australian National University Metadata Stores
+ * Copyright (C) 2013  The Australian National University
+ * 
+ * This file is part of Australian National University Metadata Stores.
+ * 
+ * Australian National University Metadata Stores is free software: you
+ * can redistribute it and/or modify it under the terms of the GNU
+ * General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ ******************************************************************************/
+
 package au.edu.anu.metadatastores.store.publication;
 
 import java.math.BigInteger;
@@ -26,6 +47,16 @@ import au.edu.anu.metadatastores.store.people.PersonItem;
 import au.edu.anu.metadatastores.store.people.PersonService;
 import au.edu.anu.metadatastores.store.properties.StoreProperties;
 
+/**
+ * PublicationService
+ * 
+ * The Australian National University
+ * 
+ * Service for retrieving and updating publications within the metadata stores
+ * 
+ * @author Genevieve Turner
+ *
+ */
 public class PublicationService extends AbstractItemService {
 	static final Logger LOGGER = LoggerFactory.getLogger(PublicationService.class);
 	
@@ -34,6 +65,11 @@ public class PublicationService extends AbstractItemService {
 	PersonService personService = PersonService.getSingleton();
 	AriesService ariesService_ = AriesService.getSingleton();
 	
+	/**
+	 * Main class to update publication information
+	 * 
+	 * @param args The command line arguments
+	 */
 	public static void main(String[] args) {
 		PublicationService publicationService = PublicationService.getSingleton();
 		for (int i = 0; i < args.length; i++) {
@@ -48,10 +84,18 @@ public class PublicationService extends AbstractItemService {
 		System.out.println("Updates Complete");
 	}
 	
+	/**
+	 * Constructor
+	 */
 	private PublicationService() {
 		
 	}
 	
+	/**
+	 * Gets the singleton object of PublicationService
+	 * 
+	 * @return The PublicationService instance
+	 */
 	public static PublicationService getSingleton() {
 		if (singleton_ == null) {
 			singleton_ = new PublicationService();
@@ -59,6 +103,12 @@ public class PublicationService extends AbstractItemService {
 		return singleton_;
 	}
 	
+	/**
+	 * Fetch the information about publications from other sources e.g. Aries
+	 * 
+	 * @param staffId The university id of the person to fetch publications about
+	 * @return A list of publications the person is an author of
+	 */
 	public List<Publication> fetchPublicationsForUid(String staffId) {
 		List<Publication> publications = new ArrayList<Publication>();
 		Publication publication = null;
@@ -75,9 +125,14 @@ public class PublicationService extends AbstractItemService {
 		return publications;
 	}
 	
+	/**
+	 * Transform a publication from the Aries publication format to the Stores format
+	 * 
+	 * @param ariesPublication The publication in aries format
+	 * @return The publication in Stores format
+	 */
 	private Publication ariesPublicationToPublication(au.edu.anu.metadatastores.services.aries.Publication ariesPublication) {
 		Publication publication = new Publication();
-		//LOGGER.info("ID: {}, Title: {}", ariesPublication.getAriesId(), ariesPublication.getPublicationTitle());
 		publication.setAriesId(ariesPublication.getAriesId());
 		publication.setTitle(ariesPublication.getPublicationTitle());
 		publication.setPublicationName(ariesPublication.getPublicationName());
@@ -111,6 +166,12 @@ public class PublicationService extends AbstractItemService {
 		return publication;
 	}
 	
+	/**
+	 * Fetch the publication information by the aries id
+	 * 
+	 * @param ariesId The aries id
+	 * @return The publication
+	 */
 	public Publication fetchPublication(String ariesId) {
 		au.edu.anu.metadatastores.services.aries.Publication ariesPublication = ariesService_.getSinglePublication(ariesId);
 		Publication publication = ariesPublicationToPublication(ariesPublication);
@@ -118,6 +179,12 @@ public class PublicationService extends AbstractItemService {
 		return publication;
 	}
 	
+	/**
+	 * Fetch the publications by year
+	 * 
+	 * @param year The year to find publications for
+	 * @return The a list of publications that were published in the given year
+	 */
 	public List<Publication> fetchPublicationsByYear(String year) {
 		au.edu.anu.metadatastores.services.aries.Publication[] ariesPublications = ariesService_.getPublicationsForYear(year);
 		List<Publication> publications = new ArrayList<Publication>();
@@ -130,6 +197,11 @@ public class PublicationService extends AbstractItemService {
 		return publications;
 	}
 	
+	/**
+	 * Update the publications by year
+	 * 
+	 * @param year The year to retrieve and update publications for
+	 */
 	public void updatePublicationsByYear(String year) {
 		List<Publication> publications = fetchPublicationsByYear(year);
 		for (Publication pub : publications) {
@@ -137,13 +209,24 @@ public class PublicationService extends AbstractItemService {
 		}
 	}
 	
+	/**
+	 * Save the publication
+	 * 
+	 * @param publication The publication to save
+	 * @return The saved publication item
+	 */
 	public PublicationItem savePublication(Publication publication) {
 		return savePublication(publication, Boolean.FALSE);
 	}
 	
+	/**
+	 * Save the publication
+	 * 
+	 * @param publication The publication to save
+	 * @param userUpdated Indicates whether the update is user updated
+	 * @return The publication item
+	 */
 	public PublicationItem savePublication(Publication publication, Boolean userUpdated) {
-
-		//TODO update this as needed with other systems bring in publications
 		if (publication.getTitle() == null || publication.getTitle().trim().length() == 0) {
 			return null;
 		}
@@ -249,6 +332,14 @@ public class PublicationService extends AbstractItemService {
 		return item;
 	}
 	
+	/**
+	 * Searches for the people that match the publication with an author that has the provided given and surnames
+	 * 
+	 * @param iid The item id of the publication
+	 * @param givenName The given name
+	 * @param surname The surname
+	 * @return The list of people that match
+	 */
 	public List<PersonItem> searchPublicationPerson(Long iid, String givenName, String surname) {
 		Session session = StoreHibernateUtil.getSessionFactory().openSession();
 		session.enableFilter("attributes");
@@ -266,6 +357,12 @@ public class PublicationService extends AbstractItemService {
 		return people;
 	}
 	
+	/**
+	 * Get the publication by the aries id
+	 * 
+	 * @param ariesId The aries id to get publications for
+	 * @return The publication
+	 */
 	public Publication getPublicationByAriesId(String ariesId) {
 		Session session = StoreHibernateUtil.getSessionFactory().openSession();
 		session.enableFilter("attributes");
@@ -435,9 +532,15 @@ public class PublicationService extends AbstractItemService {
 		}
 	}
 	
+	/**
+	 * Set the relations of the publiations into the publication object
+	 * 
+	 * @param publication The publication to get the relations of
+	 * @param item The item to retrieve the relations from
+	 */
 	private void setRelations(Publication publication, PublicationItem item) {
+		//Get the authors
 		List<String> authorExtIds = new ArrayList<String>();
-		//LOGGER.info("Get People");
 		for (ItemRelation relation : item.getItemRelationsForIid()) {
 			if (relation.getId().getRelationValue().equals(StoreProperties.getProperty("publication.author.type"))){
 				authorExtIds.add(relation.getItemByRelatedIid().getExtId());
@@ -447,25 +550,6 @@ public class PublicationService extends AbstractItemService {
 			List<Person> authors = personService.getBasicPeople(authorExtIds, true);
 			publication.setAuthors(authors);
 		}
-		//LOGGER.info("End Get People");
-	}
-	
-	/**
-	 * Set the publication information for the relation
-	 * 
-	 * @param publication The publication to set relations for
-	 * @param relation The relation
-	 * @param extraUserInfo 
-	 */
-	private void setRelation(Publication publication, ItemRelation relation, boolean extraUserInfo) {
-		//LOGGER.info("Set Relations for Publications");
-		if (relation.getId().getRelationValue().equals(StoreProperties.getProperty("publication.author.type"))){
-		//	LOGGER.info("Set Person");
-			Person person = personService.getBasicPerson((PersonItem)relation.getItemByRelatedIid(), extraUserInfo);
-			publication.getAuthors().add(person);
-		//	LOGGER.info("End Set Person");
-		}
-		//LOGGER.info("End Set Relations for Publications");
 	}
 	
 	/**

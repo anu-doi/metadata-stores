@@ -37,6 +37,7 @@ import javax.persistence.Table;
  * 
  * Entity class for the contracts_grants_departments table
  * 
+ * @author Rainbow Cai
  * @author Genevieve Turner
  *
  */

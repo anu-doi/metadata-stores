@@ -1,8 +1,30 @@
+/*******************************************************************************
+ * Australian National University Metadata Stores
+ * Copyright (C) 2013  The Australian National University
+ * 
+ * This file is part of Australian National University Metadata Stores.
+ * 
+ * Australian National University Metadata Stores is free software: you
+ * can redistribute it and/or modify it under the terms of the GNU
+ * General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ ******************************************************************************/
+
 package au.edu.anu.metadatastores.store.datacommons;
 
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
@@ -31,6 +53,10 @@ import au.edu.anu.metadatastores.store.misc.Mappings;
 import au.edu.anu.metadatastores.store.properties.StoreProperties;
 
 /**
+ * DataCommonsService
+ * 
+ * The Australian National University
+ * 
  * Service to provide updates to Data Commons records
  * 
  * @author Genevieve Turner
@@ -143,7 +169,8 @@ public class DataCommonsService extends DublinCoreService {
 		catch (JAXBException e) {
 			LOGGER.error("Exception transforming document");
 		}
-		session.flush();
+
+		//session.flush();
 		session.merge(item);
 		
 		LOGGER.debug("Item Numbers: {}", item.getItemAttributes().size());
@@ -214,8 +241,8 @@ public class DataCommonsService extends DublinCoreService {
 	/**
 	 * Set split the relation into relation parts
 	 * 
-	 * @param relation The 
-	 * @return
+	 * @param relation The relation
+	 * @return The parts of the relation
 	 */
 	private String[] getRelationParts(String relation) {
 		String[] values = new String[2];
@@ -242,49 +269,47 @@ public class DataCommonsService extends DublinCoreService {
 	 * @param session The hibernate session
 	 */
 	protected void setRelations(DublinCoreItem item, DublinCore dublinCore, Session session) {
-		//Set<ItemRelation> relations = item.getItemRelationsForIid();
 		Iterator<ItemRelation> it = item.getItemRelationsForIid().iterator();
-		LOGGER.debug("Number of relations before remove: {}", item.getItemRelationsForIid().size());
+		
+		List<ItemRelation> itemRelations = new ArrayList<ItemRelation>();
+		
+		List<RelationPart> relationParts = getRelationPartsList(dublinCore);
+		setIdentifierRelations(item, relationParts, itemRelations, session);
+		setNLAIdentifierRelations(item, relationParts, itemRelations, session);
+		setARCIdentifierRelations(item, relationParts, itemRelations, session);
+		setNHMRCIdentifierRelations(item, relationParts, itemRelations, session);
+		
+		boolean hasValue = false;
 		while (it.hasNext()) {
 			ItemRelation relation = it.next();
-		//for (ItemRelation relation : item.getItemRelationsForIid()) {
-			Boolean updated = relation.getUserUpdated();
-			if (updated != Boolean.TRUE) {
-				LOGGER.info("Removing: {}", relation);
+			
+			for (ItemRelation itemRelation : itemRelations) {
+				if (relation.getId().equals(itemRelation.getId())) {
+					if (Boolean.TRUE.equals(relation.getUserUpdated())) {
+						itemRelation.setUserUpdated(Boolean.TRUE);
+					}
+					hasValue = true;
+				}
+			}
+			if (!hasValue && Boolean.TRUE.equals(relation.getUserUpdated())) {
+				itemRelations.add(relation);
+			}
+			else if (!hasValue) {
 				it.remove();
 				session.delete(relation);
 			}
+			
+			hasValue = false;
 		}
-		LOGGER.debug("Number of relations after remove: {}", item.getItemRelationsForIid().size());
-		session.flush();
-		
-		List<RelationPart> relationParts = getRelationPartsList(dublinCore);
-		setIdentifierRelations(item, relationParts, session);
-		setNLAIdentifierRelations(item, relationParts, session);
-		setARCIdentifierRelations(item, relationParts, session);
-		setNHMRCIdentifierRelations(item, relationParts, session);
-		
-		/*Query query = session.createQuery("SELECT i FROM Item i join i.itemAttributes ia WHERE ia.attrType = :attrType AND ia.attrValue = :attrValue");
-		query.setParameter("attrType", StoreAttributes.IDENTIFIER);
-		
-		for (String relation : dublinCore.getRelations()) {
-			String[] relationParts = getRelationParts(relation);
-			query.setParameter("attrValue", relationParts[1].trim());
-			LOGGER.info("Item: {}, Value: {}", relationParts[1], relationParts[0]);
-			
-			List<Item> relItems = query.list();
-			
-			String relationType = getRelationType(relationParts[0]);
-			
-			for (Item relItem : relItems) {
-				ItemRelationId itemRelationId = new ItemRelationId(item.getIid(), relationType, relItem.getIid());
-				ItemRelation itemRelation = new ItemRelation();
-				itemRelation.setId(itemRelationId);
-				item.getItemRelationsForIid().add(itemRelation);
-			}
-		}*/
+		item.setItemRelationsForIid(new HashSet<ItemRelation>(itemRelations));
 	}
 	
+	/**
+	 * Get a list of relationship parts from the relations
+	 * 
+	 * @param dublinCore The dublin core
+	 * @return The relationship parts
+	 */
 	private List<RelationPart> getRelationPartsList(DublinCore dublinCore) {
 		List<RelationPart> relationParts = new ArrayList<RelationPart>();
 		
@@ -292,27 +317,28 @@ public class DataCommonsService extends DublinCoreService {
 		for (String relation : dublinCore.getRelations()) {
 			String[] relParts = getRelationParts(relation);
 			relationPart = new RelationPart(relParts[1], relParts[0]);
-			LOGGER.info("Relation: {}, {}", relationPart.getValue(), relationPart.getType());
+			LOGGER.debug("Relation: {}, {}", relationPart.getValue(), relationPart.getType());
 			relationParts.add(relationPart);
 		}
-		LOGGER.info("Number of relations: {}", relationParts.size());
+		LOGGER.debug("Number of relations: {}", relationParts.size());
 		
 		return relationParts;
 	}
 	
-	private void setIdentifierRelations(Item item, List<RelationPart> relationParts, Session session) {
-		//LOGGER.info("Number of relations in identifiers: {}", relationParts.size());
+	/**
+	 * Add relationships based on identifiers in the item
+	 * 
+	 * @param item The item to add relationships to
+	 * @param relationParts The relationship parts
+	 * @param session The session
+	 */
+	private void setIdentifierRelations(Item item, List<RelationPart> relationParts, List<ItemRelation> itemRelations, Session session) {
 		Query query = session.createQuery("SELECT i FROM Item i join i.itemAttributes ia WHERE ia.attrType = :attrType AND ia.attrValue = :attrValue");
 		query.setParameter("attrType", StoreAttributes.IDENTIFIER);
 		
 		for (RelationPart relationPart : relationParts) {
-			
-		//for (String relation : dublinCore.getRelations()) {
-		//	String[] relationParts = getRelationParts(relation);
-		//	query.setParameter("attrValue", relationParts[1].trim());
 			query.setParameter("attrValue", relationPart.getValue());
 			LOGGER.debug("Item: {}, Value: {}", relationPart.getValue(), relationPart.getType());
-			//LOGGER.info("Item: {}, Value: {}", relationParts[1], relationParts[0]);
 			
 			List<Item> relItems = query.list();
 			
@@ -322,28 +348,49 @@ public class DataCommonsService extends DublinCoreService {
 				ItemRelationId itemRelationId = new ItemRelationId(item.getIid(), relationType, relItem.getIid());
 				ItemRelation itemRelation = new ItemRelation();
 				itemRelation.setId(itemRelationId);
-				item.getItemRelationsForIid().add(itemRelation);
+				itemRelations.add(itemRelation);
 			}
 		}
-		LOGGER.info("Item Relation Size: {}", item.getItemRelationsForIid().size());
 	}
 
-	private void setARCIdentifierRelations(Item item, List<RelationPart> relationParts, Session session) {
-		//LOGGER.info("Number of relations in arc: {}", relationParts.size());
+	/**
+	 * Set the Australian Research Council relationships
+	 * 
+	 * @param item The item to add the relationship to
+	 * @param relationParts The relationship parts
+	 * @param session The session object
+	 */
+	private void setARCIdentifierRelations(Item item, List<RelationPart> relationParts, List<ItemRelation> itemRelations, Session session) {
 		String arcPrefix = StoreProperties.getProperty("arc.prefix");
 		String arcTitle = StoreProperties.getProperty("arc.grant.title");
 		
-		setGrantIdentifierRelations(item, relationParts, session, arcPrefix, arcTitle);
+		setGrantIdentifierRelations(item, relationParts, itemRelations, session, arcPrefix, arcTitle);
 	}
 	
-	private void setNHMRCIdentifierRelations(Item item, List<RelationPart> relationParts, Session session) {
+	/**
+	 * Set the National Health and Medical Research Council relationships
+	 * 
+	 * @param item The item to add the relationship to
+	 * @param relationParts The relationship parts
+	 * @param session The session object
+	 */
+	private void setNHMRCIdentifierRelations(Item item, List<RelationPart> relationParts, List<ItemRelation> itemRelations, Session session) {
 		String nhmrcPrefix = StoreProperties.getProperty("nhmrc.prefix");
 		String nhmrcTitle = StoreProperties.getProperty("nhmrc.grant.title");
 		
-		setGrantIdentifierRelations(item, relationParts, session, nhmrcPrefix, nhmrcTitle);
+		setGrantIdentifierRelations(item, relationParts, itemRelations, session, nhmrcPrefix, nhmrcTitle);
 	}
 	
-	private void setGrantIdentifierRelations(Item item, List<RelationPart> relationParts, Session session, String fundsPrefix, String fundsProvider) {
+	/**
+	 * Set the grant identifier relationships
+	 * 
+	 * @param item The item to add relationships to
+	 * @param relationParts The relationship parts
+	 * @param session The session
+	 * @param fundsPrefix The prefix of the grant
+	 * @param fundsProvider The name of the funds provider
+	 */
+	private void setGrantIdentifierRelations(Item item, List<RelationPart> relationParts, List<ItemRelation> itemRelations, Session session, String fundsPrefix, String fundsProvider) {
 		Query query = session.createQuery("SELECT gr from GrantItem gr join gr.itemAttributes fundProv join gr.itemAttributes refNum where fundProv.attrType = :fundType and fundProv.attrValue = :fundProvValue and refNum.attrType = :refType and refNum.attrValue = :refValue");
 		query.setParameter("fundType", StoreAttributes.FUNDS_PROVIDER);
 		query.setParameter("refType", StoreAttributes.REFERENCE_NUMBER);
@@ -353,26 +400,31 @@ public class DataCommonsService extends DublinCoreService {
 		for (RelationPart relationPart : relationParts) {
 			LOGGER.debug("Relation: {}, {}", relationPart.getValue(), relationPart.getType());
 			if (relationPart.getValue().startsWith(fundsPrefix)) {
-				LOGGER.info("Is a Grant: {}", relationPart.getValue());
+				LOGGER.debug("Is a Grant: {}", relationPart.getValue());
 				String id = relationPart.getValue().substring(prefixLength);
 				query.setParameter("refValue", id);
 				List<Item> grants = query.list();
 				String relationType = getRelationType(relationPart.getType());
 				for (Item grant : grants) {
-					LOGGER.info("ID: {}, Title: {}", grant.getIid(), grant.getTitle());
+					LOGGER.debug("ID: {}, Title: {}", grant.getIid(), grant.getTitle());
 					ItemRelationId itemRelationId = new ItemRelationId(item.getIid(), relationType, grant.getIid());
 					ItemRelation itemRelation = new ItemRelation();
 					itemRelation.setId(itemRelationId);
-					item.getItemRelationsForIid().add(itemRelation);
+					itemRelations.add(itemRelation);
 				}
 			}
 		}
-		LOGGER.info("Item Relation Size: {}", item.getItemRelationsForIid().size());
 	}
 	
-	private void setNLAIdentifierRelations(Item item, List<RelationPart> relationParts, Session session) {
+	/**
+	 * Set the National Library of Australia relationships
+	 * 
+	 * @param item The item to add the relationships to
+	 * @param relationParts The relationship parts
+	 * @param session The session object
+	 */
+	private void setNLAIdentifierRelations(Item item, List<RelationPart> relationParts, List<ItemRelation> itemRelations, Session session) {
 		String nlaPrefix = StoreProperties.getProperty("nla.prefix");
-		
 		
 		Query query = session.createQuery("SELECT p FROM PersonItem p join p.itemAttributes nlaId WHERE nlaId.attrType = :nlaType and nlaId.attrValue = :nlaValue");
 		query.setParameter("nlaType", StoreAttributes.NLA_ID);
@@ -380,20 +432,20 @@ public class DataCommonsService extends DublinCoreService {
 		for (RelationPart relationPart : relationParts) {
 			LOGGER.debug("Relation: {}, {}", relationPart.getValue(), relationPart.getType());
 			if (relationPart.getValue().startsWith(nlaPrefix)) {
-				LOGGER.info("Is a nla identifier: {}", relationPart.getValue());
+				LOGGER.debug("Is a nla identifier: {}", relationPart.getValue());
 				query.setParameter("nlaValue", relationPart.getValue());
 				List<Item> people = query.list();
 				String relationType = getRelationType(relationPart.getType());
 				for (Item person : people) {
-					LOGGER.info("ID: {}, Title: {}", person.getIid(), person.getTitle());
+					LOGGER.debug("ID: {}, Title: {}", person.getIid(), person.getTitle());
 					ItemRelationId itemRelationId = new ItemRelationId(item.getIid(), relationType, person.getIid());
 					ItemRelation itemRelation = new ItemRelation();
 					itemRelation.setId(itemRelationId);
-					item.getItemRelationsForIid().add(itemRelation);
+					itemRelations.add(itemRelation);
 				}
 			}
 		}
-		LOGGER.info("Item Relation Size: {}", item.getItemRelationsForIid().size());
+		LOGGER.debug("Item Relation Size: {}", item.getItemRelationsForIid().size());
 	}
 
 	/**
@@ -403,7 +455,8 @@ public class DataCommonsService extends DublinCoreService {
 	 * @param dublinCore the dublin core to set relations for
 	 * @param session The hibernate session
 	 */
-	protected void setReverseRelations(DublinCoreItem item, DublinCore dublinCore, Session session) {
+	protected void setReverseRelations(DublinCoreItem item, DublinCore dublinCore, Session session2) {
+		Session session = StoreHibernateUtil.getSessionFactory().openSession();
 		Query query = session.createQuery("FROM ItemAttribute WHERE attrType = :attrType AND attrValue = :attrValue");
 		query.setParameter("attrType", StoreAttributes.RELATION_VALUE);
 		dublinCore.getIdentifiers();
@@ -418,7 +471,7 @@ public class DataCommonsService extends DublinCoreService {
 			query.setParameter("attrValue", identifier);
 			List<ItemAttribute> relatedAttributes = query.list();
 			
-			LOGGER.info("Number of reverse relationships: {}", relatedAttributes.size());
+			LOGGER.debug("Number of reverse relationships: {}", relatedAttributes.size());
 			ItemRelationId id = null;
 			for (ItemAttribute relatedAttribute : relatedAttributes) {
 				String relationText = relatedAttribute.getItemAttribute().getAttrValue();
@@ -429,16 +482,17 @@ public class DataCommonsService extends DublinCoreService {
 				id = new ItemRelationId(relatedAttribute.getItem().getIid(), relationType, item.getIid());
 				ItemRelation relation = (ItemRelation) session.get(ItemRelation.class, id);
 				if (relation == null) {
-					LOGGER.info("Does not have relation");
+					LOGGER.debug("Does not have relation");
 					ItemRelation newRelation = new ItemRelation();
 					newRelation.setId(id);
 					item.getItemRelationsForRelatedIid().add(newRelation);
 				}
 				else {
-					LOGGER.info("has relation");
+					LOGGER.debug("has relation");
 				}
 			}
 		}
+		session.close();
 	}
 	
 	/**

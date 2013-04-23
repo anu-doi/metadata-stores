@@ -1,3 +1,24 @@
+/*******************************************************************************
+ * Australian National University Metadata Stores
+ * Copyright (C) 2013  The Australian National University
+ * 
+ * This file is part of Australian National University Metadata Stores.
+ * 
+ * Australian National University Metadata Stores is free software: you
+ * can redistribute it and/or modify it under the terms of the GNU
+ * General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ ******************************************************************************/
+
 package au.edu.anu.metadatastores.store.digitalcollections;
 
 import java.io.StringReader;
@@ -35,9 +56,15 @@ import au.edu.anu.metadatastores.store.publication.PublicationItem;
 import au.edu.anu.metadatastores.store.publication.PublicationService;
 
 /**
+ * 
+ * DigitalCollectionsService
+ * 
+ * The Australian National University
+ * 
  * Service class to process harvested digital collections records
  * 
  * @author Genevieve Turner
+ *
  */
 public class DigitalCollectionsService extends DublinCoreService {
 	static final Logger LOGGER = LoggerFactory.getLogger(DigitalCollectionsService.class);
@@ -49,11 +76,18 @@ public class DigitalCollectionsService extends DublinCoreService {
 	PersonService personService_ = PersonService.getSingleton();
 	PublicationService publicationService_ = PublicationService.getSingleton();
 	
-	
+	/**
+	 * Constructor
+	 */
 	private DigitalCollectionsService() {
 		
 	}
 	
+	/**
+	 * Get the singleton instance of DigitalCollectionsService
+	 * 
+	 * @return The DigitalCollectionsService object
+	 */
 	public static DigitalCollectionsService getSingleton() {
 		if (singleton_ == null) {
 			singleton_ = new DigitalCollectionsService();
@@ -111,7 +145,7 @@ public class DigitalCollectionsService extends DublinCoreService {
 	/**
 	 * Process the record
 	 * 
-	 * @param content
+	 * @param content The harvested content
 	 */
 	private void processRecord(HarvestContent content) {
 		Session session = StoreHibernateUtil.getSessionFactory().openSession();

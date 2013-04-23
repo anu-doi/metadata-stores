@@ -1,3 +1,24 @@
+/*******************************************************************************
+ * Australian National University Metadata Stores
+ * Copyright (C) 2013  The Australian National University
+ * 
+ * This file is part of Australian National University Metadata Stores.
+ * 
+ * Australian National University Metadata Stores is free software: you
+ * can redistribute it and/or modify it under the terms of the GNU
+ * General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ ******************************************************************************/
+
 package au.edu.anu.metadatastores.services.aries;
 
 import java.util.ArrayList;
@@ -13,15 +34,34 @@ import org.slf4j.LoggerFactory;
 import au.edu.anu.metadatastores.datamodel.aries.publications.ResearchOutputsData1;
 import au.edu.anu.metadatastores.datamodel.aries.publications.ResearchOutputsDataAuthors;
 
+/**
+ * PublicationId
+ * 
+ * The Australian National University
+ * 
+ * Class to retrieve publication information
+ * 
+ * @author Rainbow Cai
+ * @author Genevieve Turner
+ *
+ */
 public class PublicationId {
 	static final Logger LOGGER = LoggerFactory.getLogger(PublicationId.class);
 	
 	private static PublicationId singleton_;
 	
+	/**
+	 * Constructor
+	 */
 	private PublicationId() {
 		
 	}
 	
+	/**
+	 * Get the PublicationId singleton
+	 * 
+	 * @return The PublicationId object
+	 */
 	public static synchronized PublicationId getSingleton() {
 		if (singleton_ == null) {
 			singleton_ = new PublicationId();
@@ -30,7 +70,7 @@ public class PublicationId {
 	}
 	
 	/**
-	 * Retrieve all the publication codes from aries
+	 * Retrieve all the publication codes from Aries
 	 * 
 	 * @return An array of publication codes
 	 */
@@ -164,8 +204,8 @@ public class PublicationId {
 	/**
 	 * Retrieve the first authors 
 	 * 
-	 * @param publicationCodes
-	 * @return
+	 * @param publicationCodes The publication codes
+	 * @return The university ids of the first authors
 	 */
 	public String[] getFirstAuthorsUniIDs(String[] publicationCodes) {
 		Session session = AriesHibernateUtil.getSessionFactory().openSession();
@@ -190,11 +230,8 @@ public class PublicationId {
 			query = session.createQuery("from ResearchOutputsDataAuthors where chrOutputInvestigatorCode like '" + publicationCode + "x%' and chrOrder = '01'");
 			//query = session.createQuery("from ResearchOutputsDataAuthors where chrOutputInvestigatorCode like :publicationCode and chrOrder = '01'");
 			//query.setParameter("publicationCode", publicationCode + "x%");
-			//query.ex
-			//query.setParameter("publicationCode", publicationCode);
-			System.out.println(query.getQueryString());
+			
 			outputAuthors = query.list();
-			System.out.println("Output Authors Size: " + outputAuthors.size());
 			for (ResearchOutputsDataAuthors outputAuthor : outputAuthors) {
 				outputInvestigatorCode = outputAuthor.getChrOutputInvestigatorCode();
 				if (publicationCode != null && outputInvestigatorCode.indexOf(publicationCode) != -1) {
@@ -214,8 +251,8 @@ public class PublicationId {
 	/**
 	 * Retrieve the first authors
 	 * 
-	 * @param publicationCodes
-	 * @return
+	 * @param publicationCodes The publication codes
+	 * @return The first named authors
 	 */
 	public String[] getFirstAuthors(String[] publicationCodes) {
 		Session session = AriesHibernateUtil.getSessionFactory().openSession();

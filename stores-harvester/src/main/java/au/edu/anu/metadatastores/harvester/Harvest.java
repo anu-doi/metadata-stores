@@ -44,6 +44,9 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.openarchives.oai._2.OAIPMHtype;
+import org.openarchives.oai._2.RecordType;
+import org.openarchives.oai._2.StatusType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
@@ -54,9 +57,6 @@ import org.xml.sax.SAXException;
 import ORG.oclc.oai.harvester2.verb.ListRecords;
 import au.edu.anu.metadatastores.datamodel.harvester.HarvestContent;
 import au.edu.anu.metadatastores.datamodel.harvester.Location;
-import au.edu.anu.metadatastores.harvester.xml.oaipmh.OAIPMHtype;
-import au.edu.anu.metadatastores.harvester.xml.oaipmh.RecordType;
-import au.edu.anu.metadatastores.harvester.xml.oaipmh.StatusType;
 
 /**
  * Harvest

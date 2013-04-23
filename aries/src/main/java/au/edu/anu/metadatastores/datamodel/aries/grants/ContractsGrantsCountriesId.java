@@ -33,6 +33,7 @@ import javax.persistence.Embeddable;
  * 
  * Class for mapping the id of the contracts_grants_countries
  * 
+ * @author Rainbow Cai
  * @author Genevieve Turner
  */
 @Embeddable

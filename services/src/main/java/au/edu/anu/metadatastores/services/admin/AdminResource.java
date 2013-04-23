@@ -1,3 +1,24 @@
+/*******************************************************************************
+ * Australian National University Metadata Stores
+ * Copyright (C) 2013  The Australian National University
+ * 
+ * This file is part of Australian National University Metadata Stores.
+ * 
+ * Australian National University Metadata Stores is free software: you
+ * can redistribute it and/or modify it under the terms of the GNU
+ * General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ ******************************************************************************/
+
 package au.edu.anu.metadatastores.services.admin;
 
 import java.util.HashMap;
@@ -26,15 +47,26 @@ import au.edu.anu.metadatastores.store.misc.RelationService;
 
 import com.sun.jersey.api.view.Viewable;
 
+/**
+ * AdminResource
+ * 
+ * The Australian National University
+ * 
+ * Administrative resource class.  Provides restful resources for administrators
+ * 
+ * @author Genevieve Turner
+ *
+ */
 @Path("/admin")
 public class AdminResource {
 	static final Logger LOGGER = LoggerFactory.getLogger(AdminResource.class);
-	/*@GET
-	@Path("/possible-relation")
-	public Response getPotentialRelations() {
-		return null;
-	}*/
 	
+	/**
+	 * Get the potential relations that have not yet been verified.  These may be all the potential relations, or it may be for a defined user
+	 * 
+	 * @param uid The uid to filter potential relations by
+	 * @return A html page with the potential relations
+	 */
 	@GET
 	@Path("/possible-relation")
 	@Produces(MediaType.TEXT_HTML)
@@ -50,6 +82,11 @@ public class AdminResource {
 		return Response.ok(viewable).build();
 	}
 	
+	/**
+	 * Get the potential relations that have not yet been verified
+	 * 
+	 * @return XML or JSON that contains the potential relations
+	 */
 	@GET
 	@Path("/possible-relation")
 	@Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
@@ -62,6 +99,18 @@ public class AdminResource {
 		return Response.ok(entity).build();
 	}
 	
+	/**
+	 * Update the potential relations either confirming or denying the relationship
+	 * 
+	 * @param request The http request
+	 * @param uid The defined user against which there may be potential relations
+	 * @param iids The item ids to update the relationships for
+	 * @param relationValues The value of the relationship
+	 * @param relatedIids The related item ids to update relationships for
+	 * @param confirmRelations Confirmation or denial of the relationship
+	 * @param multivaluedMap
+	 * @return
+	 */
 	@POST
 	@Path("/possible-relation")
 //	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -112,8 +161,5 @@ public class AdminResource {
 			uriBuilder = uriBuilder.queryParam("uid", uid);
 		}
 		return Response.seeOther(uriBuilder.build()).build();
-		
-		//resp = Response.created(createdUri).entity(fedoraObject.getObject_id()).build();
-		//return Response.seeOther(location);
 	}
 }

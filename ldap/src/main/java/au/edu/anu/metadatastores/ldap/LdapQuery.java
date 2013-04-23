@@ -1,3 +1,24 @@
+/*******************************************************************************
+ * Australian National University Metadata Stores
+ * Copyright (C) 2013  The Australian National University
+ * 
+ * This file is part of Australian National University Metadata Stores.
+ * 
+ * Australian National University Metadata Stores is free software: you
+ * can redistribute it and/or modify it under the terms of the GNU
+ * General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ ******************************************************************************/
+
 package au.edu.anu.metadatastores.ldap;
 
 import java.util.HashMap;
@@ -8,8 +29,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * LdapQuery
+ * 
+ * The Australian National University
+ * 
  * Class to generate ldap queries
- * @author u5125986
+ * 
+ * @author Genevieve Turner
  *
  */
 public class LdapQuery {
@@ -19,7 +45,7 @@ public class LdapQuery {
 	private Map<String, String> partialMap;
 	
 	/**
-	 * 
+	 * Constructor
 	 */
 	public LdapQuery() {
 		attributeMap = new HashMap<String, String>();
@@ -113,7 +139,9 @@ public class LdapQuery {
 	}
 	
 	/**
+	 * Overrides the toString method returning the same information as getQuery
 	 * 
+	 * @return The string representation of this object
 	 */
 	public String toString() {
 		return getQuery();
