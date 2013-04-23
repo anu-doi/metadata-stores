@@ -18,8 +18,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-
-package au.edu.anu.metadatastores.store.datacommons;
+package au.edu.anu.metadatastores.store.digitalcollections;
 
 import java.util.TimerTask;
 
@@ -27,19 +26,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * DataCommonsTimerTask
+ * DigitalCollectionsTimerTask
  * 
  * The Australian National University
- * 
- * Timer task that processes the data commons harvest content
  * 
  * @author Genevieve Turner
  *
  */
-public class DataCommonsTimerTask extends TimerTask {
-	static final Logger LOGGER = LoggerFactory.getLogger(DataCommonsTimerTask.class);
+public class DigitalCollectionsTimerTask extends TimerTask {
+	static final Logger LOGGER = LoggerFactory.getLogger(DigitalCollectionsTimerTask.class);
 	private boolean isRunning = false;
-	private DataCommonsService dcService = DataCommonsService.getSingleton();
+	private DigitalCollectionsService dcService = DigitalCollectionsService.getSingleton();
 	
 	/**
 	 * Execute the timer task
@@ -54,7 +51,7 @@ public class DataCommonsTimerTask extends TimerTask {
 				dcService.processHarvestContent();
 			}
 			catch (Exception e) {
-				LOGGER.error("Exception processing harvest content", e);
+				LOGGER.error("Exception processing digital collections harvest content", e);
 			}
 			isRunning = false;
 		}

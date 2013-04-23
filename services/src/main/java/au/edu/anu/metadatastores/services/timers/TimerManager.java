@@ -25,6 +25,7 @@ import java.util.Timer;
 
 import au.edu.anu.metadatastores.harvester.HarvestTimerManager;
 import au.edu.anu.metadatastores.store.datacommons.DataCommonsTimerTask;
+import au.edu.anu.metadatastores.store.digitalcollections.DigitalCollectionsTimerTask;
 
 /**
  * TimerManager
@@ -39,6 +40,8 @@ import au.edu.anu.metadatastores.store.datacommons.DataCommonsTimerTask;
 public class TimerManager {
 	Timer timer = new Timer();
 	DataCommonsTimerTask dctask = new DataCommonsTimerTask();
+	DigitalCollectionsTimerTask digTask = new DigitalCollectionsTimerTask();
+	int processInterval = 300000;
 	
 	private static TimerManager singleton_ = null;
 	
@@ -65,7 +68,8 @@ public class TimerManager {
 	 * Set the timers
 	 */
 	public void start() {
-		timer.schedule(dctask, 10000, 300000);
+		timer.schedule(dctask, 10000, processInterval);
+		timer.schedule(digTask, 10000, processInterval);
 		HarvestTimerManager.getInstance().start();
 	}
 	
