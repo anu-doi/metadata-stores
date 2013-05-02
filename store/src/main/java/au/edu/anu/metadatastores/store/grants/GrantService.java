@@ -160,6 +160,24 @@ public class GrantService extends AbstractItemService {
 	public GrantItem saveGrant(Grant grant) {
 		return saveGrant(grant, Boolean.FALSE);
 	}
+	
+	/**
+	 * Save a list of grants
+	 * 
+	 * @param grants The grants to save
+	 * @return THe saved grant items
+	 */
+	public List<GrantItem> saveGrants(List<Grant> grants) {
+		List<GrantItem> grantItems = new ArrayList<GrantItem>();
+		GrantItem grantItem = null;
+		
+		for (Grant grant : grants) {
+			grantItem = saveGrant(grant);
+			grantItems.add(grantItem);
+		}
+		
+		return grantItems;
+	}
 
 	/**
 	 * Save the grant information
@@ -236,28 +254,39 @@ public class GrantService extends AbstractItemService {
 	 * @param grant The grant that holds the people who need to be associated
 	 * @param session The session
 	 */
-	private void associatePeople(GrantItem item, Grant grant, Session session) {
+	private void associatePeople(GrantItem item, Grant grant, Session session2) {
 		//TODO add the removing of people who are no longer associated
-		for (Person person : grant.getAssociatedPeople()) {
-			PersonItem personItem = personService_.getPersonItem(person.getExtId());
-			ItemRelationId relationId = null;
-			if (personItem != null) {
-				if (grant.getFirstInvestigator() != null && person.getExtId().equals(grant.getFirstInvestigator().getExtId())) {
-					relationId = new ItemRelationId(item.getIid(), "hasPrincipalInvestigator", personItem.getIid());
+		Session session = StoreHibernateUtil.getSessionFactory().openSession();
+		try {
+			LOGGER.info("Associate People");
+			for (Person person : grant.getAssociatedPeople()) {
+				PersonItem personItem = personService_.getPersonItem(person.getExtId());
+				ItemRelationId relationId = null;
+				if (personItem != null) {
+					if (grant.getFirstInvestigator() != null && person.getExtId().equals(grant.getFirstInvestigator().getExtId())) {
+						relationId = new ItemRelationId(item.getIid(), "hasPrincipalInvestigator", personItem.getIid());
+					}
+					else {
+						relationId = new ItemRelationId(item.getIid(), "hasAssociationWith", personItem.getIid());
+					}
+					ItemRelation relation = (ItemRelation) session.get(ItemRelation.class, relationId);
+					if (relation == null) {
+						LOGGER.info("Adding Relation: {}, {}, {}", relationId.getIid(), relationId.getRelatedIid(), relationId.getRelationValue());
+						relation = new ItemRelation();
+						relation.setId(relationId);
+						item.getItemRelationsForIid().add(relation);
+					}
+					else {
+						LOGGER.info("Found Relation: {}, {}, {}", relationId.getIid(), relationId.getRelatedIid(), relationId.getRelationValue());
+					}
 				}
 				else {
-					relationId = new ItemRelationId(item.getIid(), "hasAssociationWith", personItem.getIid());
-				}
-				ItemRelation relation = (ItemRelation) session.get(ItemRelation.class, relationId);
-				if (relation == null) {
-					relation = new ItemRelation();
-					relation.setId(relationId);
-					item.getItemRelationsForIid().add(relation);
+					LOGGER.error("Error finding and saving person with an id of: {}", person.getExtId());
 				}
 			}
-			else {
-				LOGGER.error("Error finding and saving person with an id of: {}", person.getExtId());
-			}
+		}
+		finally {
+			session.close();
 		}
 	}
 	
@@ -290,29 +319,37 @@ public class GrantService extends AbstractItemService {
 	 */
 	public Grant getGrant(GrantItem item) {
 		Grant grant = new Grant();
-		String contractCode = getSingleAttributeValue(item.getContractCodes());
+		//String contractCode = getSingleAttributeValue(item.getContractCodes());
+		String contractCode = getSingleAttributeValue(item, StoreAttributes.CONTRACT_CODE);
 		grant.setContractCode(contractCode);
 
-		String title = getSingleAttributeValue(item.getGrantTitles());
+		//String title = getSingleAttributeValue(item.getGrantTitles());
+		String title = getSingleAttributeValue(item, StoreAttributes.TITLE);
 		grant.setTitle(title);
 		
-		String startDate = getSingleAttributeValue(item.getStartDates());
+		//String startDate = getSingleAttributeValue(item.getStartDates());
+		String startDate = getSingleAttributeValue(item, StoreAttributes.START_DATE);
 		grant.setStartDate(startDate);
 		
-		String endDate = getSingleAttributeValue(item.getEndDates());
+		//String endDate = getSingleAttributeValue(item.getEndDates());
+		String endDate = getSingleAttributeValue(item, StoreAttributes.END_DATE);
 		grant.setEndDate(endDate);
 		
-		String status = getSingleAttributeValue(item.getStatus());
+		//String status = getSingleAttributeValue(item.getStatus());
+		String status = getSingleAttributeValue(item, StoreAttributes.STATUS);
 		grant.setStatus(status);
 		
-		String firstInvestigatorId = getSingleAttributeValue(item.getFirstInvestigatorIds());
+		//String firstInvestigatorId = getSingleAttributeValue(item.getFirstInvestigatorIds());
+		String firstInvestigatorId = getSingleAttributeValue(item, StoreAttributes.FIRST_INVESTIGATOR_ID);
 		Person firstInvestigator = personService_.getBasicPerson(firstInvestigatorId);
 		grant.setFirstInvestigator(firstInvestigator);
 		
-		String fundsProvider = getSingleAttributeValue(item.getFundsProviders());
+		//String fundsProvider = getSingleAttributeValue(item.getFundsProviders());
+		String fundsProvider = getSingleAttributeValue(item, StoreAttributes.FUNDS_PROVIDER);
 		grant.setFundsProvider(fundsProvider);
 		
-		String referenceNumber = getSingleAttributeValue(item.getReferenceNumbers());
+		//String referenceNumber = getSingleAttributeValue(item.getReferenceNumbers());
+		String referenceNumber = getSingleAttributeValue(item, StoreAttributes.REFERENCE_NUMBER);
 		grant.setReferenceNumber(referenceNumber);
 		
 		for (ItemAttribute attr : item.getAnzforSubjects()) {

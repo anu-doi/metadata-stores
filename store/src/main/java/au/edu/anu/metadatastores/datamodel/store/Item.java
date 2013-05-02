@@ -37,6 +37,8 @@ import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
+import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.FetchProfile;
 import org.hibernate.annotations.FilterDef;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
@@ -56,6 +58,9 @@ import org.hibernate.annotations.NotFoundAction;
 		"ext_system", "ext_id" }))
 @DiscriminatorColumn(name="ext_system")
 @FilterDef(name="attributes")
+@FetchProfile(name = "item-with-attributes", fetchOverrides = {
+		@FetchProfile.FetchOverride(entity = Item.class, association = "itemAttributes", mode = FetchMode.JOIN)	
+	})
 public class Item implements java.io.Serializable {
 	private static final long serialVersionUID = 1L;
 

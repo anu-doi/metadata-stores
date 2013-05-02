@@ -344,4 +344,22 @@ public abstract class AbstractItemService {
 		}
 		return null;
 	}
+	
+	/**
+	 * Get a single item attribute value
+	 * 
+	 * @param item The item to retrieve the value from
+	 * @param field The field to retrieve
+	 * @return The value
+	 */
+	public String getSingleAttributeValue(Item item, String field) {
+		String value = null;
+		for (ItemAttribute attr : item.getItemAttributes()) {
+			if (field.equals(attr.getAttrType())) {
+				value = attr.getAttrValue();
+				break;
+			}
+		}
+		return value;
+	}
 }

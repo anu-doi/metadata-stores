@@ -6,11 +6,11 @@
 	<session-factory>
 		<property name="hibernate.connection.driver_class">net.sourceforge.jtds.jdbc.Driver</property>
 		<!-- 
-		<property name="hibernate.connection.url"></property>
+		<property name="hibernate.connection.url">jdbc:jtds:sqlserver://UDSSQL99/dbsAries_devl;instance=GS01;domain=uds.anu.edu.au</property>
 		<property name="hibernate.connection.username"></property>
-		<property name="hibernate.connection.password"></property>
+		<property name="hibernate.connection.password">ENC()</property>
 		 -->
-		<property name="hibernate.connection.url"></property>
+		<property name="hibernate.connection.url">jdbc:jtds:sqlserver://UDSSQL99/dbsAries_devl;instance=GS01</property>
 		<property name="hibernate.dialect">org.hibernate.dialect.SQLServerDialect</property>
 		
 		<mapping class="au.edu.anu.metadatastores.datamodel.aries.grants.ContractsGrantsCountries" />

@@ -36,6 +36,7 @@ import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,6 +75,9 @@ public class PersonResource {
 	public Response getPeopleInformation(@PathParam("uid") String uid) {
 		StoreService storeService = StoreService.getSingleton();
 		Person person = storeService.getPersonInformation(uid);
+		if (person == null) {
+			return Response.status(Status.NOT_FOUND).build();
+		}
 		return Response.ok(person).build();
 	}
 	

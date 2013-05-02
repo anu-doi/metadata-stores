@@ -103,7 +103,7 @@ public class PublicationServiceTest {
 	public void testGetPublicationsByYear() {
 		PublicationService publicationService = PublicationService.getSingleton();
 		Date startDate = new Date();
-		List<Publication> publications = publicationService.getPublicationsByYear("1997");
+		List<Publication> publications = publicationService.getPublicationsByYear("2011");
 		
 		for (Publication pub : publications) {
 			LOGGER.info("Publication: {}, {}, Year: {}, Number of Authors: {}", new Object[] {pub.getAriesId(), pub.getTitle(), pub.getYear(), pub.getAuthors().size()});

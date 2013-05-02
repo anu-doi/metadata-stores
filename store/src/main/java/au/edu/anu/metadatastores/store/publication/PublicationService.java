@@ -220,6 +220,24 @@ public class PublicationService extends AbstractItemService {
 	}
 	
 	/**
+	 * Save a list of publications
+	 * 
+	 * @param publications The publications to save
+	 * @return The saved publication items
+	 */
+	public List<PublicationItem> savePublications(List<Publication> publications) {
+		List<PublicationItem> publicationItems = new ArrayList<PublicationItem>();
+		PublicationItem pubItem = null;
+		
+		for (Publication pub : publications) {
+			pubItem = savePublication(pub);
+			publicationItems.add(pubItem);
+		}
+		
+		return publicationItems;
+	}
+	
+	/**
 	 * Save the publication
 	 * 
 	 * @param publication The publication to save
@@ -396,7 +414,7 @@ public class PublicationService extends AbstractItemService {
 		Session session = StoreHibernateUtil.getSessionFactory().openSession();
 		session.enableFilter("attributes");
 		Date startDate = new Date();
-		Query query = session.createQuery("SELECT pub FROM PublicationItem pub inner join pub.itemAttributes pubYear WHERE pubYear.attrType = :yearType and pubYear.attrValue = :yearValue");
+		Query query = session.createQuery("SELECT DISTINCT pub FROM PublicationItem pub inner join pub.itemAttributes pubYear join fetch pub.itemAttributes attrs left join fetch attrs.itemAttributes WHERE pubYear.attrType = :yearType and pubYear.attrValue = :yearValue");
 		query.setParameter("yearType", StoreAttributes.YEAR);
 		query.setParameter("yearValue", year);
 		
@@ -411,6 +429,7 @@ public class PublicationService extends AbstractItemService {
 			publication = getPublication(item, true);
 			publications.add(publication);
 		}
+		LOGGER.info("Number of Publications: {}", items.size());
 		
 		session.close();
 		
@@ -540,6 +559,7 @@ public class PublicationService extends AbstractItemService {
 	 */
 	private void setRelations(Publication publication, PublicationItem item) {
 		//Get the authors
+	//	LOGGER.info("Get publication relations");
 		List<String> authorExtIds = new ArrayList<String>();
 		for (ItemRelation relation : item.getItemRelationsForIid()) {
 			if (relation.getId().getRelationValue().equals(StoreProperties.getProperty("publication.author.type"))){
@@ -550,6 +570,7 @@ public class PublicationService extends AbstractItemService {
 			List<Person> authors = personService.getBasicPeople(authorExtIds, true);
 			publication.setAuthors(authors);
 		}
+	//	LOGGER.info("End Get publication relations");
 	}
 	
 	/**

@@ -380,7 +380,7 @@ public class PersonService extends AbstractItemService {
 	 * @return The list of people with the name
 	 */
 	private List<PersonItem> queryPeopleByName(String givenName, String surname) {
-		LOGGER.info("Given Name: {}, Surname: {}", givenName, surname);
+		LOGGER.debug("Given Name: {}, Surname: {}", givenName, surname);
 		Session session = StoreHibernateUtil.getSessionFactory().openSession();
 		session.enableFilter("attributes");
 		
@@ -448,7 +448,7 @@ public class PersonService extends AbstractItemService {
 			i++;
 		}
 		String queryString = "SELECT pi " + fromString.toString() + " " + whereString.toString();
-		LOGGER.info("Query: {}", queryString);
+		LOGGER.debug("Query: {}", queryString);
 		LOGGER.debug("Number of parameters: {}", parameters.size());
 		Query query = session.createQuery(queryString);
 		for (i = 0; i < parameters.size(); i++) {
@@ -624,7 +624,7 @@ public class PersonService extends AbstractItemService {
 		session.enableFilter("attributes");
 		Transaction transaction = session.beginTransaction();
 		
-		Query query = session.createQuery("select pi from PersonItem pi fetch join pi.itemAttributes where extId = :extId");
+		Query query = session.createQuery("select pi from PersonItem pi join fetch pi.itemAttributes where pi.extId = :extId");
 		query.setParameter("extId", uid);
 		
 		PersonItem item = (PersonItem) query.uniqueResult();
@@ -661,7 +661,7 @@ public class PersonService extends AbstractItemService {
 		query.setParameterList("extIds", extIds);
 		
 		List<PersonItem> personItems = query.list();
-		LOGGER.info("Number of People Found: {}", personItems.size());
+		LOGGER.debug("Number of People Found: {}", personItems.size());
 		List<Person> people = new ArrayList<Person>();
 		for (PersonItem personItem : personItems) {
 			Person person = getBasicPerson(personItem, extraInfo);

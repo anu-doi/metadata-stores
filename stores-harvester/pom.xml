@@ -61,6 +61,11 @@
 			<artifactId>oclc-harvester2</artifactId>
 			<version>0.1.12</version>
 		</dependency>
+		<dependency>
+			<groupId>util</groupId>
+			<artifactId>util</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>

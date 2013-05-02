@@ -23,8 +23,11 @@ package au.edu.anu.metadatastores.harvester;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.service.ServiceRegistryBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import au.edu.anu.metadatastores.util.encrypt.EncryptUtil;
 
 /**
  * HarvesterHibernateUtil
@@ -47,7 +50,17 @@ public class HarvesterHibernateUtil {
 	 */
 	private static SessionFactory buildSessionFactory() {
 		try {
-			return new Configuration().configure("/harvester.cfg.xml").buildSessionFactory();
+			Configuration configuration = new Configuration();
+			configuration.configure("/harvester.cfg.xml");
+
+			//Provide for having an encrypted password
+			String password = configuration.getProperty("hibernate.connection.password");
+			String decryptedValue = EncryptUtil.decrypt(password);
+			configuration.setProperty("hibernate.connection.password", decryptedValue);
+			
+			ServiceRegistryBuilder serviceRegistryBuilder = new ServiceRegistryBuilder().applySettings(configuration.getProperties());
+			
+			return configuration.buildSessionFactory(serviceRegistryBuilder.buildServiceRegistry());
 		}
 		catch (Exception e) {
 			LOGGER.error("Initial SessionFactory creation failed.", e);

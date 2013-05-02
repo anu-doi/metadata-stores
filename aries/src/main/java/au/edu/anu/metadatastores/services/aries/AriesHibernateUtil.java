@@ -23,8 +23,11 @@ package au.edu.anu.metadatastores.services.aries;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.service.ServiceRegistryBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import au.edu.anu.metadatastores.util.encrypt.EncryptUtil;
 
 /**
  * AriesHibernateUtil
@@ -48,8 +51,19 @@ public class AriesHibernateUtil {
 	 */
 	private static SessionFactory buildSessionFactory() {
 		try {
-			//TODO figure out what to set for the ServiceRegistry
-			return new Configuration().configure("/aries.cfg.xml").buildSessionFactory();
+			Configuration configuration = new Configuration();
+			configuration.configure("/aries.cfg.xml");
+			
+			//Provide for having an encrypted password
+			String password = configuration.getProperty("hibernate.connection.password");
+			if (password != null) {
+				String decryptedValue = EncryptUtil.decrypt(password);
+				configuration.setProperty("hibernate.connection.password", decryptedValue);
+			}
+
+			ServiceRegistryBuilder serviceRegistryBuilder = new ServiceRegistryBuilder().applySettings(configuration.getProperties());
+			
+			return configuration.buildSessionFactory(serviceRegistryBuilder.buildServiceRegistry());
 		}
 		catch (Exception e) {
 			LOGGER.error("Initial SessionFactory creation failed.", e);

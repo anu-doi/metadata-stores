@@ -156,4 +156,40 @@ public class Relation {
 	public void setRelatedItemTitle(String relatedItemTitle) {
 		this.relatedItemTitle = relatedItemTitle;
 	}
+	
+	/**
+	 * Override
+	 */
+	public boolean equals(Object other) {
+		if (this == other) {
+			return true;
+		}
+		if (other == null) {
+			return false;
+		}
+		if (!(other instanceof Relation)) {
+			return false;
+		}
+		Relation castOther = (Relation) other;
+		
+		return (
+				(this.getIid() == castOther.getIid() || (this.getIid() != null && this.getIid().equals(castOther.getIid())))
+				&& (this.getRelatedIid() == castOther.getRelatedIid() || (this.getRelatedIid() != null && (this.getRelatedIid().equals(castOther.getRelatedIid()))))
+				&& (this.getRelationValue() == castOther.getRelationValue() || (this.getRelationValue() != null && this.getRelationValue().equals(castOther.getRelationValue())))
+				&& (this.getItemTitle() == castOther.getItemTitle() || (this.getItemTitle() != null && this.getItemTitle().equals(castOther.getItemTitle())))
+				&& (this.getRelatedItemTitle() == castOther.getRelatedItemTitle() || (this.getRelatedItemTitle() != null && this.getRelatedItemTitle().equals(castOther.getRelatedItemTitle())))
+				);
+	}
+	
+	public int hashCode() {
+		int result = 17;
+		
+		result = 37 * result + (int) this.getIid().intValue();
+		result = 37 + result + (int) this.getRelatedIid().intValue();
+		result = 37 + result + (getRelationValue() == null ? 0 : this.getRelationValue().hashCode());
+		result = 37 + result + (getItemTitle() == null ? 0 : this.getItemTitle().hashCode());
+		result = 37 + result + (getRelatedItemTitle() == null ? 0 : this.getRelatedItemTitle().hashCode());
+		
+		return result;
+	}
 }

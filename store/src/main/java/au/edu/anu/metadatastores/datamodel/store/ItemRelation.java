@@ -168,4 +168,28 @@ public class ItemRelation implements java.io.Serializable {
 		this.userUpdated = userUpdated;
 	}
 
+	public boolean equals(Object other) {
+		if (this == other) {
+			return true;
+		}
+		if (other == null) {
+			return false;
+		}
+		if (!(other instanceof ItemRelation)) {
+			return false;
+		}
+		ItemRelation castOther = (ItemRelation) other;
+		
+		return (
+				(this.getId() == castOther.getId() || (this.getId() != null && this.getId().equals(castOther.getId())))
+				&& (this.getUserUpdated() == castOther.getUserUpdated() || (this.getUserUpdated() != null && (this.getUserUpdated().equals(castOther.getUserUpdated()))))
+				);
+	}
+	
+	public int hashCode() {
+		int result = 17;
+		result = 37 * result + this.getId().hashCode();
+		result = 37 * result + (getUserUpdated() == null ? 0 : this.getUserUpdated().hashCode());
+		return result;
+	}
 }

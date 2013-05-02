@@ -22,15 +22,22 @@
 package au.edu.anu.metadatastores.store.misc;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import au.edu.anu.metadatastores.datamodel.store.Item;
 import au.edu.anu.metadatastores.datamodel.store.ItemRelation;
 import au.edu.anu.metadatastores.datamodel.store.ItemRelationId;
 import au.edu.anu.metadatastores.datamodel.store.PotentialRelation;
 import au.edu.anu.metadatastores.datamodel.store.PotentialRelationId;
+import au.edu.anu.metadatastores.datamodel.store.RelationMapping;
 import au.edu.anu.metadatastores.services.store.StoreHibernateUtil;
 
 /**
@@ -44,6 +51,8 @@ import au.edu.anu.metadatastores.services.store.StoreHibernateUtil;
  *
  */
 public class RelationService {
+	static final Logger LOGGER = LoggerFactory.getLogger(RelationService.class);
+	
 	private static RelationService singleton_;
 	
 	/**
@@ -124,45 +133,113 @@ public class RelationService {
 	 */
 	public void confirmOrDenyRelation(Relation relation, Boolean isRelation) {
 		Session session = StoreHibernateUtil.getSessionFactory().openSession();
-		session.beginTransaction();
-		
-		PotentialRelationId id = new PotentialRelationId(relation.getIid(), relation.getRelationValue(), relation.getRelatedIid());
-		
-		PotentialRelation potentialRelation = (PotentialRelation)session.get(PotentialRelation.class, id);
-		
-		if (potentialRelation == null) {
-			potentialRelation = new PotentialRelation();
-			potentialRelation.setId(id);
-		}
-		
-		potentialRelation.setRequireCheck(Boolean.FALSE);
-		potentialRelation.setIslink(isRelation);
-		
-		session.merge(potentialRelation);
-		
-		ItemRelationId itemRelationId = new ItemRelationId(id.getIid(), id.getRelationValue(), id.getRelatedIid());
-		
-		ItemRelation itemRelation = (ItemRelation) session.get(ItemRelation.class, itemRelationId);
-		
-		if (isRelation == Boolean.TRUE) {
-			if (itemRelation == null) {
-				itemRelation = new ItemRelation();
-				itemRelation.setId(itemRelationId);
-				itemRelation.setUserUpdated(Boolean.TRUE);
-				session.save(itemRelation);
+		try {
+			session.beginTransaction();
+			
+			PotentialRelationId id = new PotentialRelationId(relation.getIid(), relation.getRelationValue(), relation.getRelatedIid());
+			
+			PotentialRelation potentialRelation = (PotentialRelation)session.get(PotentialRelation.class, id);
+			
+			if (potentialRelation == null) {
+				potentialRelation = new PotentialRelation();
+				potentialRelation.setId(id);
+			}
+			
+			potentialRelation.setRequireCheck(Boolean.FALSE);
+			potentialRelation.setIslink(isRelation);
+			
+			session.merge(potentialRelation);
+			
+			ItemRelationId itemRelationId = new ItemRelationId(id.getIid(), id.getRelationValue(), id.getRelatedIid());
+			
+			ItemRelation itemRelation = (ItemRelation) session.get(ItemRelation.class, itemRelationId);
+			
+			if (isRelation == Boolean.TRUE) {
+				if (itemRelation == null) {
+					itemRelation = new ItemRelation();
+					itemRelation.setId(itemRelationId);
+					itemRelation.setUserUpdated(Boolean.TRUE);
+					session.save(itemRelation);
+				}
+				else {
+					itemRelation.setUserUpdated(Boolean.TRUE);
+					session.merge(itemRelation);
+				}
 			}
 			else {
-				itemRelation.setUserUpdated(Boolean.TRUE);
-				session.merge(itemRelation);
+				if (itemRelation != null) {
+					session.delete(itemRelation);
+				}
 			}
+			
+			session.getTransaction().commit();
 		}
-		else {
-			if (itemRelation != null) {
-				session.delete(itemRelation);
-			}
+		finally {
+			session.close();
+		}
+	}
+	
+	/**
+	 * Get the relations for the item with the given id
+	 * 
+	 * @param iid The item id
+	 * @return The list of relations
+	 */
+	public List<Relation> getRelatedItems(Long iid) {
+		Session session = StoreHibernateUtil.getSessionFactory().openSession();
+		
+		// Get the direct relations
+		Query query = session.createQuery("select i, ir.itemByRelatedIid, rm from Item i join i.itemRelationsForIid ir, RelationMapping rm where i.iid = :id and ir.id.relationValue = rm.code");
+		query.setParameter("id", iid);
+		
+		List<Object[]> results = query.list();
+		
+		Set<Relation> relations = new HashSet<Relation>();
+		Relation relation = null;
+		
+		for (Object[] result : results) {
+			Item item = (Item) result[0];
+			Item relatedItem = (Item) result[1];
+			RelationMapping mapping = (RelationMapping) result[2];
+			relation = new Relation(item.getIid(), mapping.getDescription(), relatedItem.getIid());
+			relation.setItemTitle(item.getTitle());
+			relation.setRelatedItemTitle(relatedItem.getTitle());
+			relations.add(relation);
 		}
 		
-		session.getTransaction().commit();
+		// Get the reverse relations
+		Query reverseQuery = session.createQuery("select i, ir.itemByIid, rrm from Item i join i.itemRelationsForRelatedIid ir, RelationMapping rm, RelationMapping rrm where i.iid = :id and ir.id.relationValue = rm.code and rm.reverse = rrm.code");
+		reverseQuery.setParameter("id", iid);
+		List<Object[]> results2 = reverseQuery.list();
+		
+		for (Object[] result : results2) {
+			Item item = (Item) result[0];
+			Item relatedItem = (Item) result[1];
+			RelationMapping mapping = (RelationMapping) result[2];
+			relation = new Relation(item.getIid(), mapping.getDescription(), relatedItem.getIid());
+			relation.setItemTitle(item.getTitle());
+			relation.setRelatedItemTitle(relatedItem.getTitle());
+			relations.add(relation);
+		}
+		LOGGER.debug("Number of relations: {}", relations.size());
+		
 		session.close();
+		return new ArrayList<Relation>(relations);
+	}
+	
+	/**
+	 * Get the item for the given item id
+	 * 
+	 * @param iid The item id
+	 * @return The item
+	 */
+	public Item getItem(Long iid) {
+		Session session = StoreHibernateUtil.getSessionFactory().openSession();
+		session.enableFetchProfile("item-with-attributes");
+		
+		Item item = (Item) session.get(Item.class, iid);
+		
+		session.close();
+		return item;
 	}
 }

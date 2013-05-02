@@ -30,6 +30,7 @@ import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
@@ -42,6 +43,7 @@ import javax.ws.rs.core.UriBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import au.edu.anu.metadatastores.datamodel.store.Item;
 import au.edu.anu.metadatastores.store.misc.Relation;
 import au.edu.anu.metadatastores.store.misc.RelationService;
 
@@ -161,5 +163,47 @@ public class AdminResource {
 			uriBuilder = uriBuilder.queryParam("uid", uid);
 		}
 		return Response.seeOther(uriBuilder.build()).build();
+	}
+	
+	/**
+	 * Get a page that shows the relationships for the given item id
+	 * 
+	 * @param id The id to get the relationship page for
+	 * @return The relationship page
+	 */
+	@GET
+	@Path("/relation/{id}")
+	@Produces(MediaType.TEXT_HTML)
+	public Response getRelationsHtml(@PathParam("id") Long id) {
+		LOGGER.info("Id: {}", id);
+		RelationService relationService = RelationService.getSingleton();
+		List<Relation> relations = relationService.getRelatedItems(id);
+		Item item = relationService.getItem(id);
+		
+		LOGGER.info("Number of Relations: {}", relations.size());
+		
+		Map<String, Object> model = new HashMap<String, Object>();
+		model.put("relations", relations);
+		model.put("item", item);
+		
+		return Response.ok(new Viewable("/list_relations.jsp", model)).build();
+	}
+	
+	/**
+	 * Get JSON/XML
+	 * 
+	 * @param id The id to get the json/xml for
+	 * @return The relationships
+	 */
+	@GET
+	@Path("/relation/{id}")
+	@Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+	public Response getRelationsJson(@PathParam("id") Long id) {
+
+		RelationService relationService = RelationService.getSingleton();
+		List<Relation> relations = relationService.getRelatedItems(id);
+		GenericEntity<List<Relation>> entity = new GenericEntity<List<Relation>>(relations){};
+
+		return Response.ok(entity).build();
 	}
 }

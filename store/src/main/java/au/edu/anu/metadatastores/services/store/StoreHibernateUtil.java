@@ -23,10 +23,14 @@ package au.edu.anu.metadatastores.services.store;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.service.ServiceRegistryBuilder;
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
-import org.jasypt.hibernate4.encryptor.HibernatePBEEncryptorRegistry;
+import org.jasypt.encryption.pbe.config.SimplePBEConfig;
+import org.jasypt.properties.PropertyValueEncryptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import au.edu.anu.metadatastores.util.encrypt.EncryptUtil;
 
 /**
  * StoreHibernateUtil
@@ -49,15 +53,17 @@ public class StoreHibernateUtil {
 	 */
 	private static SessionFactory buildSessionFactory() {
 		try {
-			StandardPBEStringEncryptor strongEncryptor = new StandardPBEStringEncryptor();
-			strongEncryptor.setAlgorithm("PBEWithMD5AndDES");
-			strongEncryptor.setPassword("mspassword");
+			Configuration configuration = new Configuration();
+			configuration.configure("/store.cfg.xml");
 			
-			HibernatePBEEncryptorRegistry registry = HibernatePBEEncryptorRegistry.getInstance();
-			registry.registerPBEStringEncryptor("strongHibernateStringEncryptor", strongEncryptor);
+			//Provide for having an encrypted password
+			String password = configuration.getProperty("hibernate.connection.password");
+			String decryptedValue = EncryptUtil.decrypt(password);
+			configuration.setProperty("hibernate.connection.password", decryptedValue);
 			
-			//TODO figure out what to set for the ServiceRegistry
-			return new Configuration().configure("/hibernate.cfg.xml").buildSessionFactory();
+			ServiceRegistryBuilder serviceRegistryBuilder = new ServiceRegistryBuilder().applySettings(configuration.getProperties());
+			
+			return configuration.buildSessionFactory(serviceRegistryBuilder.buildServiceRegistry());
 		}
 		catch (Exception e) {
 			LOGGER.error("Initial SessionFactory creation failed.", e);

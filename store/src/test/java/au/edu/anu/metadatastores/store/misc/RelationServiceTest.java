@@ -18,12 +18,29 @@ public class RelationServiceTest {
 		System.out.println("Done");
 	}
 	*/
-	@Test
+	/*@Test
 	public void testPotentialRelations() {
 		RelationService relationService = RelationService.getSingleton();
 		List<Relation> relations = relationService.getPotentialRelations();
 		for (Relation relation : relations) {
 			LOGGER.info("Iid: {}, Title: {}, Type: {}, Related Iid: {}, Related Title: {}", new Object[]{relation.getIid(), relation.getItemTitle(), relation.getRelatedIid(), relation.getRelatedItemTitle()});
+		}
+	}*/
+	
+	@Test
+	public void  testGetRelations() {
+		RelationService relationService = RelationService.getSingleton();
+		List<Relation> relations = relationService.getRelatedItems(new Long(54));
+		printRelations(relations);
+		relations = relationService.getRelatedItems(new Long(129));
+		printRelations(relations);
+		relations = relationService.getRelatedItems(new Long(947));
+		printRelations(relations);
+	}
+	
+	private void printRelations(List<Relation> relations) {
+		for (Relation relation : relations) {
+			LOGGER.info("{}, {}, {}, {}, {}",new Object[] {relation.getIid(), relation.getRelatedIid(), relation.getRelationValue(), relation.getItemTitle(), relation.getRelatedItemTitle()});
 		}
 	}
 }
