@@ -12,7 +12,10 @@
 		<servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
 		<init-param>
 			<param-name>com.sun.jersey.config.property/packages</param-name>
-			<param-value>au.edu.anu.metadatastores.services.people</param-value>
+			<param-value>au.edu.anu.metadatastores.services.people;
+				au.edu.anu.metadatastores.services.publications;
+				au.edu.anu.metadatastores.services.report;
+				au.edu.anu.metadatastores.services.admin;</param-value>
 		</init-param>
 		<init-param>
 			<param-name>com.sun.jersey.config.property.JSPTemplatesBasePath</param-name>
@@ -33,5 +36,8 @@
 	</servlet-mapping>
 	<listener>
 		<listener-class>au.edu.anu.metadatastores.services.timers.TimerAppListener</listener-class>
+	</listener>
+	<listener>
+		<listener-class>au.edu.anu.metadatastores.services.report.ReportAppListener</listener-class>
 	</listener>
 </web-app>

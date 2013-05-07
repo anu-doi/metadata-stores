@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rpt_mscollections" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="009f97a7-5df3-436b-8930-7c15c3d9cb26">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="101"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="baseURL" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:/WorkSpace/Software/ireport/reports/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="timePeriod" class="java.lang.String">
+		<defaultValueExpression><![CDATA["14 days"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="endDate" class="java.sql.Timestamp">
+		<defaultValueExpression><![CDATA[new java.sql.Timestamp(new java.util.Date().getTime())]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[with foundattrrec as (
+	select item.iid as iid, count(item.iid) as numrec
+	from item, item_attribute
+	where item.ext_system='DATA_COMMONS'
+	and item.iid = item_attribute.iid
+	and item_attribute.last_modified between (CAST($P{endDate} AS TIMESTAMP) - INTERVAL '1 month') and $P{endDate}
+	group by item.iid)
+	, oldattrrec as (
+	select item.iid as iid, count(item.iid) as numrec
+	from item, item_attribute
+	where item.ext_system='DATA_COMMONS'
+	and item.iid = item_attribute.iid
+	and item_attribute.last_modified < (CAST($P{endDate} AS TIMESTAMP) - INTERVAL '1 month')
+	group by item.iid)
+	, foundhistrec as (
+	select item.iid as iid, count(item.iid) as numrec
+	from item, hist_item_attribute
+	where item.ext_system = 'DATA_COMMONS'
+	and item.iid = hist_item_attribute.iid
+	and hist_item_attribute.last_modified between (CAST($P{endDate} AS TIMESTAMP) - INTERVAL '1 month') and $P{endDate}
+	group by item.iid)
+	, oldhistrec as (
+	select item.iid as iid, count(item.iid) as numrec
+	from item, hist_item_attribute
+	where item.ext_system='DATA_COMMONS'
+	and item.iid = hist_item_attribute.iid
+	and hist_item_attribute.last_modified < (CAST($P{endDate} AS TIMESTAMP) - INTERVAL '1 month')
+	group by item.iid)
+select item.*
+	, coalesce(foundattrrec.numrec, 0) as attrupdated
+	, coalesce(oldattrrec.numrec, 0) as attrold
+	, coalesce(foundhistrec.numrec, 0) as histupdated
+	, coalesce(oldhistrec.numrec, 0) as histold
+from item left join foundattrrec on (item.iid = foundattrrec.iid) left join oldattrrec on (item.iid =oldattrrec.iid) left join foundhistrec on (item.iid = foundhistrec.iid) left join oldhistrec on (item.iid = oldhistrec.iid)
+where item.ext_system = 'DATA_COMMONS'
+ and exists (select iid
+		from item_attribute
+		where item_attribute.iid = item.iid
+		and item_attribute.attr_type = 'TYPE'
+		and lower(item_attribute.attr_value) = 'collection')
+and (exists (select iid
+	from item_attribute
+	where item_attribute.iid = item.iid
+	and item_attribute.last_modified <= $P{endDate})
+	or
+    exists (select iid
+	from hist_item_attribute
+	where hist_item_attribute.iid = item.iid
+	and hist_item_attribute.last_modified <= $P{endDate}))]]>
+	</queryString>
+	<field name="iid" class="java.lang.Long"/>
+	<field name="title" class="java.lang.String"/>
+	<field name="ext_system" class="java.lang.String"/>
+	<field name="ext_id" class="java.lang.String"/>
+	<field name="deleted" class="java.lang.Boolean"/>
+	<field name="attrupdated" class="java.lang.Long"/>
+	<field name="attrold" class="java.lang.Long"/>
+	<field name="histupdated" class="java.lang.Long"/>
+	<field name="histold" class="java.lang.Long"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="110" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="beb94200-eb54-4a44-8b7c-83684b61eda1" x="0" y="0" width="315" height="47"/>
+				<textElement>
+					<font size="32"/>
+				</textElement>
+				<text><![CDATA[Metadata Stores]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="a40af492-6069-4915-9da8-10f9c16567cf" x="0" y="47" width="292" height="32"/>
+				<textElement>
+					<font size="20"/>
+				</textElement>
+				<text><![CDATA[Collection Report]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="22" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="74f7c452-0c16-420f-ae0a-85f7b5345177" x="0" y="0" width="100" height="20"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ID]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="fd0cb47f-d282-4561-9bbc-96189fb7ea04" x="100" y="0" width="344" height="20"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Title]]></text>
+			</staticText>
+			<line>
+				<reportElement uuid="07db0972-0af4-4b51-b1d5-83f7b67737a7" x="0" y="20" width="555" height="2"/>
+			</line>
+			<staticText>
+				<reportElement uuid="1504b9b3-ed84-4ef7-977b-3c314c04ce9f" x="482" y="0" width="30" height="20"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[New]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="cc59841e-dfc9-4baa-996e-32a378a7d2d1" x="512" y="0" width="43" height="20"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Update]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="13" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="d7f7ccc0-9d48-41ad-a104-573d6c9fd058" x="0" y="0" width="100" height="13"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{ext_id}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="cfe46dc9-c2da-4a57-9fd1-2958f56df50e" x="100" y="0" width="382" height="13"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{title}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement uuid="9d8fdd3f-2822-4e06-8752-95c0fe11a02a" x="0" y="12" width="555" height="1"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+			<rectangle>
+				<reportElement uuid="e592cc62-032f-44ff-917e-ee87684b53e8" x="488" y="1" width="10" height="10"/>
+			</rectangle>
+			<rectangle>
+				<reportElement uuid="bcc63b47-e523-44aa-828c-608db246ec16" x="522" y="1" width="10" height="10"/>
+			</rectangle>
+			<staticText>
+				<reportElement uuid="b8c97b0d-d3c2-498f-964a-bb0b98951cf9" x="490" y="0" width="12" height="13">
+					<printWhenExpression><![CDATA[($F{attrupdated}.longValue() > 0 || $F{histupdated}.longValue() > 0)
+    && ($F{attrold}.longValue() == 0 && $F{histold}.longValue() == 0)]]></printWhenExpression>
+				</reportElement>
+				<textElement/>
+				<text><![CDATA[X]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="00f118f4-a15c-48a5-ae73-aa189d6c354d" x="524" y="0" width="12" height="13">
+					<printWhenExpression><![CDATA[($F{attrupdated}.longValue() > 0 || $F{histupdated}.longValue() > 0)
+    && ($F{attrold}.longValue() > 0 || $F{histold}.longValue() > 0)]]></printWhenExpression>
+				</reportElement>
+				<textElement/>
+				<text><![CDATA[X]]></text>
+			</staticText>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>
