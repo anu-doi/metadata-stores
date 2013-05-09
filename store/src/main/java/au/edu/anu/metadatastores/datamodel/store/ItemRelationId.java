@@ -25,11 +25,11 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 /**
- * ItemRelationId
+ * <p>ItemRelationId<p>
  * 
- * The Australian National University
+ * <p>The Australian National University</p>
  * 
- * Id class for the ItemRelation table
+ * <p>Id class for the ItemRelation table</p>
  * 
  * @author Genevieve Turner
  *

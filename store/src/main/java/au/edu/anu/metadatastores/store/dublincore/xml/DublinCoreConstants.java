@@ -22,11 +22,11 @@
 package au.edu.anu.metadatastores.store.dublincore.xml;
 
 /**
- * DublinCoreConstants
+ * <p>DublinCoreConstants<p>
  * 
- * The Australian National University
+ * <p>The Australian National University</p>
  * 
- * Constants class for dublin core.  These are namespaces for dublin core
+ * <p>Constants class for dublin core.  These are namespaces for dublin core.</p>
  * 
  * @author Genevieve Turner
  *

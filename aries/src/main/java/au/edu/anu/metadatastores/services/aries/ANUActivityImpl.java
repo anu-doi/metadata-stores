@@ -22,11 +22,11 @@
 package au.edu.anu.metadatastores.services.aries;
 
 /**
- * ANUActivityImpl
+ * <p>ANUActivityImpl<p>
  * 
- * The Australian National University
+ * <p>The Australian National University</p>
  * 
- * Implementation class for anu activity information
+ * <p>Implementation class for anu activity information</p>
  * 
  * @author Rainbow Cai
  * @author Genevieve Turner
@@ -75,7 +75,7 @@ public class ANUActivityImpl implements ANUActivity {
 	/**
 	 * Set the activity title
 	 * 
-	 * @param title The activity title
+	 * @param activityTitle The activity title
 	 */
 	public void setActivityTitle(String activityTitle) {
 		this.activityTitle = activityTitle;
@@ -93,7 +93,7 @@ public class ANUActivityImpl implements ANUActivity {
 	/**
 	 * Set the staff id of the first investigator
 	 * 
-	 * @param id The staff id of the first investigator
+	 * @param firstInvestigatorId The staff id of the first investigator
 	 */
 	public void setFirstInvestigatorId(String firstInvestigatorId) {
 		this.firstInvestigatorId = firstInvestigatorId;

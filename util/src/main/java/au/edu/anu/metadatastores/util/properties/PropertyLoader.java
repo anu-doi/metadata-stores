@@ -7,12 +7,13 @@ import java.util.Properties;
 import java.util.ResourceBundle;
 
 /**
- * PropertyLoader
+ * <p>PropertyLoader<p>
  * 
- * The Australian National University
+ * <p>The Australian National University</p>
+ * 
+ * <p>Property Loader class</p>
  * 
  * @author Rainbow Cai
- *
  */
 public class PropertyLoader {
 	private static final String SUFFIX = ".properties";

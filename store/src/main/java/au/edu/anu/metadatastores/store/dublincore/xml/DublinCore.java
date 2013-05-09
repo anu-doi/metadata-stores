@@ -37,6 +37,16 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author Genevieve Turner
  *
  */
+/**
+ * <p>DublinCore<p>
+ * 
+ * <p>The Australian National University</p>
+ * 
+ * <p>Class to represent dublin core records</p>
+ * 
+ * @author Genevieve Turner
+ *
+ */
 @XmlRootElement(name="dc", namespace=DublinCoreConstants.OAI_DC)
 public class DublinCore {
 	private List<String> titles = new ArrayList<String>();

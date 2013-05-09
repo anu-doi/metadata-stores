@@ -48,7 +48,18 @@ import au.edu.anu.metadatastores.datamodel.aries.publications.ResearchOutputsDat
  * 
  * Class to retrieve associated staff information
  * 
- * @Rainbow Cai
+ * @author Rainbow Cai
+ * @author Genevieve Turner
+ *
+ */
+/**
+ * <p>StaffId<p>
+ * 
+ * <p>The Australian National University</p>
+ * 
+ * <p>Class to retrieve associated staff information</p>
+ * 
+ * @author Rainbow Cai
  * @author Genevieve Turner
  *
  */
@@ -65,7 +76,8 @@ public class StaffId {
 	
 	/**
 	 * Get the StaffId singleton
-	 * @return
+	 * 
+	 * @return The StaffId object
 	 */
 	public static synchronized StaffId getSingleton() {
 		if (singleton_ == null) {

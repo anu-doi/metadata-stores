@@ -50,9 +50,11 @@ import au.edu.anu.metadatastores.services.store.StoreHibernateUtil;
 import au.edu.anu.metadatastores.util.filter.ExtensionFileFilter;
 
 /**
- * ReportGenerator
+ * <p>ReportGenerator<p>
  * 
- * The Australian National University
+ * <p>The Australian National University</p>
+ * 
+ * <p>Class to generates reports</p>
  * 
  * @author Genevieve Turner
  *

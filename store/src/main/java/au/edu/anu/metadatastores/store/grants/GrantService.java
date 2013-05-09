@@ -46,11 +46,11 @@ import au.edu.anu.metadatastores.store.people.PersonItem;
 import au.edu.anu.metadatastores.store.people.PersonService;
 
 /**
- * GrantService
+ * <p>GrantService<p>
  * 
- * The Australian National University
+ * <p>The Australian National University</p>
  * 
- * Service class to retrieve and update grant information
+ * <p>Service class to retrieve and update grant information</p>
  * 
  * @author Genevieve Turner
  *
@@ -103,7 +103,7 @@ public class GrantService extends AbstractItemService {
 	 * Fetches grant information from the Aries Database
 	 * 
 	 * @param staffId The id of the staff member to find grants for
-	 * @return
+	 * @return A list of grants associated with the given staff member
 	 */
 	public List<Grant> fetchGrantsForPerson(String staffId) {
 		ANUActivity[] activities = ariesService_.getContracts(staffId);

@@ -30,11 +30,11 @@ import au.edu.anu.metadatastores.datamodel.harvester.HarvestContent;
 import au.edu.anu.metadatastores.datamodel.harvester.Location;
 
 /**
- * HarvestContentService
+ * <p>HarvestContentService<p>
  * 
- * The Australian National University
+ * <p>The Australian National University</p>
  * 
- * Harvest Content Service, this class processes the harvesting
+ * <p>Harvest Content Service, this class processes the harvesting</p>
  * 
  * @author Genevieve Turner
  *

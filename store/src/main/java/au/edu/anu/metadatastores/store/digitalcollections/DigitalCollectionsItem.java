@@ -27,11 +27,11 @@ import javax.persistence.Entity;
 import au.edu.anu.metadatastores.store.dublincore.DublinCoreItem;
 
 /**
- * DigitalCollectionsItem
+ * <p>DigitalCollectionsItem<p>
  * 
- * The Australian National University
+ * <p>The Australian National University</p>
  * 
- * Entity class for Digital Collection Items
+ * <p>Entity class for Digital Collection Items</p>
  * 
  * @author Genevieve Turner
  *

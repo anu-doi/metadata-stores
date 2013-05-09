@@ -27,11 +27,11 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 /**
- * HistItemAttributeId
+ * <p>HistItemAttributeId<p>
  * 
- * The Australian National University
+ * <p>The Australian National University</p>
  * 
- * Id class for the HistItemAttribute class
+ * <p>Id class for the HistItemAttribute class</p>
  * 
  * @author Genevieve Turner
  *

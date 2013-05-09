@@ -50,11 +50,11 @@ import au.edu.anu.metadatastores.store.misc.RelationService;
 import com.sun.jersey.api.view.Viewable;
 
 /**
- * AdminResource
+ * <p>AdminResource<p>
  * 
- * The Australian National University
+ * <p>The Australian National University</p>
  * 
- * Administrative resource class.  Provides restful resources for administrators
+ * <p>Administrative resource class.  Provides restful resources for administrators</p>
  * 
  * @author Genevieve Turner
  *
@@ -110,8 +110,8 @@ public class AdminResource {
 	 * @param relationValues The value of the relationship
 	 * @param relatedIids The related item ids to update relationships for
 	 * @param confirmRelations Confirmation or denial of the relationship
-	 * @param multivaluedMap
-	 * @return
+	 * @param multivaluedMap The post parameters
+	 * @return A response containing the potential relations
 	 */
 	@POST
 	@Path("/possible-relation")

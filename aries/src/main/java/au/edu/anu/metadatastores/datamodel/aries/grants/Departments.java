@@ -29,13 +29,12 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 /**
- * Departments
+ * <p>Departments<p>
  * 
- * The Australian National University
+ * <p>The Australian National University</p>
  * 
- * Entity class for the departments table
+ * <p>Entity class for the <i>departments</i> table</p>
  * 
- * @author Rainbow Cai
  * @author Genevieve Turner
  *
  */

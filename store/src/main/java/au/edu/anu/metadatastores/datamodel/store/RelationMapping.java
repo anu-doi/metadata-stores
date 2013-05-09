@@ -38,6 +38,16 @@ import javax.persistence.Table;
  * @author Genevieve Turner
  *
  */
+/**
+ * <p>RelationMapping<p>
+ * 
+ * <p>The Australian National University</p>
+ * 
+ * <p>Entity class for the <i>relation_mapping</i> table</p>
+ * 
+ * @author Genevieve Turner
+ *
+ */
 @Entity
 @Table(name="relation_mapping")
 public class RelationMapping {

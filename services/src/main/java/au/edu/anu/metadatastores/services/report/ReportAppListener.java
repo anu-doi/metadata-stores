@@ -24,11 +24,11 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 /**
- * ReportAppListener
+ * <p>ReportAppListener<p>
  * 
- * The Australian National University
+ * <p>The Australian National University</p>
  * 
- * Initiates the recompilation of reports on server start up
+ * <p>Initiates the recompilation of reports on server start up</p>
  * 
  * @author Genevieve Turner
  *

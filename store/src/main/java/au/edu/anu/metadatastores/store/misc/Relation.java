@@ -25,11 +25,11 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * Relation
+ * <p>Relation<p>
  * 
- * The Australian National University
+ * <p>The Australian National University</p>
  * 
- * Class that contains relations
+ * <p>Class that contains relations</p>
  * 
  * @author Genevieve Turner
  *

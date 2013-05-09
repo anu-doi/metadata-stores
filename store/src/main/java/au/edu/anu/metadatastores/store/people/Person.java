@@ -31,11 +31,11 @@ import javax.xml.bind.annotation.XmlTransient;
 import au.edu.anu.metadatastores.store.misc.Subject;
 
 /**
- * Person
+ * <p>Person<p>
  * 
- * The Australian National University
+ * <p>The Australian National University</p>
  * 
- * Class to hold and expose information about people
+ * <p>Class to hold and expose information about people</p>
  * 
  * @author Genevieve Turner
  *

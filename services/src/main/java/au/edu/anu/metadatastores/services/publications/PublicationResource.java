@@ -38,10 +38,11 @@ import au.edu.anu.metadatastores.services.store.StoreService;
 import au.edu.anu.metadatastores.store.publication.Publication;
 
 /**
+ * <p>PublicationResource<p>
  * 
- * PublicationResource
+ * <p>The Australian National University</p>
  * 
- * The Australian National University
+ * <p>Resource class to display publications</p>
  * 
  * @author Genevieve Turner
  *

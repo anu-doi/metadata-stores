@@ -22,11 +22,12 @@
 package au.edu.anu.metadatastores.services.aries;
 
 /**
- * ANUStaffImpl
  * 
- * The Australian National University
+ * <p>ANUStaffImpl<p>
  * 
- * Implementation class for anu staff members
+ * <p>The Australian National University</p>
+ * 
+ * <p>Implementation class for anu staff members</p>
  * 
  * @author Rainbow Cai
  * @author Genevieve Turner

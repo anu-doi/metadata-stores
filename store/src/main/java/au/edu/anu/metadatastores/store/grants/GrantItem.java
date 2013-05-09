@@ -36,11 +36,11 @@ import au.edu.anu.metadatastores.datamodel.store.ItemAttribute;
 import au.edu.anu.metadatastores.datamodel.store.ext.StoreAttributes;
 
 /**
- * GrantItem
+ * <p>GrantItem<p>
  * 
- * The Australian National University
+ * <p>The Australian National University</p>
  * 
- * Item entity for Grants
+ * <p>Item entity for Grants</p>
  * 
  * @author Genevieve Turner
  *

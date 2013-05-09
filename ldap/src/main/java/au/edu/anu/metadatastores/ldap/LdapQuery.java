@@ -29,11 +29,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * LdapQuery
+ * <p>LdapQuery<p>
  * 
- * The Australian National University
+ * <p>The Australian National University</p>
  * 
- * Class to generate ldap queries
+ * <p>Class to generate ldap queries</p>
  * 
  * @author Genevieve Turner
  *

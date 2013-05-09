@@ -27,11 +27,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * DataCommonsTimerTask
+ * <p>DataCommonsTimerTask<p>
  * 
- * The Australian National University
+ * <p>The Australian National University</p>
  * 
- * Timer task that processes the data commons harvest content
+ * <p>Timer task that processes the data commons harvest content</p>
  * 
  * @author Genevieve Turner
  *

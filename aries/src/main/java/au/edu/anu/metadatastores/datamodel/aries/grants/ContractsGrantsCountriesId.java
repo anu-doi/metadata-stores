@@ -27,11 +27,11 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 /**
- * ContractsGrantsCountriesId
+ * <p>ContractsGrantsCountriesId</p>
  * 
- * The Australian National University
+ * <p>The Australian National University</p>
  * 
- * Class for mapping the id of the contracts_grants_countries
+ * <p>Class for mapping the id of the <i>contracts_grants_countries</i></p>
  * 
  * @author Rainbow Cai
  * @author Genevieve Turner

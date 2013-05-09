@@ -34,11 +34,12 @@ import au.edu.anu.metadatastores.datamodel.aries.grants.ContractsGrantsInvestiga
 import au.edu.anu.metadatastores.datamodel.aries.grants.ContractsGrantsMain;
 
 /**
- * ContractId
  * 
- * The Australian National University
+ * <p>ContractId<p>
  * 
- * Class that retrieves information about contracts
+ * <p>The Australian National University</p>
+ * 
+ * <p>Class that retrieves information about contracts</p>
  * 
  * @author Rainbow Cai
  * @author Genevieve Turner

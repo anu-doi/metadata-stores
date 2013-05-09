@@ -41,6 +41,17 @@ import au.edu.anu.metadatastores.util.properties.PropertyLoader;
  * @author Genevieve Turner
  *
  */
+/**
+ * <p>AriesService<p>
+ * 
+ * <p>The Australian National University</p>
+ * 
+ * <p>Service class for aries methods.  It provides external access to aries information</p>
+ * 
+ * @author Rainbow Cai
+ * @author Genevieve Turner
+ *
+ */
 public class AriesService {
 	static final Logger LOGGER = LoggerFactory.getLogger(AriesService.class);
 	
@@ -109,7 +120,7 @@ public class AriesService {
 	 * Get the funding authority url for the activity
 	 * 
 	 * @param anuActivityId THe id of the activity
-	 * @return THe funding authority url
+	 * @return The funding authority url
 	 */
 	public String getFundingAuthorityURLforANUActivity(String anuActivityId) {
 		String arc_ands_url_rule = (String) properties_.get("ARC_ANDS_url");
@@ -239,7 +250,8 @@ public class AriesService {
 	}
 	
 	/**
-	 * Get the university ids of the first authros for the specified publications
+	 * Get the university ids of the first authors for the specified publications
+	 * 
 	 * @param publicationCodes The publication codes to retrieve authors for
 	 * @return The authors university ids
 	 */
@@ -309,8 +321,9 @@ public class AriesService {
 	
 	/**
 	 * Get external staff members information
-	 * @param staffId
-	 * @return
+	 * 
+	 * @param staffId The external staff id
+	 * @return The external staff member's information
 	 */
 	public ExternalStaff getExternalStaffInformation(String staffId) {
 		return staffService.getExternalStaffInformation(staffId);

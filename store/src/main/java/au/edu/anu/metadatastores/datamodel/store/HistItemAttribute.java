@@ -34,12 +34,13 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 /**
- * HistItemAttribute
  * 
- * The Australian National University
+ * <p>HistItemAttribute<p>
  * 
- * Entity class for the hist_item_attribute table.  The History Item Attribute table attempts to keep track of changes that have occurred
- * on a given item.
+ * <p>The Australian National University</p>
+ * 
+ * <p>Entity class for the <i>hist_item_attribute</i> table.  The History Item Attribute table attempts to keep track of changes that have occurred
+ * on a given item.</p>
  * 
  * @author Genevieve Turner
  *

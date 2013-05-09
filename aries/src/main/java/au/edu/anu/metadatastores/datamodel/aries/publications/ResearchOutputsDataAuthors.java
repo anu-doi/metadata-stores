@@ -30,11 +30,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 /**
- * ResearchOutputsDataAuthors
+ * <p>ResearchOutputsDataAuthors<p>
  * 
- * The Australian National University
+ * <p>The Australian National University</p>
  * 
- * Entity class for research_outputs_data_authors
+ * <p>Entity class for <i>research_outputs_data_authors</i> table</p>
  * 
  * @author Rainbow Cai
  * @author Genevieve Turner

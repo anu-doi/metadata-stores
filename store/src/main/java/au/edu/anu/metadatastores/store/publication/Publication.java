@@ -31,11 +31,11 @@ import au.edu.anu.metadatastores.store.misc.Subject;
 import au.edu.anu.metadatastores.store.people.Person;
 
 /**
- * Publication
+ * <p>Publication<p>
  * 
- * The Australian National University
+ * <p>The Australian National University</p>
  * 
- * Class to hold information about publications
+ * <p>Class to hold information about publications</p>
  * 
  * @author Genevieve Turner
  *

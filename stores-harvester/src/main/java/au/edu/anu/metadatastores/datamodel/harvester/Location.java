@@ -41,6 +41,16 @@ import javax.persistence.TemporalType;
  * @author Genevieve Turner
  *
  */
+/**
+ * <p>Location<p>
+ * 
+ * <p>The Australian National University</p>
+ * 
+ * <p>Entity class for the <i>location</i> table</p>
+ * 
+ * @author Genevieve Turner
+ *
+ */
 @Entity
 @Table(name = "location")
 public class Location implements java.io.Serializable {

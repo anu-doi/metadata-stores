@@ -34,11 +34,11 @@ import org.slf4j.LoggerFactory;
 import au.edu.anu.metadatastores.datamodel.harvester.Location;
 
 /**
- * HarvestTimerManager
+ * <p>HarvestTimerManager<p>
  * 
- * The Australian National University
+ * <p>The Australian National University</p>
  * 
- * Manager class that creates timers to that the oai pmh feeds are harvested
+ * <p>Manager class that creates timers to that the oai pmh feeds are harvested</p>
  * 
  * @author Genevieve Turner
  *

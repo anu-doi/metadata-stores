@@ -27,15 +27,14 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 /**
- * ContractsGrantsStatus
+ * <p>ContractsGrantsStatus<p>
  * 
- * The Australian National University
+ * <p>The Australian National University</p>
  * 
- * Entity class for the contracts_grants_status table
+ * <p>Entity class for the <i>contracts_grants_status</i> table</p>
  * 
  * @author Rainbow Cai
  * @author Genevieve Turner
- *
  */
 @Entity
 @Table(name = "contracts_grants_status")

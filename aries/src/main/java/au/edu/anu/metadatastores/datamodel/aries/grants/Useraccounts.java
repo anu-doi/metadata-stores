@@ -29,11 +29,11 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 /**
- * Useraccounts
+ * <p>Useraccounts<p>
  * 
- * The Australian National University
+ * <p>The Australian National University</p>
  * 
- * Entity class for the useraccounts table
+ * <p>Entity class for the <i>useraccounts</i> table</p>
  * 
  * @author Rainbow Cai
  * @author Genevieve Turner

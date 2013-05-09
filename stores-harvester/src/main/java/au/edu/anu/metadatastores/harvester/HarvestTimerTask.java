@@ -29,11 +29,11 @@ import org.slf4j.LoggerFactory;
 import au.edu.anu.metadatastores.datamodel.harvester.Location;
 
 /**
- * HarvestTimerTask
+ * <p>HarvestTimerTask<p>
  * 
- * The Australian National University
+ * <p>The Australian National University</p>
  * 
- * TimerTask for harvesting content
+ * <p>TimerTask for harvesting content</p>
  * 
  * @author Genevieve Turner
  *

@@ -41,6 +41,17 @@ import au.edu.anu.metadatastores.datamodel.aries.grants.Departments;
  * @author Genevieve Turner
  *
  */
+/**
+ * 
+ * <p>DepartmentId<p>
+ * 
+ * <p>The Australian National University</p>
+ * 
+ * <p>Retrieves information about departments</p>
+ * 
+ * @author Genevieve Turner
+ *
+ */
 public class DepartmentId {
 	private static DepartmentId singleton_;
 	

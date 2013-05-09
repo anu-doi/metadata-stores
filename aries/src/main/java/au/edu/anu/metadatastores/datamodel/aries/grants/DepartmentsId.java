@@ -27,13 +27,13 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 /**
- * DepartmentsId
  * 
- * The Australian National University
+ * <p>DepartmentsId<p>
  * 
- * The id for the Departments entity
+ * <p>The Australian National University</p>
  * 
- * @author Rainbow Cai
+ * <p>The id for the Departments entity</p>
+ * 
  * @author Genevieve Turner
  *
  */

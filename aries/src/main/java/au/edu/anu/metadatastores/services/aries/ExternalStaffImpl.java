@@ -22,11 +22,12 @@
 package au.edu.anu.metadatastores.services.aries;
 
 /**
- * ExternalStaffImpl
  * 
- * The Australian National University
+ * <p>ExternalStaffImpl<p>
  * 
- * External staff implementation class
+ * <p>The Australian National University</p>
+ * 
+ * <p>External staff implementation class</p>
  * 
  * @author Genevieve Turner
  *

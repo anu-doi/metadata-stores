@@ -26,11 +26,11 @@ import java.util.Properties;
 import au.edu.anu.metadatastores.util.properties.PropertyLoader;
 
 /**
- * StoreProperties
+ * <p>StoreProperties<p>
  * 
- * The Australian National University
+ * <p>The Australian National University</p>
  * 
- * Retries properties for the store application
+ * <p>Retries properties for the store application</p>
  * 
  * @author Genevieve Turner
  *

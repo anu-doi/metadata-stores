@@ -24,11 +24,11 @@ package au.edu.anu.metadatastores.store.misc;
 import javax.xml.bind.annotation.XmlElement;
 
 /**
- * Subject
+ * <p>Subject<p>
  * 
- * The Australian National University
+ * <p>The Australian National University</p>
  * 
- * Subject class that contains a code, value, and percentage
+ * <p>Subject class that contains a code, value, and percentage</p>
  * 
  * @author Genevieve Turner
  *

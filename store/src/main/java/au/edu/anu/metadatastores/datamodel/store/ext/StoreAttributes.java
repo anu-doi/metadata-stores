@@ -22,11 +22,11 @@
 package au.edu.anu.metadatastores.datamodel.store.ext;
 
 /**
- * StoreAttributes
+ * <p>StoreAttributes<p>
  * 
- * The Australian National University
+ * <p>The Australian National University</p>
  * 
- * The attributes used in the item_attribute table
+ * <p>The attributes used in the item_attribute table</p>
  * 
  * @author Genevieve Turner
  *

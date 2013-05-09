@@ -26,7 +26,6 @@ import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -36,7 +35,17 @@ import javax.persistence.Table;
  * 
  * The Australian National University
  * 
- * Entity class for the item_relation table
+ * Entity class for the <i>item_relation</i> table
+ * 
+ * @author Genevieve Turner
+ *
+ */
+/**
+ * <p>ItemRelation<p>
+ * 
+ * <p>The Australian National University</p>
+ * 
+ * <p>Entity class for the <i>item_relation</i> table</p>
  * 
  * @author Genevieve Turner
  *

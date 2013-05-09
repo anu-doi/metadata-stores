@@ -30,11 +30,11 @@ import com.sun.jersey.api.json.JSONConfiguration;
 import com.sun.jersey.api.json.JSONJAXBContext;
 
 /**
- * PersonJAXBContextResolver
+ * <p>PersonJAXBContextResolver<p>
  * 
- * The Australian National University
+ * <p>The Australian National University</p>
  * 
- * Context resolver for JSON
+ * <p>Context resolver for JSON</p>
  * 
  * @author Genevieve Turner
  *

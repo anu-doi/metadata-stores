@@ -28,11 +28,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * TimerAppListener
+ * <p>TimerAppListener<p>
  * 
- * The Australian National University
+ * <p>The Australian National University</p>
  * 
- * Class that starts and stops timers when the web service is started and stopped
+ * <p>Class that starts and stops timers when the web service is started and stopped</p>
  * 
  * @author Genevieve Turner
  *

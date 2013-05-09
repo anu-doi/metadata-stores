@@ -44,11 +44,11 @@ import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 
 /**
- * Item
+ * <p>Item<p>
  * 
- * The Australian National University
+ * <p>The Australian National University</p>
  * 
- * Entity class for the item table.  The item table provides the root information about an object.
+ * <p>Entity class for the <i>item</i> table.  The item table provides the root information about an object.</p>
  * 
  * @author Genevieve Turner
  *

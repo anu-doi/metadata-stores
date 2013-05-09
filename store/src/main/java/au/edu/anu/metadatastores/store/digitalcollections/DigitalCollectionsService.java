@@ -56,12 +56,11 @@ import au.edu.anu.metadatastores.store.publication.PublicationItem;
 import au.edu.anu.metadatastores.store.publication.PublicationService;
 
 /**
+ * <p>DigitalCollectionsService<p>
  * 
- * DigitalCollectionsService
+ * <p>The Australian National University</p>
  * 
- * The Australian National University
- * 
- * Service class to process harvested digital collections records
+ * <p>Service class to process harvested digital collections records</p>
  * 
  * @author Genevieve Turner
  *

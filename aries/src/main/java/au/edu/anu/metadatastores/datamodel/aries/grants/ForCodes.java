@@ -26,13 +26,13 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 /**
- * ForCodes
  * 
- * The Australian National University
+ * <p>ForCodes<p>
  * 
- * Entity class for FOR_codes table
+ * <p>The Australian National University</p>
  * 
- * @author Rainbow Cai
+ * <p>Entity class for FOR_codes table</p>
+ * 
  * @author Genevieve Turner
  *
  */

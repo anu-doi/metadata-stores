@@ -32,11 +32,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 /**
- * ContractsGrantsInvestigators
+ * <p>ContractsGrantsInvestigators</p>
  * 
- * The Australian National University
+ * <p>The Australian National University</p>
  * 
- * Entity class for the contracts_grants_investigators table
+ * <p>Entity class for the <i>contracts_grants_investigators</i> table</p>
  * 
  * @author Rainbow Cai
  * @author Genevieve Turner

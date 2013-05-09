@@ -22,16 +22,11 @@
 package au.edu.anu.metadatastores.ldap;
 
 /**
- * Attributes that can be found in ldap
- * @author u5125986
- *
- */
-/**
- * LdapAttribute
+ * <p>LdapAttribute<p>
  * 
- * The Australian National University
+ * <p>The Australian National University</p>
  * 
- * Attributes to retrieve from ldap
+ * <p>Attributes to retrieve from ldap</p>
  * 
  * @author Genevieve Turner
  *

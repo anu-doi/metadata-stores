@@ -27,11 +27,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * EncryptUtils
+ * <p>EncryptUtil<p>
  * 
- * The Australian National University
+ * <p>The Australian National University</p>
  * 
- * Encryption util class
+ * <p>Encryption util class</p>
  * 
  * @author Genevieve Turner
  *

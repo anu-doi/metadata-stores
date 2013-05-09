@@ -26,11 +26,11 @@ import java.util.Hashtable;
 import javax.naming.Context;
 
 /**
- * LdapConnectionData
+ * <p>LdapConnectionData<p>
  * 
- * The Australian National University
+ * <p>The Australian National University</p>
  * 
- * Container for information about LDAP connections
+ * <p>Container for information about LDAP connections</p>
  * 
  * @author Genevieve Turner
  *

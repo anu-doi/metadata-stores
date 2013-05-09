@@ -31,11 +31,12 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 /**
- * ResearchOutputsJournals
  * 
- * The Australian National University
+ * <p>ResearchOutputsJournals<p>
  * 
- * Entity class for the research_ouptuts_journals table
+ * <p>The Australian National University</p>
+ * 
+ * <p>Entity class for the <i>research_ouptuts_journals</i> table</p>
  * 
  * @author Rainbow Cai
  * @author Genevieve Turner

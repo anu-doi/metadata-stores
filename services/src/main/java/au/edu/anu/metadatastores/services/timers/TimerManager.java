@@ -28,11 +28,11 @@ import au.edu.anu.metadatastores.store.datacommons.DataCommonsTimerTask;
 import au.edu.anu.metadatastores.store.digitalcollections.DigitalCollectionsTimerTask;
 
 /**
- * TimerManager
+ * <p>TimerManager<p>
  * 
- * The Australian National University
+ * <p>The Australian National University</p>
  * 
- * Class that controls the timers used in the application
+ * <p>Class that controls the timers used in the application</p>
  * 
  * @author Genevieve Turner
  *

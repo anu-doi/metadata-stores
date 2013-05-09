@@ -24,20 +24,17 @@ package au.edu.anu.metadatastores.services.store;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistryBuilder;
-import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
-import org.jasypt.encryption.pbe.config.SimplePBEConfig;
-import org.jasypt.properties.PropertyValueEncryptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import au.edu.anu.metadatastores.util.encrypt.EncryptUtil;
 
 /**
- * StoreHibernateUtil
+ * <p>StoreHibernateUtil<p>
  * 
- * The Australian National University
+ * <p>The Australian National University</p>
  * 
- * Initialises the store hibernate session
+ * <p>Initialises the store hibernate session</p>
  * 
  * @author Genevieve Turner
  *

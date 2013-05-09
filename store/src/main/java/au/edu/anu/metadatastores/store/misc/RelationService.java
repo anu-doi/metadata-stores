@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -41,11 +40,11 @@ import au.edu.anu.metadatastores.datamodel.store.RelationMapping;
 import au.edu.anu.metadatastores.services.store.StoreHibernateUtil;
 
 /**
- * RelationService
+ * <p>RelationService<p>
  * 
- * The Australian National University
+ * <p>The Australian National University</p>
  * 
- * Service class for updating relationships
+ * <p>Service class for updating relationships</p>
  * 
  * @author Genevieve Turner
  *

@@ -22,13 +22,12 @@
 package au.edu.anu.metadatastores.services.aries;
 
 /**
- * Publication
+ * <p>Publication<p>
  * 
- * The Australian National University
+ * <p>The Australian National University</p>
  * 
- * Class for holding publication information
+ * <p>Class for holding publication information</p>
  * 
- * @author Rainbow Cai
  * @author Genevieve Turner
  *
  */

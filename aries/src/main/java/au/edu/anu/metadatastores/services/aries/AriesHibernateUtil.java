@@ -30,11 +30,11 @@ import org.slf4j.LoggerFactory;
 import au.edu.anu.metadatastores.util.encrypt.EncryptUtil;
 
 /**
- * AriesHibernateUtil
+ * <p>AriesHibernateUtil<p>
  * 
- * The Australian National University
+ * <p>The Australian National University</p>
  * 
- * Initialises the Aries hibernate session factory
+ * <p>Initialises the Aries hibernate session factory</p>
  * 
  * @author Rainbow Cai
  * @author Genevieve Turner

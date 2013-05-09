@@ -24,11 +24,12 @@ package au.edu.anu.metadatastores.datamodel.aries.grants;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
-
 /**
- * FacultyschoolcentreId
+ * <p>FacultyschoolcentreId<p>
  * 
- * The Australian National University
+ * <p>The Australian National University</p>
+ * 
+ * <p>Id class for the Facultyschoolcentre entity</p>
  * 
  * @author Rainbow Cai
  * @author Genevieve Turner
@@ -76,8 +77,9 @@ public class FacultyschoolcentreId implements java.io.Serializable {
 	}
 
 	/**
+	 * Get the institution code
 	 * 
-	 * @return
+	 * @return The institution code
 	 */
 	@Column(name = "chrTierCode", length = 45)
 	public String getChrTierCode() {
@@ -85,8 +87,9 @@ public class FacultyschoolcentreId implements java.io.Serializable {
 	}
 
 	/**
+	 * Set the institution code
 	 * 
-	 * @param chrTierCode
+	 * @param chrTierCode The institution code
 	 */
 	public void setChrTierCode(String chrTierCode) {
 		this.chrTierCode = chrTierCode;

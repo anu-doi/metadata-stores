@@ -29,11 +29,12 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 /**
- * PicklistChrrouteChrstatus
  * 
- * The Australian National University
+ * <p>PicklistChrrouteChrstatus<p>
  * 
- * Entity class for picklist_chrroute_chrstatus table
+ * <p>The Australian National University</p>
+ * 
+ * <p>Entity class for <i>picklist_chrroute_chrstatus</i> table</p>
  * 
  * @author Rainbow Cai
  * @author Genevieve Turner

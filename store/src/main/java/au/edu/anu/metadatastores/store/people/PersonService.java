@@ -53,11 +53,11 @@ import au.edu.anu.metadatastores.store.misc.AbstractItemService;
 import au.edu.anu.metadatastores.store.misc.Subject;
 
 /**
- * PersonService
+ * <p>PersonService<p>
  * 
- * The Australian National University
+ * <p>The Australian National University</p>
  * 
- * Service class to retrieve and save information about people
+ * <p>Service class to retrieve and save information about people</p>
  * 
  * @author Genevieve Turner
  *
@@ -72,7 +72,7 @@ public class PersonService extends AbstractItemService {
 	/**
 	 * Main class that takes user ids and finds information about the person
 	 * 
-	 * @param args
+	 * @param args Command line arguments
 	 */
 	public static void main(String[] args) {
 		PersonService personService = PersonService.getSingleton();
@@ -97,7 +97,7 @@ public class PersonService extends AbstractItemService {
 	/**
 	 * Get the singleton instance
 	 * 
-	 * @return
+	 * @return Get the singleton object
 	 */
 	public static PersonService getSingleton() {
 		if (singleton_ == null) {
@@ -222,7 +222,7 @@ public class PersonService extends AbstractItemService {
 	 * 
 	 * @param givenName The given name of the person
 	 * @param surname The surname of the person
-	 * @return
+	 * @return A list of people with similar names
 	 */
 	private List<PersonItem> getPeopleByName(String givenName, String surname) {
 		List<PersonItem> people = new ArrayList<PersonItem>();
@@ -357,7 +357,7 @@ public class PersonService extends AbstractItemService {
 	 * Find a person by a uid
 	 * 
 	 * @param uid The uid of the person to find
-	 * @return
+	 * @return Get the Item of the person with the given uid
 	 */
 	private PersonItem queryPersonByUid(String uid) {
 		Session session = StoreHibernateUtil.getSessionFactory().openSession();
@@ -496,8 +496,8 @@ public class PersonService extends AbstractItemService {
 	/**
 	 * Fetch information about staff via the external users
 	 * 
-	 * @param staffId
-	 * @return
+	 * @param staffId The external id of the collaborating staff member
+	 * @return The information about the staff member
 	 */
 	public Person fetchExternalUser(String staffId) {
 		ExternalStaff staff = ariesService_.getExternalStaffInformation(staffId);
@@ -653,7 +653,7 @@ public class PersonService extends AbstractItemService {
 	 * 
 	 * @param extIds The ids to retrieve information about people for
 	 * @param extraInfo Indicates whether to also retrieve the type, institution, country and organisational unit about the person
-	 * @return
+	 * @return A list of people containing basic information
 	 */
 	public List<Person> getBasicPeople(List<String> extIds, boolean extraInfo) {
 		Session session = StoreHibernateUtil.getSessionFactory().openSession();

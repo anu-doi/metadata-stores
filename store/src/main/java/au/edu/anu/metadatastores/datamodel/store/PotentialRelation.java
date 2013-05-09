@@ -32,11 +32,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 /**
- * PotentialRelation
+ * <p>PotentialRelation<p>
  * 
- * The Australian National University
+ * <p>The Australian National University</p>
  * 
- * Entity class for the potential_relation table
+ * <p>Entity class for the <i>potential_relation</i> table</p>
  * 
  * @author Genevieve Turner
  *

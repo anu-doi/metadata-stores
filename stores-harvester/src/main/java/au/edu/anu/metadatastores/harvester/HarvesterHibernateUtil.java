@@ -30,11 +30,11 @@ import org.slf4j.LoggerFactory;
 import au.edu.anu.metadatastores.util.encrypt.EncryptUtil;
 
 /**
- * HarvesterHibernateUtil
+ * <p>HarvesterHibernateUtil<p>
  * 
- * The Australian National University
+ * <p>The Australian National University</p>
  * 
- * Class provide the hibernate session factory for the harvester
+ * <p>Class provide the hibernate session factory for the harvester</p>
  * 
  * @author Genevieve Turner
  *

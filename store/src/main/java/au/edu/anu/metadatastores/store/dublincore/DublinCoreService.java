@@ -34,11 +34,11 @@ import au.edu.anu.metadatastores.store.dublincore.xml.DublinCore;
 import au.edu.anu.metadatastores.store.misc.AbstractItemService;
 
 /**
- * DublinCoreService
+ * <p>DublinCoreService<p>
  * 
- * The Australian National University
+ * <p>The Australian National University</p>
  * 
- * Abstract Service for classes Item classes that are coming from the dublin core format
+ * <p>Abstract Service for classes Item classes that are coming from the dublin core format</p>
  * 
  * @author Genevieve Turner
  *

@@ -26,11 +26,11 @@ import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 
 /**
- * LdapPerson
+ * <p>LdapPerson<p>
  * 
- * The Australian National University
+ * <p>The Australian National University</p>
  * 
- * Class that stores information about a person that has been retrieved from ldap
+ * <p>Class that stores information about a person that has been retrieved from ldap</p>
  * 
  * @author Genevieve Turner
  *

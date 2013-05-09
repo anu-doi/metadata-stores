@@ -62,6 +62,16 @@ import au.edu.anu.metadatastores.store.properties.StoreProperties;
  * @author Genevieve Turner
  *
  */
+/**
+ * <p>DataCommonsService<p>
+ * 
+ * <p>The Australian National University</p>
+ * 
+ * <p>Service to provide updates to Data Commons records</p>
+ * 
+ * @author Genevieve Turner
+ *
+ */
 public class DataCommonsService extends DublinCoreService {
 	static final Logger LOGGER = LoggerFactory.getLogger(DataCommonsService.class);
 	
@@ -185,6 +195,7 @@ public class DataCommonsService extends DublinCoreService {
 	 * @param item The item to update
 	 * @param dublinCore The dublin core of the record
 	 * @param session The current active hibernate session
+	 * @param lastModified The modification date
 	 */
 	@Override
 	protected void setItemRelations(DublinCoreItem item, DublinCore dublinCore, Session session, Date lastModified) {
@@ -199,6 +210,7 @@ public class DataCommonsService extends DublinCoreService {
 	 * @param values The dublin core values
 	 * @param session The current active hibernate session
 	 * @param attrType The type of attribute to update
+	 * @param lastModified The modification date
 	 */
 	private void setRelationAttributes(DublinCoreItem item, List<ItemAttribute> attributes, List<String> values, Session session, String attrType, Date lastModified) {
 		List<ItemAttribute> removeItems = new ArrayList<ItemAttribute>();
@@ -215,6 +227,7 @@ public class DataCommonsService extends DublinCoreService {
 	 * @param addItems The items to add
 	 * @param session The current active session
 	 * @param attrType The attribute type
+	 * @param lastModified The modification date
 	 */
 	private void updateRelationAttributes(DublinCoreItem item, List<ItemAttribute> removeItems, List<String> addItems, Session session, String attrType, Date lastModified) {
 		removeAttributes(item, removeItems, session, lastModified);
@@ -330,6 +343,7 @@ public class DataCommonsService extends DublinCoreService {
 	 * 
 	 * @param item The item to add relationships to
 	 * @param relationParts The relationship parts
+	 * @param itemRelations The existing relationships
 	 * @param session The session
 	 */
 	private void setIdentifierRelations(Item item, List<RelationPart> relationParts, List<ItemRelation> itemRelations, Session session) {
@@ -352,12 +366,13 @@ public class DataCommonsService extends DublinCoreService {
 			}
 		}
 	}
-
+	
 	/**
 	 * Set the Australian Research Council relationships
 	 * 
 	 * @param item The item to add the relationship to
 	 * @param relationParts The relationship parts
+	 * @param itemRelations The existing relationships
 	 * @param session The session object
 	 */
 	private void setARCIdentifierRelations(Item item, List<RelationPart> relationParts, List<ItemRelation> itemRelations, Session session) {
@@ -372,6 +387,7 @@ public class DataCommonsService extends DublinCoreService {
 	 * 
 	 * @param item The item to add the relationship to
 	 * @param relationParts The relationship parts
+	 * @param itemRelations The existing relationships
 	 * @param session The session object
 	 */
 	private void setNHMRCIdentifierRelations(Item item, List<RelationPart> relationParts, List<ItemRelation> itemRelations, Session session) {
@@ -421,6 +437,14 @@ public class DataCommonsService extends DublinCoreService {
 	 * 
 	 * @param item The item to add the relationships to
 	 * @param relationParts The relationship parts
+	 * @param session The session object
+	 */
+	/**
+	 * Set the National Library of Australia relationships
+	 * 
+	 * @param item The item to add the relationships to
+	 * @param relationParts The relationship parts
+	 * @param itemRelations The existing relationships
 	 * @param session The session object
 	 */
 	private void setNLAIdentifierRelations(Item item, List<RelationPart> relationParts, List<ItemRelation> itemRelations, Session session) {

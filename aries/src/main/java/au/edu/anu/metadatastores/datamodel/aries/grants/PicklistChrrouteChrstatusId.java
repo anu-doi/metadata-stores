@@ -25,11 +25,12 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 /**
- * PicklistChrrouteChrstatusId
  * 
- * The Australian National University
+ * <p>PicklistChrrouteChrstatusId<p>
  * 
- * Id class for PicklistChrrouteChrstatus
+ * <p>The Australian National University</p>
+ * 
+ * <p>Id class for PicklistChrrouteChrstatus</p>
  * 
  * @author Rainbow Cai
  * @author Genevieve Turner
@@ -60,8 +61,10 @@ public class PicklistChrrouteChrstatusId implements java.io.Serializable {
 	}
 
 	/**
+	 * <p>Returns a value that can be an indicator of the route of payment for a user</p>
+	 * <p>Values are: <blank>, "External", "Internal", "Salary", or "Student"
 	 * 
-	 * @return
+	 * @return The route
 	 */
 	@Column(name = "chrRoute", length = 45)
 	public String getChrRoute() {
@@ -69,16 +72,20 @@ public class PicklistChrrouteChrstatusId implements java.io.Serializable {
 	}
 
 	/**
+	 * <p>Sets a value that can be an indicator of the route of payment for a user</p>
+	 * <p>Values are: <blank>, "External", "Internal", "Salary", or "Student"
 	 * 
-	 * @param chrRoute
+	 * @param chrRoute The route
 	 */
 	public void setChrRoute(String chrRoute) {
 		this.chrRoute = chrRoute;
 	}
 
 	/**
+	 * <p>Returns whether the investigator is staff, student, visitor, etc.</p>
+	 * <p>Values are: "External", "Postgraduate student", "Research staff", "Salary", "Undergraduate sudent" or "Visitor"</p>
 	 * 
-	 * @return
+	 * @return The status
 	 */
 	@Column(name = "chrStatus", length = 45)
 	public String getChrStatus() {
@@ -86,8 +93,10 @@ public class PicklistChrrouteChrstatusId implements java.io.Serializable {
 	}
 
 	/**
+	 * <p>Sets whether the investigator is staff, student, visitor, etc.</p>
+	 * <p>Values are: "External", "Postgraduate student", "Research staff", "Salary", "Undergraduate sudent" or "Visitor"</p>
 	 * 
-	 * @param chrStatus
+	 * @param chrStatus The status
 	 */
 	public void setChrStatus(String chrStatus) {
 		this.chrStatus = chrStatus;

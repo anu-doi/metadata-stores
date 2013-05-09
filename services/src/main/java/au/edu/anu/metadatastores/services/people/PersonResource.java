@@ -50,11 +50,11 @@ import au.edu.anu.metadatastores.store.publication.Publication;
 import com.sun.jersey.api.json.JSONWithPadding;
 
 /**
- * PersonResource
+ * <p>PersonResource<p>
  * 
- * The Australian National University
+ * <p>The Australian National University</p>
  * 
- * Resource to provide restful services returning information about people.  This includes information about the person, their publications and grants.
+ * <p>Resource to provide restful services returning information about people.  This includes information about the person, their publications and grants.</p>
  * 
  * @author Genevieve Turner
  *

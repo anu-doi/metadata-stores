@@ -31,11 +31,11 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 /**
- * ContractsGrantsDepartments
+ * <p>ContractsGrantsDepartments</p>
  * 
- * The Australian National University
+ * <p>The Australian National University</p>
  * 
- * Entity class for the contracts_grants_departments table
+ * <p>Entity class for the <i>contracts_grants_departments</i> table</p>
  * 
  * @author Rainbow Cai
  * @author Genevieve Turner

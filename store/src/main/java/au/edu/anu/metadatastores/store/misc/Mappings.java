@@ -28,11 +28,11 @@ import au.edu.anu.metadatastores.datamodel.store.RelationMapping;
 import au.edu.anu.metadatastores.services.store.StoreHibernateUtil;
 
 /**
- * Mappings
+ * <p>Mappings<p>
  * 
- * The Australian National University
+ * <p>The Australian National University</p>
  * 
- * Get the relation mapping via the description
+ * <p>Get the relation mapping via the description</p>
  * 
  * @author Genevieve Turner
  *

@@ -40,6 +40,18 @@ import au.edu.anu.metadatastores.datamodel.aries.publications.ResearchOutputsDat
  * @author Genevieve Turner
  *
  */
+/**
+ * 
+ * <p>OutputId<p>
+ * 
+ * <p>The Australian National University</p>
+ * 
+ * <p>Class to provide research outputs information</p>
+ * 
+ * @author Rainbow Cai
+ * @author Genevieve Turner
+ *
+ */
 public class OutputId {
 	private static OutputId singleton_;
 	

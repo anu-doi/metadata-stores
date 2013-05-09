@@ -36,6 +36,16 @@ import au.edu.anu.metadatastores.store.dublincore.DublinCoreItem;
  * @author Genevieve Turner
  *
  */
+/**
+ * <p>DataCommonsItem<p>
+ * 
+ * <p>The Australian National University</p>
+ * 
+ * <p>Entity class for the Data Commons system for Items</p>
+ * 
+ * @author Genevieve Turner
+ *
+ */
 @Entity
 @DiscriminatorValue(value="DATA_COMMONS")
 public class DataCommonsItem extends DublinCoreItem {

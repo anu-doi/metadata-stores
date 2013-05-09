@@ -35,11 +35,11 @@ import au.edu.anu.metadatastores.datamodel.aries.publications.ResearchOutputsDat
 import au.edu.anu.metadatastores.datamodel.aries.publications.ResearchOutputsDataAuthors;
 
 /**
- * PublicationId
+ * <p>PublicationId<p>
  * 
- * The Australian National University
+ * <p>The Australian National University</p>
  * 
- * Class to retrieve publication information
+ * <p>Class to retrieve publication information</p>
  * 
  * @author Rainbow Cai
  * @author Genevieve Turner

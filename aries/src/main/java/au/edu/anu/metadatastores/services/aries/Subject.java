@@ -22,11 +22,11 @@
 package au.edu.anu.metadatastores.services.aries;
 
 /**
- * Subject
+ * <p>Subject<p>
  * 
- * The Australian National University
+ * <p>The Australian National University</p>
  * 
- * Subject class
+ * <p>Interface for subjects</p>
  * 
  * @author Genevieve Turner
  *

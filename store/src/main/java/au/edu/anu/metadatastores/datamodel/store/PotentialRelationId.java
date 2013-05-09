@@ -25,11 +25,12 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 /**
- * PotentialRelationId
  * 
- * The Australian National University
+ * <p>PotentialRelationId<p>
  * 
- * Id class for PotentialRelation
+ * <p>The Australian National University</p>
+ * 
+ * <p>Id class for PotentialRelation</p>
  * 
  * @author Genevieve Turner
  *

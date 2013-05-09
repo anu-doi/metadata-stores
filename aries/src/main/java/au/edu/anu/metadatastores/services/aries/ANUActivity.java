@@ -22,11 +22,12 @@
 package au.edu.anu.metadatastores.services.aries;
 
 /**
- * ANUActivity
  * 
- * The Australian National University
+ * <p>ANUActivity<p>
  * 
- * Inteface for ANU activity information i.e. grants
+ * <p>The Australian National University</p>
+ * 
+ * <p>Interface for ANU activity information i.e. grants</p>
  * 
  * @author Rainbow Cai
  * @author Genevieve Turner

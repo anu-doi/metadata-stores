@@ -24,9 +24,11 @@ import java.io.File;
 import java.io.FilenameFilter;
 
 /**
- * ExtensionFileFilter
+ * <p>ExtensionFileFilter<p>
  * 
- * The Australian National University
+ * <p>The Australian National University</p>
+ * 
+ * <p>File extension filter that is used to filter out files that end with the provided extension</p>
  * 
  * @author Genevieve Turner
  *

@@ -21,8 +21,6 @@
 
 package au.edu.anu.metadatastores.datamodel.aries.publications;
 
-// Generated 10/01/2013 4:27:05 PM by Hibernate Tools 4.0.0
-
 import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.Column;
@@ -40,11 +38,11 @@ import org.hibernate.annotations.NotFoundAction;
 import au.edu.anu.metadatastores.datamodel.aries.grants.ForCodes;
 
 /**
- * ResearchOutputsData1
+ * <p>ResearchOutputsData1<p>
  * 
- * The Australian National University
+ * <p>The Australian National University</p>
  * 
- * Entity class for the research_outputs_data1 table
+ * <p>Entity class for the <i>research_outputs_data1</i> table</p>
  * 
  * @author Rainbow Cai
  * @author Genevieve Turner

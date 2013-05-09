@@ -29,12 +29,13 @@ import au.edu.anu.metadatastores.ldap.LdapPerson;
 import au.edu.anu.metadatastores.ldap.LdapSearch;
 
 /**
- * LdapService
+ * <p>LdapService<p>
  * 
- * The Australian National University
+ * <p>The Australian National University</p>
  * 
- * Service class that provides information from ldap to external parties
+ * <p>Service class that provides information from ldap to external parties</p>
  * 
+ * @author Rainbow Cai
  * @author Genevieve Turner
  *
  */
@@ -64,9 +65,9 @@ public class LdapService {
 	/**
 	 * Search for names that are similar to the one given
 	 * 
-	 * @param surname
-	 * @param givenName
-	 * @return
+	 * @param surname The surname to search on
+	 * @param givenName The given name to search on
+	 * @return A list of uids with a similar name to that given
 	 * @throws NamingException
 	 */
 	public String[] searchForSimilarNames(String surname, String givenName) throws NamingException {
@@ -76,9 +77,9 @@ public class LdapService {
 	/**
 	 * Search for names that are similar or partial matches given the surname and given name
 	 * 
-	 * @param surname
-	 * @param givenName
-	 * @return
+	 * @param surname The surname to search on
+	 * @param givenName The given name to search on
+	 * @return A list of uids with a similar name to that given
 	 * @throws NamingException
 	 */
 	public String[] searchForPossibleNames(String surname, String givenName) throws NamingException {
@@ -99,9 +100,9 @@ public class LdapService {
 	/**
 	 * Retrieves information about the person for the given university id and ldap attribute
 	 * 
-	 * @param uniID
-	 * @param ldapAttr
-	 * @return
+	 * @param uniID The university id to retrieve information for
+	 * @param ldapAttr The attribute to get
+	 * @return The attribute value
 	 * @throws NamingException
 	 */
 	public String getANUPartyLdapInfo(String uniID, String ldapAttr) throws NamingException {
@@ -111,9 +112,9 @@ public class LdapService {
 	/**
 	 * Retrieves information in the ldap attribute for the given university id's
 	 * 
-	 * @param uniIDs
-	 * @param ldapAttr
-	 * @return
+	 * @param uniIDs The university ids to retrieve information for
+	 * @param ldapAttr The attribute to retrieve
+	 * @return The array attribute values
 	 * @throws NamingException
 	 */
 	public String[] getANUPartyLdapInfo(String[] uniIDs, String ldapAttr) throws NamingException {

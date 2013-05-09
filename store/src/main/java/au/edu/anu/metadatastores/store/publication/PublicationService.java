@@ -48,11 +48,11 @@ import au.edu.anu.metadatastores.store.people.PersonService;
 import au.edu.anu.metadatastores.store.properties.StoreProperties;
 
 /**
- * PublicationService
+ * <p>PublicationService<p>
  * 
- * The Australian National University
+ * <p>The Australian National University</p>
  * 
- * Service for retrieving and updating publications within the metadata stores
+ * <p>Service for retrieving and updating publications within the metadata stores</p>
  * 
  * @author Genevieve Turner
  *

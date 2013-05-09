@@ -22,10 +22,11 @@
 package au.edu.anu.metadatastores.store.datacommons;
 
 /**
+ * <p>RelationPart<p>
  * 
- * RelationPart
+ * <p>The Australian National University</p>
  * 
- * The Australian National University
+ * <p>Holds Data Commons relationship parts</p>
  * 
  * @author Genevieve Turner
  *

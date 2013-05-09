@@ -37,11 +37,11 @@ import au.edu.anu.metadatastores.datamodel.store.ItemAttribute;
 import au.edu.anu.metadatastores.datamodel.store.ext.StoreAttributes;
 
 /**
- * DublinCoreItem
+ * <p>DublinCoreItem<p>
  * 
- * The Australian National University
+ * <p>The Australian National University</p>
  * 
- * Class for mapping Dublin Core items
+ * <p>Class for mapping Dublin Core items</p>
  * 
  * @author Genevieve Turner
  *

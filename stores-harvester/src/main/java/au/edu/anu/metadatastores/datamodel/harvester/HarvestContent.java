@@ -29,11 +29,11 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 /**
- * HarvestContent
+ * <p>HarvestContent<p>
  * 
- * The Australian National University
+ * <p>The Australian National University</p>
  * 
- * Entity class for the harvest_content table
+ * <p>Entity class for the <i>harvest_content</i> table</p>
  * 
  * @author Genevieve Turner
  *

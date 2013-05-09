@@ -38,11 +38,11 @@ import au.edu.anu.metadatastores.datamodel.store.ItemAttribute;
 import au.edu.anu.metadatastores.datamodel.store.ext.StoreAttributes;
 
 /**
- * AbstractItemService
+ * <p>AbstractItemService<p>
  * 
- * The Australian National University
+ * <p>The Australian National University</p>
  * 
- * Abstract Service class that contains methods for the service classes that mould items
+ * <p>Abstract Service class that contains methods for the service classes that mould items</p>
  * 
  * @author Genevieve Turner
  *
@@ -59,6 +59,7 @@ public abstract class AbstractItemService {
 	 * @param attrType The attribute type
 	 * @param session The session
 	 * @param lastModified The last modified date to set
+	 * @param userUpdated Whether the attribute is user updated
 	 */
 	protected void setSingleAttribute(Item item, List<ItemAttribute> attributes, String value, String attrType, Session session, Date lastModified, Boolean userUpdated) {
 		if (attributes.size() > 0) {
@@ -85,14 +86,14 @@ public abstract class AbstractItemService {
 	}
 	
 	/**
-	 * Set attributes for a list of values
 	 * 
 	 * @param item The item to add attributes to
 	 * @param attributes The list of attributes currently in this field
-	 * @param value The values to set
+	 * @param values The values to set
 	 * @param attrType The attribute type
 	 * @param session The session
 	 * @param lastModified The last modified date to set
+	 * @param userUpdated Whether the attribute is user updated
 	 */
 	protected void setMultipleAttribute(Item item, List<ItemAttribute> attributes, List<String> values, String attrType, Session session, Date lastModified, Boolean userUpdated) {
 		List<ItemAttribute> removeItems = new ArrayList<ItemAttribute>();
@@ -101,16 +102,17 @@ public abstract class AbstractItemService {
 		LOGGER.debug("Remove Items Size: {}, Add Items Size: {}", removeItems.size(), addItems.size());
 		updateAttributes(item, removeItems, addItems, session, attrType, lastModified, userUpdated);
 	}
-
+	
 	/**
 	 * Set attributes for a list of values
 	 * 
 	 * @param item The item to add attributes to
 	 * @param attributes The list of attributes currently in this field
-	 * @param value The array of values to set
+	 * @param values The array of values to set
 	 * @param attrType The attribute type
 	 * @param session The session
 	 * @param lastModified The last modified date to set
+	 * @param userUpdated Whether the attributes are user updated
 	 */
 	protected void setMultipleAttribute(Item item, List<ItemAttribute> attributes, String[] values, String attrType, Session session, Date lastModified, Boolean userUpdated) {
 		setMultipleAttribute(item, attributes, Arrays.asList(values), attrType, session, lastModified, userUpdated);
@@ -160,6 +162,8 @@ public abstract class AbstractItemService {
 	 * @param addItems The items to add
 	 * @param session The current active session
 	 * @param attrType The attribute type
+	 * @param lastModified The last modified date to set
+	 * @param userUpdated Whether the attributes are user updated
 	 */
 	protected void updateAttributes(Item item, List<ItemAttribute> removeItems, List<String> addItems, Session session, String attrType, Date lastModified, Boolean userUpdated) {
 		removeAttributes(item, removeItems, session, lastModified);
@@ -178,6 +182,7 @@ public abstract class AbstractItemService {
 	 * @param item The item to remove attributes from
 	 * @param removeItems The items to remove
 	 * @param session The current active session
+	 * @param lastModified The date for which the attributes will be assigned in history
 	 */
 	protected void removeAttributes(Item item, List<ItemAttribute> removeItems, Session session, Date lastModified) {
 		for (ItemAttribute removeAttr : removeItems) {
@@ -197,9 +202,11 @@ public abstract class AbstractItemService {
 	 * Set the for subjects to save
 	 * 
 	 * @param item The item to add subjects to
-	 * @param grant The grant information
+	 * @param attrs The item attributes
+	 * @param subjects The subjects to save
 	 * @param session The current hibernate session
 	 * @param lastModified The last modified date to set
+	 * @param userUpdated Whether the attributes are user updated
 	 */
 	protected void setForSubjectsForSave(Item item, List<ItemAttribute> attrs, List<Subject> subjects, Session session, Date lastModified, Boolean userUpdated) {
 		if (subjects.size() > 0) {
@@ -295,6 +302,7 @@ public abstract class AbstractItemService {
 	 * @param item The item to add the subject attributes to
 	 * @param subject The subject to add
 	 * @param lastModified The last modified date to set
+	 * @param userUpdated Whether the attributes are user updated
 	 */
 	private void addForSubjectAttributes(Item item, Subject subject, Date lastModified, Boolean userUpdated) {
 		ItemAttribute attr = new ItemAttribute(item, StoreAttributes.FOR_SUBJECT, subject.getCode(), lastModified);

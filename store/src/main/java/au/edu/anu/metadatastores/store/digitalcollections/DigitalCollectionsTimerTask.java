@@ -26,9 +26,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * DigitalCollectionsTimerTask
+ * <p>DigitalCollectionsTimerTask<p>
  * 
- * The Australian National University
+ * <p>The Australian National University</p>
+ * 
+ * <p>Timer task that sets of the processing of Digital Collections content</p>
  * 
  * @author Genevieve Turner
  *

@@ -27,13 +27,12 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 /**
- * ExternalUsers
+ * <p>ExternalUsers<p>
  * 
- * The Australian National University
+ * <p>The Australian National University</p>
  * 
- * Entity class for the externalUsers table
+ * <p>Entity class for the externalUsers table</p>
  * 
- * @author Rainbow Cai
  * @author Genevieve Turner
  *
  */

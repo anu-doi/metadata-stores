@@ -37,12 +37,11 @@ import org.slf4j.LoggerFactory;
 import au.edu.anu.metadatastores.util.properties.PropertyLoader;
 
 /**
+ * <p>LdapSearch<p>
  * 
- * LdapSearch
+ * <p>The Australian National University</p>
  * 
- * The Australian National University
- * 
- * Class that generates and executes search methods for LdapService
+ * <p>Class that generates and executes search methods for LdapService</p>
  * 
  * @author Genevieve Turner
  *
@@ -153,7 +152,7 @@ public class LdapSearch {
 			query.addApproximateAttribute(LdapAttribute.SURNAME, surname);
 		}
 		List<String> combinedResults = new ArrayList<String>();
-		LOGGER.info("Query: {}", query.toString());
+		LOGGER.debug("Query: {}", query.toString());
 		Attributes[] results = ldapConnection_.search(peopleConnectionData_, query.toString(), returnFields);
 		combineResults(results, combinedResults);
 		
@@ -164,7 +163,7 @@ public class LdapSearch {
 		if (hasSurname) {
 			query.addPartialAttribute(LdapAttribute.SURNAME, surname);
 		}
-		LOGGER.info("Query: {}", query.toString());
+		LOGGER.debug("Query: {}", query.toString());
 		results = ldapConnection_.search(peopleConnectionData_, query.toString(), returnFields);
 		combineResults(results, combinedResults);
 		
@@ -175,7 +174,7 @@ public class LdapSearch {
 		if (hasSurname) {
 			query.addApproximateAttribute(LdapAttribute.SURNAME, surname);
 		}
-		LOGGER.info("Query: {}", query.toString());
+		LOGGER.debug("Query: {}", query.toString());
 		results = ldapConnection_.search(peopleConnectionData_, query.toString(), returnFields);
 		combineResults(results, combinedResults);
 		
@@ -186,7 +185,7 @@ public class LdapSearch {
 		if (hasSurname) {
 			query.addPartialAttribute(LdapAttribute.SURNAME, surname);
 		}
-		LOGGER.info("Query: {}", query.toString());
+		LOGGER.debug("Query: {}", query.toString());
 		results = ldapConnection_.search(peopleConnectionData_, query.toString(), returnFields);
 		combineResults(results, combinedResults);
 		
@@ -215,7 +214,7 @@ public class LdapSearch {
 	 * Find information about the person with the given university id
 	 * 
 	 * @param uniID The university
-	 * @return 
+	 * @return Attributes of the person associated with the given university id
 	 * @throws NamingException
 	 */
 	public String[] searchUniversityId(String uniID) throws NamingException {
@@ -311,7 +310,7 @@ public class LdapSearch {
 		Attributes[] results = ldapConnection_.search(peopleConnectionData_, query.toString(), returnFields, 0, 0, SearchControls.ONELEVEL_SCOPE);
 		LOGGER.debug("After find ids");
 		if (results != null) {
-			LOGGER.info("Number of results: {}", results.length);
+			LOGGER.debug("Number of results: {}", results.length);
 		}
 		StringBuilder ids = null;
 		String[] uniIDs = new String[results.length];

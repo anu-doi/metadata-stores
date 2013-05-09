@@ -32,11 +32,12 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 /**
- * ResearchOutputsLevel2
  * 
- * The Australian National University
+ * <p>ResearchOutputsLevel2<p>
  * 
- * Entity class for the research_outputs_level_2 table
+ * <p>The Australian National University</p>
+ * 
+ * <p>Entity class for the <i>research_outputs_level_2</i> table</p>
  * 
  * @author Rainbow Cai
  * @author Genevieve Turner

@@ -22,11 +22,11 @@
 package au.edu.anu.metadatastores.services.aries;
 
 /**
- * PublicationImpl
+ * <p>PublicationImpl<p>
  * 
- * The Australian National University
+ * <p>The Australian National University</p>
  * 
- * Implementation class for publication information
+ * <p>Implementation class for publication information</p>
  * 
  * @author Rainbow Cai
  * @author Genevieve Turner
@@ -77,7 +77,7 @@ public class PublicationImpl implements Publication {
 	/**
 	 * Set the university/external reference numbers of the publications authors
 	 * 
-	 * @param author The authors
+	 * @param authors The authors
 	 */
 	public void setAuthors(String[] authors) {
 		this.authors = authors;
@@ -95,7 +95,7 @@ public class PublicationImpl implements Publication {
 	/**
 	 * Set the title of the publication
 	 * 
-	 * @param publicationTitle
+	 * @param publicationTitle The title of the publication
 	 */
 	public void setPublicationTitle(String publicationTitle) {
 		this.publicationTitle = publicationTitle;
@@ -113,7 +113,7 @@ public class PublicationImpl implements Publication {
 	/**
 	 * Set the name of the journal, conference, or book in which the publication occurred
 	 * 
-	 * @param publicationName
+	 * @param publicationName The name of the publication
 	 */
 	public void setPublicationName(String publicationName) {
 		this.publicationName = publicationName;
@@ -212,7 +212,7 @@ public class PublicationImpl implements Publication {
 	/**
 	 * Get the second field of research subject
 	 * 
-	 * @return The  field of research subject
+	 * @return The field of research subject
 	 */
 	public Subject getForSubject2() {
 		return forSubject2;

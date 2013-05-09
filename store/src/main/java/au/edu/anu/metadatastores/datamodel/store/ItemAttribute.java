@@ -42,11 +42,11 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 
 /**
- * ItemAttribute
+ * <p>ItemAttribute<p>
  * 
- * The Australian National University
+ * <p>The Australian National University</p>
  * 
- * Entity class for the item_attribute table
+ * <p>Entity class for the <i>item_attribute</i> table</p>
  * 
  * @author Genevieve Turner
  *

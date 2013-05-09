@@ -38,11 +38,12 @@ import org.slf4j.LoggerFactory;
 
 import com.sun.jersey.api.view.Viewable;
 
-
 /**
- * ReportResource
+ * <p>ReportResource<p>
  * 
- * The Australian National University
+ * <p>The Australian National University</p>
+ * 
+ * <p>Resource class to serve reports</p>
  * 
  * @author Genevieve Turner
  *
@@ -50,8 +51,6 @@ import com.sun.jersey.api.view.Viewable;
 @Path("report")
 public class ReportResource {
 	static final Logger LOGGER = LoggerFactory.getLogger(ReportResource.class);
-	/*@GET
-	@Produces(MediaType.TEXT_HTML)*/
 	
 	/**
 	 * Get the report page

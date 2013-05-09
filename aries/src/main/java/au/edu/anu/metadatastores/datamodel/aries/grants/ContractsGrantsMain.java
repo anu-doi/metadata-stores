@@ -37,15 +37,15 @@ import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 
 /**
- * ContractsGrantsMain
  * 
- * The Australian National University
+ * <p>ContractsGrantsMain<p>
  * 
- * Entity class for the contract_grants_main table
+ * <p>The Australian National University</p>
+ * 
+ * <p>Entity class for the <i>contract_grants_main</i> table</p>
  * 
  * @author Rainbow Cai
  * @author Genevieve Turner
- *
  */
 @Entity
 @Table(name = "contracts_grants_main")

@@ -38,11 +38,11 @@ import au.edu.anu.metadatastores.datamodel.store.ItemAttribute;
 import au.edu.anu.metadatastores.datamodel.store.ext.StoreAttributes;
 
 /**
- * PersonItem
+ * <p>PersonItem<p>
  * 
- * The Australian National University
+ * <p>The Australian National University</p>
  * 
- * The item for people
+ * <p>The item for people</p>
  * 
  * @author Genevieve Turner
  *

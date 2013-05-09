@@ -31,26 +31,23 @@ import javax.naming.directory.DirContext;
 import javax.naming.directory.InitialDirContext;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
-import javax.naming.ldap.Control;
-import javax.naming.ldap.PagedResultsResponseControl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * LdapConnection
  * 
- * The Australian National University
+ * <p>LdapConnection<p>
  * 
- * Connection classs that searches ldap
+ * <p>The Australian National University</p>
+ * 
+ * <p>Connection classs that searches ldap</p>
  * 
  * @author Genevieve Turner
  *
  */
 public class LdapConnection {
 	static final Logger LOGGER = LoggerFactory.getLogger(LdapConnection.class);
-
-//	private static final int pageSize = 10;
 	
 	private static LdapConnection singleton_;
 	
