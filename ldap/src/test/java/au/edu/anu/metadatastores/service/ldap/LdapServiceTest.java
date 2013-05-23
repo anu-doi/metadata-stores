@@ -1,6 +1,7 @@
 package au.edu.anu.metadatastores.service.ldap;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -29,7 +30,8 @@ public class LdapServiceTest {
 			LOGGER.info("Number: {}, Potential UIDS: {}", possibleUIDs.length, arrayToString(possibleUIDs));
 			String surname = ldapService.getANUPartyLdapInfo("u5125986", LdapAttribute.SURNAME);
 			assertNotNull("There is no surname for the given uid", surname);
-			LOGGER.info("Surname: {}", surname);
+			assertEquals("The surname was not the expected result", "Turner", surname);
+			//LOGGER.info("Surname: {}", surname);
 			String[] firstnames = ldapService.getANUPartyLdapInfo(new String[] {"u5125986","a357820"}, LdapAttribute.FIRSTNAME);
 			assertNotNull("There are no given names for the list of uids", firstnames);
 			assertTrue("There is not the correct number of records", firstnames.length == 2);

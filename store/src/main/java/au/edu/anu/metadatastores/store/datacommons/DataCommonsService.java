@@ -53,16 +53,6 @@ import au.edu.anu.metadatastores.store.misc.Mappings;
 import au.edu.anu.metadatastores.store.properties.StoreProperties;
 
 /**
- * DataCommonsService
- * 
- * The Australian National University
- * 
- * Service to provide updates to Data Commons records
- * 
- * @author Genevieve Turner
- *
- */
-/**
  * <p>DataCommonsService<p>
  * 
  * <p>The Australian National University</p>
@@ -402,6 +392,7 @@ public class DataCommonsService extends DublinCoreService {
 	 * 
 	 * @param item The item to add relationships to
 	 * @param relationParts The relationship parts
+	 * @param itemRelations The existing item relations
 	 * @param session The session
 	 * @param fundsPrefix The prefix of the grant
 	 * @param fundsProvider The name of the funds provider
@@ -432,13 +423,6 @@ public class DataCommonsService extends DublinCoreService {
 		}
 	}
 	
-	/**
-	 * Set the National Library of Australia relationships
-	 * 
-	 * @param item The item to add the relationships to
-	 * @param relationParts The relationship parts
-	 * @param session The session object
-	 */
 	/**
 	 * Set the National Library of Australia relationships
 	 * 
@@ -477,7 +461,7 @@ public class DataCommonsService extends DublinCoreService {
 	 * 
 	 * @param item The dublin core item to set the relation for
 	 * @param dublinCore the dublin core to set relations for
-	 * @param session The hibernate session
+	 * @param session2 The hibernate session
 	 */
 	protected void setReverseRelations(DublinCoreItem item, DublinCore dublinCore, Session session2) {
 		Session session = StoreHibernateUtil.getSessionFactory().openSession();

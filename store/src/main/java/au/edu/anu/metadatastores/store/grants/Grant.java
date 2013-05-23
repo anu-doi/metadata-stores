@@ -22,11 +22,14 @@
 package au.edu.anu.metadatastores.store.grants;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import au.edu.anu.metadatastores.datamodel.store.ext.StoreAttributes;
 import au.edu.anu.metadatastores.store.misc.Subject;
 import au.edu.anu.metadatastores.store.people.Person;
 
@@ -51,6 +54,7 @@ public class Grant {
 	private String status;
 	private String fundsProvider;
 	private String referenceNumber;
+	private String description;
 	private List<Subject> anzforSubjects = new ArrayList<Subject>();
 	
 	/**
@@ -222,6 +226,24 @@ public class Grant {
 	 */
 	public void setReferenceNumber(String referenceNumber) {
 		this.referenceNumber = referenceNumber;
+	}
+
+	/**
+	 * Get the grant description
+	 * 
+	 * @return The description
+	 */
+	public String getDescription() {
+		return description;
+	}
+
+	/**
+	 * Set the grant description
+	 * 
+	 * @param description The description
+	 */
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	/**

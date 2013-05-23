@@ -32,16 +32,6 @@ import au.edu.anu.metadatastores.datamodel.aries.grants.ContractsGrantsDepartmen
 import au.edu.anu.metadatastores.datamodel.aries.grants.Departments;
 
 /**
- * DepartmentId
- * 
- * The Australian National University
- * 
- * Retrieves information about departments
- * 
- * @author Genevieve Turner
- *
- */
-/**
  * 
  * <p>DepartmentId<p>
  * 

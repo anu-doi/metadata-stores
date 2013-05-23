@@ -31,17 +31,6 @@ import org.slf4j.LoggerFactory;
 import au.edu.anu.metadatastores.util.properties.PropertyLoader;
 
 /**
- * AriesService
- * 
- * The Australian National University
- * 
- * Service class for aries methods.  It provides external access to aries information
- * 
- * @author Rainbow Cai
- * @author Genevieve Turner
- *
- */
-/**
  * <p>AriesService<p>
  * 
  * <p>The Australian National University</p>

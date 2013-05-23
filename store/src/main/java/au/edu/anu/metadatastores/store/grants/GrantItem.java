@@ -58,6 +58,7 @@ public class GrantItem extends Item {
 	private List<ItemAttribute> firstInvestigatorIds = new ArrayList<ItemAttribute>();
 	private List<ItemAttribute> fundsProviders = new ArrayList<ItemAttribute>();
 	private List<ItemAttribute> referenceNumbers = new ArrayList<ItemAttribute>();
+	private List<ItemAttribute> descriptions = new ArrayList<ItemAttribute>();
 	private List<ItemAttribute> anzforSubjects = new ArrayList<ItemAttribute>() ;
 	
 	/**
@@ -218,6 +219,26 @@ public class GrantItem extends Item {
 	 */
 	public void setReferenceNumbers(List<ItemAttribute> referenceNumbers) {
 		this.referenceNumbers = referenceNumbers;
+	}
+
+	/**
+	 * Get the grant descriptions
+	 * 
+	 * @return The description
+	 */
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "item")
+	@Filter(name="attributes", condition="attr_type = '"+ StoreAttributes.DESCRIPTION + "'")
+	public List<ItemAttribute> getDescriptions() {
+		return descriptions;
+	}
+
+	/**
+	 * Set the grant description
+	 * 
+	 * @param descriptions The description
+	 */
+	public void setDescriptions(List<ItemAttribute> descriptions) {
+		this.descriptions = descriptions;
 	}
 
 	/**

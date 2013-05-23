@@ -21,6 +21,9 @@
 
 package au.edu.anu.metadatastores.datamodel.aries.grants;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertEquals;
+
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.junit.Test;
@@ -43,7 +46,7 @@ public class ForCodesTest {
 	static final Logger LOGGER = LoggerFactory.getLogger(ForCodesTest.class);
 
 	/**
-	 * Queries for the fiels of research in the database and prints them out
+	 * Queries for the fields of research in the database and prints them out
 	 */
 	@Test
 	public void test() {
@@ -53,17 +56,14 @@ public class ForCodesTest {
 		query.setParameter("code", "111706");
 		
 		ForCodes forSubject = (ForCodes) query.uniqueResult();
-		if (forSubject != null) {
-			LOGGER.info("Subject: {}, Division: {}, Group: {}, Class: {}", new Object[] {forSubject.getChrForDescription(), forSubject.getChrForDivisionCode()
-					, forSubject.getChrForGroupCode(), forSubject.getChrForObjectiveCode()});
-		}
-		else {
-			LOGGER.info("No subject found");
-		}
+		
+		assertNotNull("No Field of Research Found", forSubject);
+		assertEquals("No subject description found", "Epidemiology", forSubject.getChrForDescription());
+		assertEquals("No subject division code found", "11", forSubject.getChrForDivisionCode());
+		assertEquals("No subject group code found", "1117", forSubject.getChrForGroupCode());
+		assertEquals("No subject objective code found", "111706", forSubject.getChrForObjectiveCode());
 		
 		session.close();
-		
-		//fail("Not yet implemented");
 	}
 
 }

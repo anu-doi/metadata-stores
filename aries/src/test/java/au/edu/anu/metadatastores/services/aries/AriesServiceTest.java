@@ -1,7 +1,5 @@
 package au.edu.anu.metadatastores.services.aries;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,14 +8,7 @@ public class AriesServiceTest {
 	static final Logger LOGGER = LoggerFactory.getLogger(AriesServiceTest.class);
 
 	AriesService ariesService = AriesService.getSingleton();
-
-	@Before
-	public void setUp() throws Exception {
-	}
-
-	@After
-	public void tearDown() throws Exception {
-	}
+	
 /*
 	@Test
 	public void test() {

@@ -1,5 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>au.edu.anu.metadatastores</groupId>
@@ -14,7 +14,14 @@
 		<module>store</module>
 		<module>stores-harvester</module>
 		<module>util</module>
+		<module>ands</module>
 	</modules>
+	
+	<properties>
+		<slf4j.api.version>1.7.2</slf4j.api.version>
+		<slf4j.log4j.version>1.7.2</slf4j.log4j.version>
+		<junit.version>4.10</junit.version>
+	</properties>
 	
 	<build>
 		<plugins>

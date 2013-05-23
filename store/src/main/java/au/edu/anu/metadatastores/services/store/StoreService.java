@@ -215,6 +215,26 @@ public class StoreService {
 	}
 	
 	/**
+	 * Get the grants with the values in the attributes
+	 * 
+	 * @param attributes The attributes to search on
+	 * @return The list of grants
+	 */
+	public List<Grant> getGrantsByAttributes(Map<String, String> attributes) {
+		return grantService_.queryGrantsByAttributes(attributes);
+	}
+	
+	/**
+	 * Get the grant with the given id
+	 * 
+	 * @param grantId The grant id
+	 * @return The grant
+	 */
+	public Grant getGrant(String grantId) {
+		return grantService_.getGrant(grantId);
+	}
+	
+	/**
 	 * Perform command line actions for people
 	 * 
 	 * @param line The command line arguments

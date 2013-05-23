@@ -49,6 +49,7 @@ public class PublicationIdTest {
 			LOGGER.info("ID: {}, Title: {}, Name: {}, Type: {}, Category: {}", new Object[] {pub.getAriesId(), pub.getPublicationTitle(), pub.getPublicationName(), pub.getPublicationType(), pub.getPublicationCategory()});
 		}
 		LOGGER.info("Retrieval of Publications Finished. Number of Publications: {}", publications.length);
+		System.out.println("Test Complete");
 	}
 
 }

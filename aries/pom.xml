@@ -10,6 +10,12 @@
   <name>aries</name>
   <url>http://maven.apache.org</url>
 
+	<parent>	
+		<groupId>au.edu.anu.metadatastores</groupId>
+		<artifactId>metadata-stores</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
+
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
@@ -24,7 +30,7 @@
     <dependency>
     	<groupId>org.slf4j</groupId>
     	<artifactId>slf4j-api</artifactId>
-    	<version>1.7.2</version>
+    	<version>${slf4j.api.version}</version>
     </dependency>
     <!--
     <dependency>
@@ -41,7 +47,7 @@
     <dependency>
     	<groupId>org.slf4j</groupId>
     	<artifactId>slf4j-log4j12</artifactId>
-    	<version>1.7.2</version>
+    	<version>${slf4j.log4j.version}</version>
     	<scope>test</scope>
     </dependency>
     <dependency>

@@ -24,6 +24,8 @@ package au.edu.anu.metadatastores.store.grants;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -36,6 +38,7 @@ import au.edu.anu.metadatastores.datamodel.store.ItemAttribute;
 import au.edu.anu.metadatastores.datamodel.store.ItemRelation;
 import au.edu.anu.metadatastores.datamodel.store.ItemRelationId;
 import au.edu.anu.metadatastores.datamodel.store.ext.StoreAttributes;
+import au.edu.anu.metadatastores.services.ands.ANDSService;
 import au.edu.anu.metadatastores.services.aries.ANUActivity;
 import au.edu.anu.metadatastores.services.aries.AriesService;
 import au.edu.anu.metadatastores.services.store.StoreHibernateUtil;
@@ -44,6 +47,7 @@ import au.edu.anu.metadatastores.store.misc.Subject;
 import au.edu.anu.metadatastores.store.people.Person;
 import au.edu.anu.metadatastores.store.people.PersonItem;
 import au.edu.anu.metadatastores.store.people.PersonService;
+import au.edu.anu.metadatastores.store.properties.StoreProperties;
 
 /**
  * <p>GrantService<p>
@@ -61,6 +65,12 @@ public class GrantService extends AbstractItemService {
 	private static GrantService singleton_;
 	private AriesService ariesService_ = AriesService.getSingleton();
 	private PersonService personService_ = PersonService.getSingleton();
+	private ANDSService andsService_ = ANDSService.getSingleton();
+
+	private static final String ARC_FUNDS_PROVIDER = StoreProperties.getProperty("arc.grant.title");
+	private static final String NHMRC_FUNDS_PROVIDER = StoreProperties.getProperty("nhmrc.grant.title");
+	private static final String ARC_PREFIX = StoreProperties.getProperty("arc.prefix");
+	private static final String NHMRC_PREFIX = StoreProperties.getProperty("nhmrc.prefix");
 	
 	/**
 	 * Main class to execute grants
@@ -145,10 +155,37 @@ public class GrantService extends AbstractItemService {
 				grant.getAnzforSubjects().add(subject);
 			}
 			
+			grant.setDescription(getDescription(grant));
+			
 			grants.add(grant);
 		}
 		
 		return grants;
+	}
+	
+	/**
+	 * Set the description.
+	 * 
+	 * The information for this field is retrieved from ANDS
+	 * 
+	 * @param grant The grant to retrieve the description for
+	 * @return The description
+	 */
+	private String getDescription(Grant grant) {
+		String description = null;
+		if (grant.getFundsProvider() != null && grant.getFundsProvider().trim().length() > 0 
+				&& grant.getReferenceNumber() != null && grant.getReferenceNumber().trim().length() > 0) {
+			if (ARC_FUNDS_PROVIDER.equals(grant.getFundsProvider())) {
+				String key = ARC_PREFIX + grant.getReferenceNumber();
+				description = andsService_.getActivityDescription(key);
+			}
+			else if (NHMRC_FUNDS_PROVIDER.equals(grant.getFundsProvider())) {
+				String key = NHMRC_PREFIX + grant.getReferenceNumber();
+				description = andsService_.getActivityDescription(key);
+			}
+		}
+		
+		return description;
 	}
 	
 	/**
@@ -216,6 +253,7 @@ public class GrantService extends AbstractItemService {
 		setSingleAttribute(item, item.getStatus(), grant.getStatus(), StoreAttributes.STATUS, session, lastModified, userUpdated);
 		setSingleAttribute(item, item.getFundsProviders(), grant.getFundsProvider(), StoreAttributes.FUNDS_PROVIDER, session, lastModified, userUpdated);
 		setSingleAttribute(item, item.getReferenceNumbers(), grant.getReferenceNumber(), StoreAttributes.REFERENCE_NUMBER, session, lastModified, userUpdated);
+		setSingleAttribute(item, item.getDescriptions(), grant.getDescription(), StoreAttributes.DESCRIPTION, session, lastModified, userUpdated);
 		
 		if (grant.getFirstInvestigator() != null) {
 			setSingleAttribute(item, item.getFirstInvestigatorIds(), grant.getFirstInvestigator().getExtId(), StoreAttributes.FIRST_INVESTIGATOR_ID, session, lastModified, userUpdated);
@@ -319,38 +357,36 @@ public class GrantService extends AbstractItemService {
 	 */
 	public Grant getGrant(GrantItem item) {
 		Grant grant = new Grant();
-		//String contractCode = getSingleAttributeValue(item.getContractCodes());
+		
 		String contractCode = getSingleAttributeValue(item, StoreAttributes.CONTRACT_CODE);
 		grant.setContractCode(contractCode);
 
-		//String title = getSingleAttributeValue(item.getGrantTitles());
 		String title = getSingleAttributeValue(item, StoreAttributes.TITLE);
 		grant.setTitle(title);
 		
-		//String startDate = getSingleAttributeValue(item.getStartDates());
 		String startDate = getSingleAttributeValue(item, StoreAttributes.START_DATE);
 		grant.setStartDate(startDate);
 		
-		//String endDate = getSingleAttributeValue(item.getEndDates());
 		String endDate = getSingleAttributeValue(item, StoreAttributes.END_DATE);
 		grant.setEndDate(endDate);
 		
-		//String status = getSingleAttributeValue(item.getStatus());
 		String status = getSingleAttributeValue(item, StoreAttributes.STATUS);
 		grant.setStatus(status);
 		
-		//String firstInvestigatorId = getSingleAttributeValue(item.getFirstInvestigatorIds());
 		String firstInvestigatorId = getSingleAttributeValue(item, StoreAttributes.FIRST_INVESTIGATOR_ID);
 		Person firstInvestigator = personService_.getBasicPerson(firstInvestigatorId);
 		grant.setFirstInvestigator(firstInvestigator);
 		
-		//String fundsProvider = getSingleAttributeValue(item.getFundsProviders());
 		String fundsProvider = getSingleAttributeValue(item, StoreAttributes.FUNDS_PROVIDER);
 		grant.setFundsProvider(fundsProvider);
 		
-		//String referenceNumber = getSingleAttributeValue(item.getReferenceNumbers());
 		String referenceNumber = getSingleAttributeValue(item, StoreAttributes.REFERENCE_NUMBER);
 		grant.setReferenceNumber(referenceNumber);
+		
+		String description = getSingleAttributeValue(item, StoreAttributes.DESCRIPTION);
+		grant.setDescription(description);
+		
+		LOGGER.debug("Number of subjects?: {}", item.getAnzforSubjects().size());
 		
 		for (ItemAttribute attr : item.getAnzforSubjects()) {
 			Subject subject = new Subject();
@@ -403,6 +439,7 @@ public class GrantService extends AbstractItemService {
 		
 		Query query = session.createQuery("SELECT grant FROM GrantItem grant, PersonItem person join person.itemRelationsForRelatedIid personRelation WHERE personRelation.itemByIid = grant and person.extId = :staffId");
 		query.setParameter("staffId", staffId);
+		@SuppressWarnings("unchecked")
 		List<GrantItem> grantItems = query.list();
 		List<Grant> grants = new ArrayList<Grant>();
 		Grant grant = null;
@@ -414,6 +451,65 @@ public class GrantService extends AbstractItemService {
 		}
 		
 		session.close();
+		
+		return grants;
+	}
+	
+	/**
+	 * Find grants with the given attributes and attribute values
+	 * 
+	 * @param attributes The attributes to query on
+	 * @return The grants
+	 */
+	public List<Grant> queryGrantsByAttributes(Map<String, String> attributes) {
+		List<Grant> grants = new ArrayList<Grant>();
+		Session session = StoreHibernateUtil.getSessionFactory().openSession();
+		session.enableFilter("attributes");
+
+		try {
+			List<String> parameters = new ArrayList<String>();
+			
+			StringBuilder fromString = new StringBuilder();
+			StringBuilder whereString = new StringBuilder();
+			
+			fromString.append(" FROM GrantItem gi");
+			whereString.append(" WHERE");
+			int i = 0;
+			for (Entry<String, String> entry : attributes.entrySet()) {
+				fromString.append(" LEFT JOIN gi.itemAttributes gia");
+				fromString.append(i);
+				if (i > 0) {
+					whereString.append(" AND");
+				}
+				whereString.append(" gia");
+				whereString.append(i);
+				whereString.append(".attrType = ? AND lower(gia");
+				whereString.append(i);
+				whereString.append(".attrValue) like ?");
+				parameters.add(entry.getKey());
+				parameters.add("%" + entry.getValue().toLowerCase() + "%");
+				
+				i++;
+			}
+			String queryString = "SELECT gi " + fromString.toString() + " " + whereString.toString();
+			LOGGER.info("Query: {}", queryString);
+			LOGGER.info("Number of parameters: {}", parameters.size());
+			Query query = session.createQuery(queryString);
+			for (i = 0; i < parameters.size(); i++) {
+				query.setParameter(i, parameters.get(i));
+			}
+			
+			@SuppressWarnings("unchecked")
+			List<GrantItem> grantItems = query.list();
+			Grant grant = null;
+			for (GrantItem grantItem : grantItems) {
+				grant = getGrant(grantItem);
+				grants.add(grant);
+			}
+		}
+		finally {
+			session.close();
+		}
 		
 		return grants;
 	}

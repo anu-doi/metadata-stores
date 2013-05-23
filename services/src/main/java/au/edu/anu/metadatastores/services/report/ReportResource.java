@@ -88,7 +88,6 @@ public class ReportResource {
 			throw new WebApplicationException(Response.status(500).entity("Exception processing report").build());
 		}
 		
-		//return Response.ok("Report Post").build();
 		return response;
 	}
 	
