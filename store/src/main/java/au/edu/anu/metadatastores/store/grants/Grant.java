@@ -22,13 +22,14 @@
 package au.edu.anu.metadatastores.store.grants;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import au.edu.anu.metadatastores.datamodel.store.annotations.ItemAttributeTrait;
+import au.edu.anu.metadatastores.datamodel.store.annotations.ItemTrait;
+import au.edu.anu.metadatastores.datamodel.store.annotations.TraitType;
 import au.edu.anu.metadatastores.datamodel.store.ext.StoreAttributes;
 import au.edu.anu.metadatastores.store.misc.Subject;
 import au.edu.anu.metadatastores.store.people.Person;
@@ -43,6 +44,7 @@ import au.edu.anu.metadatastores.store.people.Person;
  * @author Genevieve Turner
  *
  */
+@ItemTrait(extId="contractCode", title="title")
 @XmlRootElement(name="grant")
 public class Grant {
 	private String contractCode;
@@ -62,6 +64,7 @@ public class Grant {
 	 * 
 	 * @return The contract code
 	 */
+	@ItemAttributeTrait(attrType=StoreAttributes.CONTRACT_CODE, traitType=TraitType.STRING)
 	@XmlElement(name="contract-code")
 	public String getContractCode() {
 		return contractCode;
@@ -81,6 +84,7 @@ public class Grant {
 	 * 
 	 * @return The title
 	 */
+	@ItemAttributeTrait(attrType=StoreAttributes.TITLE, traitType=TraitType.STRING)
 	@XmlElement(name="title")
 	public String getTitle() {
 		return title;
@@ -100,6 +104,8 @@ public class Grant {
 	 * 
 	 * @return The first investigator
 	 */
+	//@ItemAttributeTrait(attrType=StoreAttributes.F)
+	//TODO figure out how to place the uid of the person for this field
 	@XmlElement(name="first-investigator")
 	public Person getFirstInvestigator() {
 		return firstInvestigator;
@@ -138,6 +144,7 @@ public class Grant {
 	 * 
 	 * @return THe start date
 	 */
+	@ItemAttributeTrait(attrType=StoreAttributes.START_DATE, traitType=TraitType.STRING)
 	@XmlElement(name="start-date")
 	public String getStartDate() {
 		return startDate;
@@ -157,6 +164,7 @@ public class Grant {
 	 * 
 	 * @return The end date
 	 */
+	@ItemAttributeTrait(attrType=StoreAttributes.END_DATE, traitType=TraitType.STRING)
 	@XmlElement(name="end-date")
 	public String getEndDate() {
 		return endDate;
@@ -176,6 +184,7 @@ public class Grant {
 	 * 
 	 * @return The status
 	 */
+	@ItemAttributeTrait(attrType=StoreAttributes.STATUS, traitType=TraitType.STRING)
 	@XmlElement(name="status")
 	public String getStatus() {
 		return status;
@@ -195,6 +204,7 @@ public class Grant {
 	 * 
 	 * @return The funds provider
 	 */
+	@ItemAttributeTrait(attrType=StoreAttributes.FUNDS_PROVIDER, traitType=TraitType.STRING)
 	@XmlElement(name="funds-provider")
 	public String getFundsProvider() {
 		return fundsProvider;
@@ -214,6 +224,7 @@ public class Grant {
 	 * 
 	 * @return The reference number
 	 */
+	@ItemAttributeTrait(attrType=StoreAttributes.REFERENCE_NUMBER, traitType=TraitType.STRING)
 	@XmlElement(name="reference-number")
 	public String getReferenceNumber() {
 		return referenceNumber;
@@ -233,6 +244,8 @@ public class Grant {
 	 * 
 	 * @return The description
 	 */
+	@ItemAttributeTrait(attrType=StoreAttributes.DESCRIPTION, traitType=TraitType.STRING)
+	@XmlElement(name="description")
 	public String getDescription() {
 		return description;
 	}
@@ -251,6 +264,8 @@ public class Grant {
 	 * 
 	 * @return The fields of research
 	 */
+	//TODO for subjects in attributes
+	@ItemAttributeTrait(attrType=StoreAttributes.FOR_SUBJECT, traitType=TraitType.SUBJECT_LIST)
 	@XmlElement(name="for-subject")
 	public List<Subject> getAnzforSubjects() {
 		return anzforSubjects;

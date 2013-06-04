@@ -22,6 +22,7 @@
 package au.edu.anu.metadatastores.store.datacommons;
 
 import java.io.StringReader;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -152,7 +153,6 @@ public class DataCommonsService extends DublinCoreService {
 		DataCommonsItem item = (DataCommonsItem) query.uniqueResult();
 		if (item == null) {
 			item = new DataCommonsItem();
-			item.setExtSystem(extSystem);
 			item.setExtId(content.getIdentifier());
 			session.save(item);
 		}
@@ -167,78 +167,21 @@ public class DataCommonsService extends DublinCoreService {
 			super.processRecord((DublinCoreItem) item, dublinCore, session, lastModified);
 		}
 		catch (JAXBException e) {
-			LOGGER.error("Exception transforming document");
+			LOGGER.error("Exception transforming document", e);
 		}
-
-		//session.flush();
+		catch (InvocationTargetException e) {
+			LOGGER.error("Error invoking method", e);
+		}
+		catch (IllegalAccessException e) {
+			LOGGER.error("Error accessing method", e);
+		}
+		
 		session.merge(item);
 		
 		LOGGER.debug("Item Numbers: {}", item.getItemAttributes().size());
 		
 		session.getTransaction().commit();
 		session.close();
-	}
-	
-	/**
-	 * Set the relations from the dublin core record provided
-	 * 
-	 * @param item The item to update
-	 * @param dublinCore The dublin core of the record
-	 * @param session The current active hibernate session
-	 * @param lastModified The modification date
-	 */
-	@Override
-	protected void setItemRelations(DublinCoreItem item, DublinCore dublinCore, Session session, Date lastModified) {
-		setRelationAttributes(item, item.getRelations(), dublinCore.getRelations(), session, StoreAttributes.RELATION, lastModified);
-	}
-	
-	/**
-	 * Set relation attributes
-	 * 
-	 * @param item The item to set attributes for
-	 * @param attributes The list of attributes currently recorded against the record
-	 * @param values The dublin core values
-	 * @param session The current active hibernate session
-	 * @param attrType The type of attribute to update
-	 * @param lastModified The modification date
-	 */
-	private void setRelationAttributes(DublinCoreItem item, List<ItemAttribute> attributes, List<String> values, Session session, String attrType, Date lastModified) {
-		List<ItemAttribute> removeItems = new ArrayList<ItemAttribute>();
-		List<String> addItems = new ArrayList<String>();
-		compareValues(values, attributes, removeItems, addItems);
-		updateRelationAttributes(item, removeItems, addItems, session, attrType, lastModified);
-	}
-	
-	/**
-	 * Update the relation attributes
-	 * 
-	 * @param item The item to update attributes of
-	 * @param removeItems The items to remove
-	 * @param addItems The items to add
-	 * @param session The current active session
-	 * @param attrType The attribute type
-	 * @param lastModified The modification date
-	 */
-	private void updateRelationAttributes(DublinCoreItem item, List<ItemAttribute> removeItems, List<String> addItems, Session session, String attrType, Date lastModified) {
-		removeAttributes(item, removeItems, session, lastModified);
-		
-		ItemAttribute attr = null;
-		for (String value : addItems) {
-			attr = new ItemAttribute(item, attrType, value, lastModified);
-			String[] relationParts = getRelationParts(value);
-			if (relationParts[0] != null && relationParts[0].trim().length() > 0) {
-				ItemAttribute typeAttr = new ItemAttribute(item, StoreAttributes.RELATION_TYPE, relationParts[0], lastModified);
-				typeAttr.setItemAttribute(attr);
-				attr.getItemAttributes().add(typeAttr);
-			}
-			if (relationParts[1] != null && relationParts[1].trim().length() > 0) {
-				ItemAttribute valueAttr = new ItemAttribute(item, StoreAttributes.RELATION_VALUE, relationParts[1], lastModified);
-				valueAttr.setItemAttribute(attr);
-				attr.getItemAttributes().add(valueAttr);
-			}
-			
-			item.getItemAttributes().add(attr);
-		}
 	}
 	
 	/**
@@ -344,6 +287,7 @@ public class DataCommonsService extends DublinCoreService {
 			query.setParameter("attrValue", relationPart.getValue());
 			LOGGER.debug("Item: {}, Value: {}", relationPart.getValue(), relationPart.getType());
 			
+			@SuppressWarnings("unchecked")
 			List<Item> relItems = query.list();
 			
 			String relationType = getRelationType(relationPart.getType());
@@ -410,6 +354,7 @@ public class DataCommonsService extends DublinCoreService {
 				LOGGER.debug("Is a Grant: {}", relationPart.getValue());
 				String id = relationPart.getValue().substring(prefixLength);
 				query.setParameter("refValue", id);
+				@SuppressWarnings("unchecked")
 				List<Item> grants = query.list();
 				String relationType = getRelationType(relationPart.getType());
 				for (Item grant : grants) {
@@ -442,6 +387,7 @@ public class DataCommonsService extends DublinCoreService {
 			if (relationPart.getValue().startsWith(nlaPrefix)) {
 				LOGGER.debug("Is a nla identifier: {}", relationPart.getValue());
 				query.setParameter("nlaValue", relationPart.getValue());
+				@SuppressWarnings("unchecked")
 				List<Item> people = query.list();
 				String relationType = getRelationType(relationPart.getType());
 				for (Item person : people) {
@@ -477,6 +423,7 @@ public class DataCommonsService extends DublinCoreService {
 		}
 		if (identifier != null) {
 			query.setParameter("attrValue", identifier);
+			@SuppressWarnings("unchecked")
 			List<ItemAttribute> relatedAttributes = query.list();
 			
 			LOGGER.debug("Number of reverse relationships: {}", relatedAttributes.size());

@@ -1,15 +1,15 @@
 package au.edu.anu.metadatastores.store.people;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import au.edu.anu.metadatastores.datamodel.store.ext.StoreAttributes;
+import au.edu.anu.metadatastores.store.misc.Subject;
 
 public class PersonServiceTest {
 	static final Logger LOGGER = LoggerFactory.getLogger(PersonServiceTest.class);
@@ -74,55 +74,58 @@ public class PersonServiceTest {
 		person.setUid("t1234569");
 		person.setGivenName("Some");
 		person.setSurname("Person");
-		person.setEmail("some.persona@anu.edu.au");
+		person.setEmail("some.person@anu.edu.au");
 		person.setAriesId("1234");
 		person.setOrganisationalUnit("ITS");
-		//person.setPhoneNumbers(Arrays.asList(new String[]{"51235", "52562"}));
+		person.setPhoneNumbers(Arrays.asList(new String[]{"54323", "52562"}));
 		person.setFaxNumbers(Arrays.asList(new String[]{"51230", "54352"}));
-		person.setJobTitle("Random Job");
+		person.setJobTitle("Random Job Title");
 		person.setStaffType("Academic Staff");
-		//person.setNlaId("http://nla.gov.au/1234");
+		//person.setNlaId("http://nla.gov.au/1235");
 		
 		List<Subject> subjects = new ArrayList<Subject>();
-		Subject subject = new Subject("10",null,"15%");
+		Subject subject = new Subject("10",null,"16%");
 		subjects.add(subject);
 		
-		subject = new Subject("20", "LANGUAGE, COMMUNICATION AND CULTURE","85%");
+		subject = new Subject("20", "LANGUAGE, COMMUNICATION AND CULTURE","84%");
 		subjects.add(subject);
 		
 		person.setAnzforSubjects(subjects);
 		personService_.savePerson(person);
+		Person person2 = personService_.getPerson("t1234569");
+		printPersonInfo(Arrays.asList(person2));
 		System.out.println("Done saving");
 	}*/
 	
 	/*@Test
 	public void updatePersonTest() {
 		
-//		Person person = personService_.fetchPersonInformation("u9909577");
+		Person person = personService_.fetchPersonInformation("u9909577");
 		//Person person = personService_.fetchPersonInformation("u5125986");
 		//Person person = personService_.fetchPersonInformation("u4034284");
-		Person person = personService_.fetchPersonInformation("u3882913");
+		//Person person = personService_.fetchPersonInformation("u3882913");
 		
 		personService_.savePerson(person);
 		
 		System.out.println("Done Updating");
 	}*/
 	
-	/*@Test
+	@Test
 	public void updateMultiplePeopleTest() {
-		String[] ids = new String[] {"u5125986","u4464261","u9909577","u4346971","u4039549","u4254847","u9802772","u4269066","u4016705",
-				"u9413939","u9708405","u4026567","u4548830","u8100493","u8100341","u4495610","u9614809","u8400184",
-				"u3872330","u4240521","u3171954","u4014066","u4002313","u9810300","u9210598","u4021832","u8406985",
-				"u4038535","u4050249","u4635999","u9909944","u4244719","u4199004","u4052332","u4269078","u3932860",
-				"u9407331","u9802669","u8600328","u9504681","u8904435","u4026213","u8406201","u9609912","u4487551",
-				"u9410731","u3548500","u8002356","u3928684","u9714433","u4485658","u3481417","u8712402","u8800157",
-				"u4791152","u4507277","u9814043","u4750648","u3789056","u4162881","u3551013","u4408050","u4881278",
-				"u9610698","u4047421"};
+		//String[] ids = new String[] {"u5125986","u4464261","u9909577","u4346971","u4039549","u4254847","u9802772","u4269066","u4016705",
+		//		"u9413939","u9708405","u4026567","u4548830","u8100493","u8100341","u4495610","u9614809","u8400184",
+		//		"u3872330","u4240521","u3171954","u4014066","u4002313","u9810300","u9210598","u4021832","u8406985",
+		//		"u4038535","u4050249","u4635999","u9909944","u4244719","u4199004","u4052332","u4269078","u3932860",
+		//		"u9407331","u9802669","u8600328","u9504681","u8904435","u4026213","u8406201","u9609912","u4487551",
+		//		"u9410731","u3548500","u8002356","u3928684","u9714433","u4485658","u3481417","u8712402","u8800157",
+		//		"u4791152","u4507277","u9814043","u4750648","u3789056","u4162881","u3551013","u4408050","u4881278",
+		//		"u9610698","u4047421"};
+		String[] ids = new String[] {"u4014066","u9909577","u3171954","u4750648","u3789056","u4791152","u4507277","u9814043","u4162881"};
 		for (String id : ids) {
 			Person person = personService_.fetchPersonInformation(id);
 			personService_.savePerson(person);
 		}
-	}*/
+	}
 	
 	/*@Test
 	public void updateExternalPersonTest() {
@@ -181,9 +184,10 @@ public class PersonServiceTest {
 	/*@Test
 	public void testFetchProfile() {
 		List<Person> people = personService_.getBasicPeople(Arrays.asList("u5125986"), false);
-		for (Person person : people) {
-			LOGGER.info("Person: {}, {} {}", new Object[] {person.getUid(), person.getGivenName(), person.getSurname()});
-		}
+		//for (Person person : people) {
+			//LOGGER.info("Person: {}, {} {}", new Object[] {person.getUid(), person.getGivenName(), person.getSurname()});
+		printPersonInfo(people);
+		//}
 		LOGGER.info("Done");
 	}*/
 	/*
@@ -204,15 +208,8 @@ public class PersonServiceTest {
 		}
 		session.close();
 	}*/
+	
 	/*@Test
-	public void testQueryPeople() {
-		//List<Person> people = personService_.queryPersonByName("Genevieve", "Turner");
-		List<Person> people = personService_.queryPersonByEmail("genevieve.turner@anu.edu.au");
-		for (Person person : people) {
-			LOGGER.info("Name: {}, Email: {}", new Object[]{person.getDisplayName(), person.getEmail()});
-		}
-	}*/
-	@Test
 	public void testQueryMap() {
 		Map<String, String> values = new HashMap<String, String>();
 		values.put(StoreAttributes.EMAIL, "genevieve.turner@anu.edu.au");
@@ -224,12 +221,12 @@ public class PersonServiceTest {
 		values.put(StoreAttributes.SURNAME, "Turner");
 		people = personService_.queryPersonByAttributes(values);
 		printPersonInfo(people);
-	}
+	}*/
 	
 	private void printPersonInfo(List<Person> people) {
 		LOGGER.info("List of people:");
 		for (Person person : people) {
-			LOGGER.info("Name: {}, Email: {}", new Object[]{person.getDisplayName(), person.getEmail()});
+			LOGGER.info("Name: {}, Email: {}, Given Name: {}, Surname: {}, UID: {}", new Object[]{person.getDisplayName(), person.getEmail(), person.getGivenName(), person.getSurname(), person.getUid()});
 		}
 	}
 }

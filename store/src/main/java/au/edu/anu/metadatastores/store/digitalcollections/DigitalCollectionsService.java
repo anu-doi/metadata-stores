@@ -22,6 +22,7 @@
 package au.edu.anu.metadatastores.store.digitalcollections;
 
 import java.io.StringReader;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -173,8 +174,15 @@ public class DigitalCollectionsService extends DublinCoreService {
 			super.processRecord((DublinCoreItem) item, dublinCore, session, lastModified);
 		}
 		catch (JAXBException e) {
-			LOGGER.error("Exception transforming document");
+			LOGGER.error("Exception transforming document", e);
 		}
+		catch (InvocationTargetException e) {
+			LOGGER.error("Error invoking method", e);
+		}
+		catch (IllegalAccessException e) {
+			LOGGER.error("Error accessing method", e);
+		}
+		
 		session.merge(item);
 		
 		LOGGER.info("Item Numbers: {}", item.getItemAttributes().size());

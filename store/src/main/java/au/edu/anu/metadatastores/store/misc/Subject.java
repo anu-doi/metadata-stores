@@ -23,6 +23,10 @@ package au.edu.anu.metadatastores.store.misc;
 
 import javax.xml.bind.annotation.XmlElement;
 
+import au.edu.anu.metadatastores.datamodel.store.annotations.ItemAttributeTrait;
+import au.edu.anu.metadatastores.datamodel.store.annotations.TraitType;
+import au.edu.anu.metadatastores.datamodel.store.ext.StoreAttributes;
+
 /**
  * <p>Subject<p>
  * 
@@ -67,6 +71,7 @@ public class Subject {
 	 * 
 	 * @return The code
 	 */
+	@ItemAttributeTrait(attrType=StoreAttributes.FOR_CODE, traitType=TraitType.STRING)
 	@XmlElement(name=CODE)
 	public String getCode() {
 		return code_;
@@ -85,6 +90,7 @@ public class Subject {
 	 * 
 	 * @return The value/description
 	 */
+	@ItemAttributeTrait(attrType=StoreAttributes.FOR_VALUE, traitType=TraitType.STRING)
 	@XmlElement(name=VALUE)
 	public String getValue() {
 		return value_;
@@ -104,6 +110,7 @@ public class Subject {
 	 * 
 	 * @return The percentage
 	 */
+	@ItemAttributeTrait(attrType=StoreAttributes.FOR_PERCENT, traitType=TraitType.STRING)
 	@XmlElement(name=PERCENTAGE)
 	public String getPercentage() {
 		return percentage_;

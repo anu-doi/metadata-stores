@@ -24,9 +24,7 @@ package au.edu.anu.metadatastores.store.publication;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -34,9 +32,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import au.edu.anu.metadatastores.datamodel.store.Item;
-import au.edu.anu.metadatastores.datamodel.store.ItemAttribute;
 import au.edu.anu.metadatastores.datamodel.store.ItemRelation;
 import au.edu.anu.metadatastores.datamodel.store.ItemRelationId;
+import au.edu.anu.metadatastores.datamodel.store.annotations.ItemTraitParser;
 import au.edu.anu.metadatastores.datamodel.store.ext.StoreAttributes;
 import au.edu.anu.metadatastores.services.aries.AriesService;
 import au.edu.anu.metadatastores.services.store.StoreHibernateUtil;
@@ -62,7 +60,7 @@ public class PublicationService extends AbstractItemService {
 	
 	private static PublicationService singleton_;
 	
-	PersonService personService = PersonService.getSingleton();
+	PersonService personService_ = PersonService.getSingleton();
 	AriesService ariesService_ = AriesService.getSingleton();
 	
 	/**
@@ -141,7 +139,6 @@ public class PublicationService extends AbstractItemService {
 		publication.setCategory(ariesPublication.getPublicationCategory());
 		publication.setISBN(ariesPublication.getISBN());
 		publication.setISSN(ariesPublication.getISSN());
-		//LOGGER.info("Publication ID: {}", publication.getAriesId());
 		
 		Person author = null;
 		for (String id : ariesPublication.getAuthors()) {
@@ -253,12 +250,23 @@ public class PublicationService extends AbstractItemService {
 		session.beginTransaction();
 		session.enableFilter("attributes");
 		
-		//TODO note this may need to be updated if we retrieve publications from other systems without an aries id
+		//note this may need to be updated if we retrieve publications from other systems without an aries id
 		Query query = session.createQuery("SELECT pi FROM PublicationItem as pi inner join pi.itemAttributes as pia WHERE pia.attrType = :attrType and pia.attrValue = :attrValue");
 		query.setParameter("attrType", StoreAttributes.ARIES_ID);
 		query.setParameter("attrValue", publication.getAriesId());
 		
 		PublicationItem item = (PublicationItem) query.uniqueResult();
+		
+
+		Date lastModified = new Date();
+		ItemTraitParser parser = new ItemTraitParser();
+		Item newItem = null;
+		try {
+			newItem = parser.getItem(publication, lastModified);
+		}
+		catch (Exception e) {
+			LOGGER.error("Exception transforming grant to an item", e);
+		}
 		
 		if (item == null) {
 			item = new PublicationItem();
@@ -271,17 +279,7 @@ public class PublicationService extends AbstractItemService {
 		else if (publication.getTitle() != null && publication.getTitle().trim().length() > 0) {
 			item.setTitle(publication.getTitle());
 		}
-		Date lastModified = new Date();
-		
-		setSingleAttribute(item, item.getAriesIds(), publication.getAriesId(), StoreAttributes.ARIES_ID, session, lastModified, userUpdated);
-		setSingleAttribute(item, item.getTypes(), publication.getType(), StoreAttributes.TYPE, session, lastModified, userUpdated);
-		setSingleAttribute(item, item.getPublicationTitles(), publication.getTitle(), StoreAttributes.TITLE, session, lastModified, userUpdated);
-		setSingleAttribute(item, item.getYears(), publication.getYear(), StoreAttributes.YEAR, session, lastModified, userUpdated);
-		setSingleAttribute(item, item.getPublicationNames(), publication.getPublicationName(), StoreAttributes.PUBLICATION_NAME, session, lastModified, userUpdated);
-		setSingleAttribute(item, item.getCategories(), publication.getCategory(), StoreAttributes.CATEGORY, session, lastModified, userUpdated);
-		setSingleAttribute(item, item.getIsbns(), publication.getISBN(), StoreAttributes.ISBN, session, lastModified, userUpdated);
-		setSingleAttribute(item, item.getIssns(), publication.getISSN(), StoreAttributes.ISSN, session, lastModified, userUpdated);
-		setForSubjectsForSave(item, item.getAnzforSubjects(), publication.getAnzforSubjects(), session, lastModified, userUpdated);
+		updateAttributesFromItem(item, newItem, session, lastModified);
 		
 		//TODO remove people who are no longer related
 		Item personItem = null;
@@ -289,7 +287,7 @@ public class PublicationService extends AbstractItemService {
 		ItemRelationId id = null;
 		List<Item> peopleItems = new ArrayList<Item>();
 		for (Person person : publication.getAuthors()) {
-			personItem = personService.getPersonItem(person.getUid());
+			personItem = personService_.getPersonItem(person.getUid());
 			if (personItem != null) {
 				peopleItems.add(personItem);
 			}
@@ -367,7 +365,8 @@ public class PublicationService extends AbstractItemService {
 		query.setParameter("extSystem", "PERSON");
 		query.setParameter("givenName", givenName.toLowerCase() + "%");
 		query.setParameter("surname", surname.toLowerCase());
-		
+
+		@SuppressWarnings("unchecked")
 		List<PersonItem> people = query.list();
 		
 		session.close();
@@ -417,11 +416,12 @@ public class PublicationService extends AbstractItemService {
 		Query query = session.createQuery("SELECT DISTINCT pub FROM PublicationItem pub inner join pub.itemAttributes pubYear join fetch pub.itemAttributes attrs left join fetch attrs.itemAttributes WHERE pubYear.attrType = :yearType and pubYear.attrValue = :yearValue");
 		query.setParameter("yearType", StoreAttributes.YEAR);
 		query.setParameter("yearValue", year);
-		
+
+		@SuppressWarnings("unchecked")
 		List<PublicationItem> items = query.list();
 		Date endDate = new Date();
 		long difference = endDate.getTime() - startDate.getTime();
-		LOGGER.info("Time For Query: {}, Number of Records: {}", difference, items.size());
+		LOGGER.debug("Time For Query: {}, Number of Records: {}", difference, items.size());
 		
 		List<Publication> publications = new ArrayList<Publication>();
 		Publication publication = null;
@@ -429,7 +429,7 @@ public class PublicationService extends AbstractItemService {
 			publication = getPublication(item, true);
 			publications.add(publication);
 		}
-		LOGGER.info("Number of Publications: {}", items.size());
+		LOGGER.debug("Number of Publications: {}", items.size());
 		
 		session.close();
 		
@@ -451,6 +451,7 @@ public class PublicationService extends AbstractItemService {
 		
 		query.setParameter("extId", uid);
 		
+		@SuppressWarnings("unchecked")
 		List<PublicationItem> publicationItems = query.list();
 		
 		List<Publication> publications = new ArrayList<Publication>();
@@ -459,7 +460,7 @@ public class PublicationService extends AbstractItemService {
 			publications.add(publication);
 		}
 		
-		LOGGER.info("Number of publications: {}", publications.size());
+		LOGGER.debug("Number of publications: {}", publications.size());
 		
 		session.getTransaction().commit();
 		session.close();
@@ -486,69 +487,17 @@ public class PublicationService extends AbstractItemService {
 	 */
 	public Publication getPublication(PublicationItem item, boolean extraUserInfo) {
 		Publication publication = new Publication();
-		for (ItemAttribute attribute : item.getItemAttributes()) {
-			setAttribute(publication, attribute);
+		
+		ItemTraitParser traitParser = new ItemTraitParser();
+		try {
+			publication = (Publication) traitParser.getItemObject(item, Publication.class);
 		}
+		catch (Exception e) {
+			LOGGER.error("Exception getting publication", e);
+		}
+		
 		setRelations(publication, item);
-		/*for (ItemRelation relation : item.getItemRelationsForIid()) {
-			setRelation(publication, relation, extraUserInfo);
-		}*/
 		return publication;
-	}
-	
-	/**
-	 * Set the publication attributes
-	 * 
-	 * @param publication The publication
-	 * @param attribute The attribute
-	 */
-	private void setAttribute(Publication publication, ItemAttribute attribute) {
-		if (checkIfAttribute(attribute, StoreAttributes.ARIES_ID)) {
-			publication.setAriesId(attribute.getAttrValue());
-		}
-		else if (checkIfAttribute(attribute, StoreAttributes.TYPE)) {
-			publication.setType(attribute.getAttrValue());
-		}
-		else if (checkIfAttribute(attribute, StoreAttributes.TITLE)) {
-			publication.setTitle(attribute.getAttrValue());
-		}
-		else if (checkIfAttribute(attribute, StoreAttributes.YEAR)) {
-			publication.setYear(attribute.getAttrValue());
-		}
-		else if (checkIfAttribute(attribute, StoreAttributes.FIRST_AUTHOR_ID)) {
-			publication.setFirstAuthor(attribute.getAttrValue());
-		}
-		else if (checkIfAttribute(attribute, StoreAttributes.PUBLICATION_NAME)) {
-			publication.setPublicationName(attribute.getAttrValue());
-		}
-		else if (checkIfAttribute(attribute, StoreAttributes.CATEGORY)) {
-			publication.setCategory(attribute.getAttrValue());
-		}
-		else if (checkIfAttribute(attribute, StoreAttributes.ISBN)) {
-			publication.setISBN(attribute.getAttrValue());
-		}
-		else if (checkIfAttribute(attribute, StoreAttributes.ISSN)) {
-			publication.setISSN(attribute.getAttrValue());
-		}
-		else if (checkIfAttribute(attribute, StoreAttributes.FOR_SUBJECT)) {
-			Set<ItemAttribute> subjectAttrs = attribute.getItemAttributes();
-			Subject subject = new Subject();
-			Iterator<ItemAttribute> it = subjectAttrs.iterator();
-			ItemAttribute attr = null;
-			while(it.hasNext()) {
-				attr = it.next();
-				if (checkIfAttribute(attr, StoreAttributes.FOR_CODE)) {
-					subject.setCode(attr.getAttrValue());
-				}
-				else if (checkIfAttribute(attr, StoreAttributes.FOR_PERCENT)) {
-					subject.setPercentage(attr.getAttrValue());
-				}
-				else if (checkIfAttribute(attr, StoreAttributes.FOR_VALUE)) {
-					subject.setValue(attr.getAttrValue());
-				}
-			}
-			publication.getAnzforSubjects().add(subject);
-		}
 	}
 	
 	/**
@@ -559,7 +508,6 @@ public class PublicationService extends AbstractItemService {
 	 */
 	private void setRelations(Publication publication, PublicationItem item) {
 		//Get the authors
-	//	LOGGER.info("Get publication relations");
 		List<String> authorExtIds = new ArrayList<String>();
 		for (ItemRelation relation : item.getItemRelationsForIid()) {
 			if (relation.getId().getRelationValue().equals(StoreProperties.getProperty("publication.author.type"))){
@@ -567,20 +515,8 @@ public class PublicationService extends AbstractItemService {
 			}
 		}
 		if (authorExtIds.size() > 0) {
-			List<Person> authors = personService.getBasicPeople(authorExtIds, true);
+			List<Person> authors = personService_.getBasicPeople(authorExtIds, true);
 			publication.setAuthors(authors);
 		}
-	//	LOGGER.info("End Get publication relations");
-	}
-	
-	/**
-	 * Check if the attribute is of the given type
-	 * 
-	 * @param attribute The attribute to check
-	 * @param type The type to check
-	 * @return Whether the attribute has the given type
-	 */
-	private boolean checkIfAttribute(ItemAttribute attribute, String type) {
-		return attribute.getAttrType().equals(type);
 	}
 }

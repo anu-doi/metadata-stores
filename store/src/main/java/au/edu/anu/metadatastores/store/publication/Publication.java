@@ -27,6 +27,9 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import au.edu.anu.metadatastores.datamodel.store.annotations.ItemAttributeTrait;
+import au.edu.anu.metadatastores.datamodel.store.annotations.TraitType;
+import au.edu.anu.metadatastores.datamodel.store.ext.StoreAttributes;
 import au.edu.anu.metadatastores.store.misc.Subject;
 import au.edu.anu.metadatastores.store.people.Person;
 
@@ -59,6 +62,7 @@ public class Publication {
 	 * 
 	 * @return The aries id
 	 */
+	@ItemAttributeTrait(attrType=StoreAttributes.ARIES_ID, traitType=TraitType.STRING)
 	@XmlElement(name="aries-id")
 	public String getAriesId() {
 		return ariesId;
@@ -78,6 +82,7 @@ public class Publication {
 	 * 
 	 * @return The publication type
 	 */
+	@ItemAttributeTrait(attrType=StoreAttributes.TYPE, traitType=TraitType.STRING)
 	@XmlElement(name="type")
 	public String getType() {
 		return type;
@@ -97,6 +102,7 @@ public class Publication {
 	 * 
 	 * @return The title
 	 */
+	@ItemAttributeTrait(attrType=StoreAttributes.TITLE, traitType=TraitType.STRING)
 	@XmlElement(name="title")
 	public String getTitle() {
 		return title;
@@ -116,6 +122,7 @@ public class Publication {
 	 * 
 	 * @return The publication year
 	 */
+	@ItemAttributeTrait(attrType=StoreAttributes.YEAR, traitType=TraitType.STRING)
 	@XmlElement(name="publication-year")
 	public String getYear() {
 		return year;
@@ -135,6 +142,8 @@ public class Publication {
 	 * 
 	 * @return The first author
 	 */
+	//TODO double check this?
+	@ItemAttributeTrait(attrType=StoreAttributes.FIRST_AUTHOR_ID, traitType=TraitType.STRING)
 	@XmlElement(name="first-author")
 	public String getFirstAuthor() {
 		return firstAuthor;
@@ -154,6 +163,7 @@ public class Publication {
 	 * 
 	 * @return The publication name The name of the publication
 	 */
+	@ItemAttributeTrait(attrType=StoreAttributes.PUBLICATION_NAME, traitType=TraitType.STRING)
 	@XmlElement(name="publication-name")
 	public String getPublicationName() {
 		return publicationName;
@@ -192,6 +202,7 @@ public class Publication {
 	 * 
 	 * @return The category
 	 */
+	@ItemAttributeTrait(attrType=StoreAttributes.CATEGORY, traitType=TraitType.STRING)
 	@XmlElement(name="category")
 	public String getCategory() {
 		return category;
@@ -211,6 +222,7 @@ public class Publication {
 	 * 
 	 * @return The ISBN
 	 */
+	@ItemAttributeTrait(attrType=StoreAttributes.ISBN, traitType=TraitType.STRING)
 	@XmlElement(name="isbn")
 	public String getISBN() {
 		return ISBN;
@@ -230,6 +242,7 @@ public class Publication {
 	 * 
 	 * @return The ISSN
 	 */
+	@ItemAttributeTrait(attrType=StoreAttributes.ISSN, traitType=TraitType.STRING)
 	@XmlElement(name="issn")
 	public String getISSN() {
 		return ISSN;
@@ -249,6 +262,7 @@ public class Publication {
 	 * 
 	 * @return The fields of research
 	 */
+	@ItemAttributeTrait(attrType=StoreAttributes.FOR_SUBJECT, traitType=TraitType.SUBJECT_LIST)
 	@XmlElement(name="for-subject")
 	public List<Subject> getAnzforSubjects() {
 		return anzforSubjects;

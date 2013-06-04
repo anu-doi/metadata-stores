@@ -27,16 +27,12 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-/**
- * DublinCore
- * 
- * The Australian National University
- * 
- * Class to represent dublin core records
- * 
- * @author Genevieve Turner
- *
- */
+import au.edu.anu.metadatastores.datamodel.store.annotations.ItemAttributeTrait;
+import au.edu.anu.metadatastores.datamodel.store.annotations.ItemTrait;
+import au.edu.anu.metadatastores.datamodel.store.annotations.RelationTrait;
+import au.edu.anu.metadatastores.datamodel.store.annotations.TraitType;
+import au.edu.anu.metadatastores.datamodel.store.ext.StoreAttributes;
+
 /**
  * <p>DublinCore<p>
  * 
@@ -47,6 +43,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author Genevieve Turner
  *
  */
+@ItemTrait(title="titles")
 @XmlRootElement(name="dc", namespace=DublinCoreConstants.OAI_DC)
 public class DublinCore {
 	private List<String> titles = new ArrayList<String>();
@@ -70,6 +67,7 @@ public class DublinCore {
 	 * 
 	 * @return The titles
 	 */
+	@ItemAttributeTrait(attrType=StoreAttributes.TITLE, traitType=TraitType.STRING_LIST)
 	@XmlElement(name="title", namespace=DublinCoreConstants.DC)
 	public List<String> getTitles() {
 		return titles;
@@ -89,6 +87,7 @@ public class DublinCore {
 	 * 
 	 * @return The creators
 	 */
+	@ItemAttributeTrait(attrType=StoreAttributes.CREATOR, traitType=TraitType.STRING_LIST)
 	@XmlElement(name="creator", namespace=DublinCoreConstants.DC)
 	public List<String> getCreators() {
 		return creators;
@@ -108,6 +107,7 @@ public class DublinCore {
 	 * 
 	 * @return The subjects
 	 */
+	@ItemAttributeTrait(attrType=StoreAttributes.SUBJECT, traitType=TraitType.STRING_LIST)
 	@XmlElement(name="subject", namespace=DublinCoreConstants.DC)
 	public List<String> getSubjects() {
 		return subjects;
@@ -127,6 +127,7 @@ public class DublinCore {
 	 * 
 	 * @return The description
 	 */
+	@ItemAttributeTrait(attrType=StoreAttributes.DESCRIPTION, traitType=TraitType.STRING_LIST)
 	@XmlElement(name="description", namespace=DublinCoreConstants.DC)
 	public List<String> getDescriptions() {
 		return descriptions;
@@ -146,6 +147,7 @@ public class DublinCore {
 	 * 
 	 * @return The publishers
 	 */
+	@ItemAttributeTrait(attrType=StoreAttributes.PUBLISHER, traitType=TraitType.STRING_LIST)
 	@XmlElement(name="publisher", namespace=DublinCoreConstants.DC)
 	public List<String> getPublishers() {
 		return publishers;
@@ -165,6 +167,7 @@ public class DublinCore {
 	 * 
 	 * @return The contributors
 	 */
+	@ItemAttributeTrait(attrType=StoreAttributes.CONTRIBUTOR, traitType=TraitType.STRING_LIST)
 	@XmlElement(name="contributor", namespace=DublinCoreConstants.DC)
 	public List<String> getContributors() {
 		return contributors;
@@ -184,6 +187,7 @@ public class DublinCore {
 	 * 
 	 * @return The dates
 	 */
+	@ItemAttributeTrait(attrType=StoreAttributes.DATE, traitType=TraitType.STRING_LIST)
 	@XmlElement(name="date", namespace=DublinCoreConstants.DC)
 	public List<String> getDates() {
 		return dates;
@@ -203,6 +207,7 @@ public class DublinCore {
 	 * 
 	 * @return The types
 	 */
+	@ItemAttributeTrait(attrType=StoreAttributes.TYPE, traitType=TraitType.STRING_LIST)
 	@XmlElement(name="type", namespace=DublinCoreConstants.DC)
 	public List<String> getTypes() {
 		return types;
@@ -222,6 +227,7 @@ public class DublinCore {
 	 * 
 	 * @return The formats
 	 */
+	@ItemAttributeTrait(attrType=StoreAttributes.FORMAT, traitType=TraitType.STRING_LIST)
 	@XmlElement(name="format", namespace=DublinCoreConstants.DC)
 	public List<String> getFormats() {
 		return formats;
@@ -241,6 +247,7 @@ public class DublinCore {
 	 * 
 	 * @return The identifier
 	 */
+	@ItemAttributeTrait(attrType=StoreAttributes.IDENTIFIER, traitType=TraitType.STRING_LIST)
 	@XmlElement(name="identifier", namespace=DublinCoreConstants.DC)
 	public List<String> getIdentifiers() {
 		return identifiers;
@@ -260,6 +267,7 @@ public class DublinCore {
 	 * 
 	 * @return The sources
 	 */
+	@ItemAttributeTrait(attrType=StoreAttributes.SOURCE, traitType=TraitType.STRING_LIST)
 	@XmlElement(name="source", namespace=DublinCoreConstants.DC)
 	public List<String> getSources() {
 		return sources;
@@ -279,6 +287,7 @@ public class DublinCore {
 	 * 
 	 * @return The languages
 	 */
+	@ItemAttributeTrait(attrType=StoreAttributes.LANGUAGE, traitType=TraitType.STRING_LIST)
 	@XmlElement(name="language", namespace=DublinCoreConstants.DC)
 	public List<String> getLanguages() {
 		return languages;
@@ -298,6 +307,8 @@ public class DublinCore {
 	 * 
 	 * @return The relations
 	 */
+	@ItemAttributeTrait(attrType=StoreAttributes.RELATION, traitType=TraitType.RELATION_LIST)
+	@RelationTrait(partTypes={StoreAttributes.RELATION_TYPE, StoreAttributes.RELATION_VALUE}, delimiter="http")
 	@XmlElement(name="relation", namespace=DublinCoreConstants.DC)
 	public List<String> getRelations() {
 		return relations;
@@ -317,6 +328,7 @@ public class DublinCore {
 	 * 
 	 * @return The coverage
 	 */
+	@ItemAttributeTrait(attrType=StoreAttributes.COVERAGE, traitType=TraitType.STRING_LIST)
 	@XmlElement(name="coverage", namespace=DublinCoreConstants.DC)
 	public List<String> getCoverage() {
 		return coverage;
@@ -336,6 +348,7 @@ public class DublinCore {
 	 * 
 	 * @return The rights
 	 */
+	@ItemAttributeTrait(attrType=StoreAttributes.RIGHTS, traitType=TraitType.STRING_LIST)
 	@XmlElement(name="rights", namespace=DublinCoreConstants.DC)
 	public List<String> getRights() {
 		return rights;

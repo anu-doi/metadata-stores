@@ -24,11 +24,9 @@ package au.edu.anu.metadatastores.store.people;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -41,8 +39,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import au.edu.anu.metadatastores.datamodel.store.Item;
-import au.edu.anu.metadatastores.datamodel.store.ItemAttribute;
-import au.edu.anu.metadatastores.datamodel.store.ext.StoreAttributes;
+import au.edu.anu.metadatastores.datamodel.store.annotations.ItemTraitParser;
 import au.edu.anu.metadatastores.ldap.LdapPerson;
 import au.edu.anu.metadatastores.services.aries.ANUStaff;
 import au.edu.anu.metadatastores.services.aries.AriesService;
@@ -388,6 +385,7 @@ public class PersonService extends AbstractItemService {
 		query.setParameter("givenName", givenName.toLowerCase());
 		query.setParameter("surname", surname.toLowerCase());
 		
+		@SuppressWarnings("unchecked")
 		List<PersonItem> people = query.list();
 		if (people != null) {
 			LOGGER.debug("Number of people found in first query: {}", people.size());
@@ -402,10 +400,10 @@ public class PersonService extends AbstractItemService {
 			
 			people = query.list();
 			if (people != null) {
-				LOGGER.info("Number of people found in second query: {}", people.size());
+				LOGGER.debug("Number of people found in second query: {}", people.size());
 			}
 			else {
-				LOGGER.info("No people found in second query");
+				LOGGER.debug("No people found in second query");
 			}
 		}
 		
@@ -455,6 +453,7 @@ public class PersonService extends AbstractItemService {
 			query.setParameter(i, parameters.get(i));
 		}
 		
+		@SuppressWarnings("unchecked")
 		List<PersonItem> personItems = query.list();
 		
 		Person person = null;
@@ -540,6 +539,17 @@ public class PersonService extends AbstractItemService {
 		PersonItem item = (PersonItem) query.uniqueResult();
 		String title = person.getGivenName() + " " + person.getSurname();
 		
+		Date lastModified = new Date();
+		ItemTraitParser parser = new ItemTraitParser();
+		Item newItem = null;
+		
+		try {
+			newItem = parser.getItem(person, lastModified);
+		}
+		catch (Exception e) {
+			LOGGER.error("Exception transforming person to an item", e);
+		}
+		
 		if (item == null) {
 			item = new PersonItem();
 			item.setExtId(person.getExtId().toLowerCase());
@@ -550,24 +560,7 @@ public class PersonService extends AbstractItemService {
 			item.setTitle(title);
 		}
 		
-		Date lastModified = new Date();
-		setSingleAttribute(item, item.getUids(), person.getUid(), StoreAttributes.UNIVERSITY_ID, session, lastModified, userUpdated);
-		setSingleAttribute(item, item.getGivenNames(), person.getGivenName().trim(), StoreAttributes.GIVEN_NAME, session, lastModified, userUpdated);
-		setSingleAttribute(item, item.getSurnames(), person.getSurname().trim(), StoreAttributes.SURNAME, session, lastModified, userUpdated);
-		setSingleAttribute(item, item.getDisplayNames(), person.getDisplayName(), StoreAttributes.DISPLAY_NAME, session, lastModified, userUpdated);
-		setSingleAttribute(item, item.getAriesIds(), person.getAriesId(), StoreAttributes.ARIES_ID, session, lastModified, userUpdated);
-		setSingleAttribute(item, item.getEmailAddresses(), person.getEmail(), StoreAttributes.EMAIL, session, lastModified, userUpdated);
-		setMultipleAttribute(item, item.getPhoneNumbers(), person.getPhoneNumbers(), StoreAttributes.PHONE, session, lastModified, userUpdated);
-		setMultipleAttribute(item, item.getFaxNumbers(), person.getFaxNumbers(), StoreAttributes.FAX, session, lastModified, userUpdated);
-		setSingleAttribute(item, item.getJobTitles(), person.getJobTitle(), StoreAttributes.JOB_TITLE, session, lastModified, userUpdated);
-		setSingleAttribute(item, item.getPreferredNames(), person.getPreferredName(), StoreAttributes.PREFERRED_NAME, session, lastModified, userUpdated);
-		setSingleAttribute(item, item.getStaffType(), person.getStaffType(), StoreAttributes.STAFF_TYPE, session, lastModified, userUpdated);
-		setSingleAttribute(item, item.getOrganisationalUnits(), person.getOrganisationalUnit(), StoreAttributes.ORGANISATIONAL_UNIT, session, lastModified, userUpdated);
-		setSingleAttribute(item, item.getNlaIds(), person.getNlaId(), StoreAttributes.NLA_ID, session, lastModified, userUpdated);
-		setForSubjectsForSave(item, item.getAnzforSubjects(), person.getAnzforSubjects(), session, lastModified, userUpdated);
-		setSingleAttribute(item, item.getCountries(), person.getCountry(), StoreAttributes.COUNTRY, session, lastModified, userUpdated);
-		setSingleAttribute(item, item.getInstitutions(), person.getInstitution(), StoreAttributes.INSTITUTION, session, lastModified, userUpdated);
-		setSingleAttribute(item, item.getDescriptions(), person.getDescription(), StoreAttributes.DESCRIPTION, session, lastModified, userUpdated);
+		updateAttributesFromItem(item, newItem, session, lastModified);
 		
 		item = (PersonItem) session.merge(item);
 		session.getTransaction().commit();
@@ -660,6 +653,7 @@ public class PersonService extends AbstractItemService {
 		Query query = session.createQuery("select distinct pi from PersonItem as pi left join fetch pi.itemAttributes where pi.extId in (:extIds)");
 		query.setParameterList("extIds", extIds);
 		
+		@SuppressWarnings("unchecked")
 		List<PersonItem> personItems = query.list();
 		LOGGER.debug("Number of People Found: {}", personItems.size());
 		List<Person> people = new ArrayList<Person>();
@@ -684,56 +678,20 @@ public class PersonService extends AbstractItemService {
 	 */
 	public Person getBasicPerson(PersonItem item, boolean extraInfo) {
 		Person person = new Person();
-		for (ItemAttribute attr : item.getItemAttributes()) {
-			setBasicPersonAttributes(person, attr);
-		}
 		
+		int level = 4;
 		if (extraInfo) {
-			for (ItemAttribute attr : item.getItemAttributes()) {
-				setExtraBasicPersonAttributes(person, attr);
-			}
+			level = 3;
+		}
+		ItemTraitParser parser = new ItemTraitParser();
+		try {
+			person = (Person) parser.getItemObject(item, Person.class, level);
+		}
+		catch (Exception e) {
+			LOGGER.error("Exception retrieving information about people", e);
 		}
 		
 		return person;
-	}
-	
-	/**
-	 * Set the appropriate person information if it is an appropriate attribute type
-	 * 
-	 * @param person The person to assign information to
-	 * @param attribute The attribute to set if it is the right type
-	 */
-	private void setBasicPersonAttributes(Person person, ItemAttribute attribute) {
-		if (checkIfAttribute(attribute, StoreAttributes.GIVEN_NAME)) {
-			person.setGivenName(attribute.getAttrValue());
-		}
-		else if (checkIfAttribute(attribute, StoreAttributes.SURNAME)) {
-			person.setSurname(attribute.getAttrValue());
-		}
-	}
-	
-	/**
-	 * Set the appropriate person information if it is an appropriate attribute type
-	 * 
-	 * @param person The person to assign information to
-	 * @param attribute The attribute to set if it is the right type
-	 */
-	private void setExtraBasicPersonAttributes(Person person, ItemAttribute attribute) {
-		if (checkIfAttribute(attribute, StoreAttributes.ORGANISATIONAL_UNIT)) {
-			person.setOrganisationalUnit(attribute.getAttrValue());
-		}
-		else if (checkIfAttribute(attribute, StoreAttributes.COUNTRY)) {
-			person.setCountry(attribute.getAttrValue());
-		}
-		else if (checkIfAttribute(attribute, StoreAttributes.INSTITUTION)) {
-			person.setInstitution(attribute.getAttrValue());
-		}
-		else if (checkIfAttribute(attribute, StoreAttributes.DISPLAY_NAME)) {
-			person.setDisplayName(attribute.getAttrValue());
-		}
-		else if (checkIfAttribute(attribute, StoreAttributes.STAFF_TYPE)) {
-			person.setStaffType(attribute.getAttrValue());
-		}
 	}
 	
 	public Person getPerson(Item item) {
@@ -748,102 +706,19 @@ public class PersonService extends AbstractItemService {
 	 */
 	public Person getPerson(Item item, boolean showUid) {
 		Person person = new Person();
-		person.setExtId(item.getExtId());
-		for (ItemAttribute attribute : item.getItemAttributes()) {
-			attribute.getAttrType();
-			setAttribute(person, attribute, showUid);
+		int level = 2;
+		if (showUid) {
+			level = 1;
+		}
+		ItemTraitParser parser = new ItemTraitParser();
+		try {
+			person = (Person) parser.getItemObject(item, Person.class, level);
+		}
+		catch (Exception e) {
+			LOGGER.error("Exception retrieving information about people", e);
 		}
 		
 		return person;
-	}
-	
-	/**
-	 * Set the attributes for the Person
-	 * 
-	 * @param person The person to set the attribute for
-	 * @param attribute The attribute to set the persons value of
-	 */
-	private void setAttribute(Person person, ItemAttribute attribute, boolean showUid) {
-		if (checkIfAttribute(attribute, StoreAttributes.UNIVERSITY_ID)) {
-			if (showUid) {
-				person.setUid(attribute.getAttrValue().toLowerCase());
-			}
-		}
-		else if (checkIfAttribute(attribute, StoreAttributes.GIVEN_NAME)) {
-			person.setGivenName(attribute.getAttrValue());
-		}
-		else if (checkIfAttribute(attribute, StoreAttributes.SURNAME)) {
-			person.setSurname(attribute.getAttrValue());
-		}
-		else if (checkIfAttribute(attribute, StoreAttributes.DISPLAY_NAME)) {
-			person.setDisplayName(attribute.getAttrValue());
-		}
-		else if (checkIfAttribute(attribute, StoreAttributes.ARIES_ID)) {
-			person.setAriesId(attribute.getAttrValue());
-		}
-		else if (checkIfAttribute(attribute, StoreAttributes.EMAIL)) {
-			person.setEmail(attribute.getAttrValue());
-		}
-		else if (checkIfAttribute(attribute, StoreAttributes.PHONE)) {
-			person.getPhoneNumbers().add(attribute.getAttrValue());
-		}
-		else if (checkIfAttribute(attribute, StoreAttributes.FAX)) {
-			person.getFaxNumbers().add(attribute.getAttrValue());
-		}
-		else if (checkIfAttribute(attribute, StoreAttributes.JOB_TITLE)) {
-			person.setJobTitle(attribute.getAttrValue());
-		}
-		else if (checkIfAttribute(attribute, StoreAttributes.PREFERRED_NAME)) {
-			person.setPreferredName(attribute.getAttrValue());
-		}
-		else if (checkIfAttribute(attribute, StoreAttributes.STAFF_TYPE)) {
-			person.setStaffType(attribute.getAttrValue());
-		}
-		else if (checkIfAttribute(attribute, StoreAttributes.ORGANISATIONAL_UNIT)) {
-			person.setOrganisationalUnit(attribute.getAttrValue());
-		}
-		else if (checkIfAttribute(attribute, StoreAttributes.COUNTRY)) {
-			person.setCountry(attribute.getAttrValue());
-		}
-		else if (checkIfAttribute(attribute, StoreAttributes.INSTITUTION)) {
-			person.setInstitution(attribute.getAttrValue());
-		}
-		else if (checkIfAttribute(attribute, StoreAttributes.NLA_ID)) {
-			person.setNlaId(attribute.getAttrValue());
-		}
-		else if (checkIfAttribute(attribute, StoreAttributes.DESCRIPTION)) {
-			person.setDescription(attribute.getAttrValue());
-		}
-		else if (checkIfAttribute(attribute, StoreAttributes.FOR_SUBJECT)) {
-			Set<ItemAttribute> subjectAttrs = attribute.getItemAttributes();
-			Subject subject = new Subject();
-			Iterator<ItemAttribute> it = subjectAttrs.iterator();
-			ItemAttribute attr = null;
-			while(it.hasNext()) {
-				attr = it.next();
-				if (checkIfAttribute(attr, StoreAttributes.FOR_CODE)) {
-					subject.setCode(attr.getAttrValue());
-				}
-				else if (checkIfAttribute(attr, StoreAttributes.FOR_PERCENT)) {
-					subject.setPercentage(attr.getAttrValue());
-				}
-				else if (checkIfAttribute(attr, StoreAttributes.FOR_VALUE)) {
-					subject.setValue(attr.getAttrValue());
-				}
-			}
-			person.getAnzforSubjects().add(subject);
-		}
-	}
-	
-	/**
-	 * Check if the attribute is of the given type
-	 * 
-	 * @param attribute The attribute to check
-	 * @param type The type to check
-	 * @return Whether the attribute is the same
-	 */
-	private boolean checkIfAttribute(ItemAttribute attribute, String type) {
-		return attribute.getAttrType().equals(type);
 	}
 	
 	/**
@@ -936,7 +811,7 @@ public class PersonService extends AbstractItemService {
 	 * 
 	 * @param currentValues The current values
 	 * @param key The field to get
-	 * @param newValues The map of new vlaues
+	 * @param newValues The map of new values
 	 * @return The list of values
 	 */
 	private List<String> getValues(List<String> currentValues, String key, Map<String, List<String>> newValues) {

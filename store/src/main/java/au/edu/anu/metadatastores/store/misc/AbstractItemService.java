@@ -22,10 +22,11 @@
 package au.edu.anu.metadatastores.store.misc;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
-import java.util.Iterator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.hibernate.Session;
@@ -35,7 +36,6 @@ import org.slf4j.LoggerFactory;
 import au.edu.anu.metadatastores.datamodel.store.HistItemAttribute;
 import au.edu.anu.metadatastores.datamodel.store.Item;
 import au.edu.anu.metadatastores.datamodel.store.ItemAttribute;
-import au.edu.anu.metadatastores.datamodel.store.ext.StoreAttributes;
 
 /**
  * <p>AbstractItemService<p>
@@ -49,283 +49,6 @@ import au.edu.anu.metadatastores.datamodel.store.ext.StoreAttributes;
  */
 public abstract class AbstractItemService {
 	static final Logger LOGGER = LoggerFactory.getLogger(AbstractItemService.class);
-
-	/**
-	 * Set a single attribute
-	 * 
-	 * @param item The item to add attributes to
-	 * @param attributes The list of attributes currently in this field
-	 * @param value The value to update
-	 * @param attrType The attribute type
-	 * @param session The session
-	 * @param lastModified The last modified date to set
-	 * @param userUpdated Whether the attribute is user updated
-	 */
-	protected void setSingleAttribute(Item item, List<ItemAttribute> attributes, String value, String attrType, Session session, Date lastModified, Boolean userUpdated) {
-		if (attributes.size() > 0) {
-			ItemAttribute attr = attributes.get(0);
-			if (!attr.getAttrValue().equals(value)) {
-				if (value != null) {
-					addAttributeHistory(item, attr, lastModified);
-					attr.setAttrValue(value);
-					attr.setLastModified(lastModified);
-					attr.setUserUpdated(userUpdated);
-				}
-				else if (attr.getUserUpdated() == null || attr.getUserUpdated() == Boolean.FALSE) {
-					addAttributeHistory(item, attr, lastModified);
-					item.getItemAttributes().remove(attr);
-					session.delete(attr);
-				}
-			}
-		}
-		else if (value != null && value.trim().length() > 0) {
-			ItemAttribute attr = new ItemAttribute(item, attrType, value, lastModified);
-			attr.setUserUpdated(userUpdated);
-			item.getItemAttributes().add(attr);
-		}
-	}
-	
-	/**
-	 * 
-	 * @param item The item to add attributes to
-	 * @param attributes The list of attributes currently in this field
-	 * @param values The values to set
-	 * @param attrType The attribute type
-	 * @param session The session
-	 * @param lastModified The last modified date to set
-	 * @param userUpdated Whether the attribute is user updated
-	 */
-	protected void setMultipleAttribute(Item item, List<ItemAttribute> attributes, List<String> values, String attrType, Session session, Date lastModified, Boolean userUpdated) {
-		List<ItemAttribute> removeItems = new ArrayList<ItemAttribute>();
-		List<String> addItems = new ArrayList<String>();
-		compareValues(values, attributes, removeItems, addItems);
-		LOGGER.debug("Remove Items Size: {}, Add Items Size: {}", removeItems.size(), addItems.size());
-		updateAttributes(item, removeItems, addItems, session, attrType, lastModified, userUpdated);
-	}
-	
-	/**
-	 * Set attributes for a list of values
-	 * 
-	 * @param item The item to add attributes to
-	 * @param attributes The list of attributes currently in this field
-	 * @param values The array of values to set
-	 * @param attrType The attribute type
-	 * @param session The session
-	 * @param lastModified The last modified date to set
-	 * @param userUpdated Whether the attributes are user updated
-	 */
-	protected void setMultipleAttribute(Item item, List<ItemAttribute> attributes, String[] values, String attrType, Session session, Date lastModified, Boolean userUpdated) {
-		setMultipleAttribute(item, attributes, Arrays.asList(values), attrType, session, lastModified, userUpdated);
-	}
-	
-	/**
-	 * Compares items and adds the item to the add/remove lists if they should be added or deleted
-	 * 
-	 * @param values The list of dublin core values to compare
-	 * @param attributes The list of attributes to compare against
-	 * @param removeItems The list of items to remove
-	 * @param addItems The list of items to add
-	 */
-	protected void compareValues(List<String> values, List<ItemAttribute> attributes, List<ItemAttribute> removeItems, List<String> addItems) {
-		String value = null;
-		boolean[] hasValue = new boolean[values.size()];
-		boolean found = false;
-		
-		for (ItemAttribute attr : attributes) {
-			value = attr.getAttrValue();
-			for (int i = 0; i < values.size(); i++) {
-				LOGGER.debug("Value: x{}x, Verify Value: x{}x", value.trim(), values.get(i).trim());
-				if (value.trim().equals(values.get(i).trim())) {
-					LOGGER.debug("Found Item: {}", value);
-					hasValue[i] = true;
-					found = true;
-					//Unfortunately we can't break here in case there is a duplicate value as it would keep trying to add that value again in successive attempts
-				}
-			}
-			if (!found && (values.size() > 0 || (attr.getUserUpdated() == null || attr.getUserUpdated() == Boolean.FALSE))) {
-				removeItems.add(attr);
-			}
-			found = false;
-		}
-		for (int i = 0; i < values.size(); i++) {
-			if (!hasValue[i]) {
-				addItems.add(values.get(i).trim());
-			}
-		}
-	}
-	
-	/**
-	 * Updates the attributes
-	 * 
-	 * @param item The item to update attributes of
-	 * @param removeItems The items to remove
-	 * @param addItems The items to add
-	 * @param session The current active session
-	 * @param attrType The attribute type
-	 * @param lastModified The last modified date to set
-	 * @param userUpdated Whether the attributes are user updated
-	 */
-	protected void updateAttributes(Item item, List<ItemAttribute> removeItems, List<String> addItems, Session session, String attrType, Date lastModified, Boolean userUpdated) {
-		removeAttributes(item, removeItems, session, lastModified);
-		
-		ItemAttribute attr = null;
-		for (String value : addItems) {
-			attr = new ItemAttribute(item, attrType, value, lastModified);
-			attr.setUserUpdated(userUpdated);
-			item.getItemAttributes().add(attr);
-		}
-	}
-	
-	/**
-	 * Removes the attributes from the item
-	 * 
-	 * @param item The item to remove attributes from
-	 * @param removeItems The items to remove
-	 * @param session The current active session
-	 * @param lastModified The date for which the attributes will be assigned in history
-	 */
-	protected void removeAttributes(Item item, List<ItemAttribute> removeItems, Session session, Date lastModified) {
-		for (ItemAttribute removeAttr : removeItems) {
-			LOGGER.debug("Removing Item: {}, Aid: {}, Value: {}", new Object[] {item.getIid(), removeAttr.getAid(), removeAttr.getAttrValue()});
-			for (ItemAttribute attr : removeAttr.getItemAttributes()) {
-				addAttributeHistory(item, attr, lastModified);
-				item.getItemAttributes().remove(attr);
-				session.delete(attr);
-			}
-			addAttributeHistory(item, removeAttr, lastModified);
-			item.getItemAttributes().remove(removeAttr);
-			session.delete(removeAttr);
-		}
-	}
-	
-	/**
-	 * Set the for subjects to save
-	 * 
-	 * @param item The item to add subjects to
-	 * @param attrs The item attributes
-	 * @param subjects The subjects to save
-	 * @param session The current hibernate session
-	 * @param lastModified The last modified date to set
-	 * @param userUpdated Whether the attributes are user updated
-	 */
-	protected void setForSubjectsForSave(Item item, List<ItemAttribute> attrs, List<Subject> subjects, Session session, Date lastModified, Boolean userUpdated) {
-		if (subjects.size() > 0) {
-			boolean[] hasSubjects = new boolean[subjects.size()];
-			Subject subject = null;
-			boolean found = false;
-			for (ItemAttribute subjectAttr : attrs) {
-				for (int i = 0; i < subjects.size(); i++) {
-					subject = subjects.get(i);
-					if (subjectAttr.getAttrValue().equals(subject.getCode())) {
-						hasSubjects[i] = true;
-						found = true;
-						Set<ItemAttribute> subAttrs = subjectAttr.getItemAttributes();
-						Iterator<ItemAttribute> it = subAttrs.iterator();
-						boolean hasCode = false, hasValue = false, hasPercent = false;
-						while (it.hasNext()) {
-							ItemAttribute subjSubAttr = it.next();
-							if (subjSubAttr.getAttrType().equals(StoreAttributes.FOR_CODE)) {
-								hasCode = true;
-								if (!subjSubAttr.getAttrValue().equals(subject.getCode())) {
-									subjSubAttr.setAttrValue(subject.getCode());
-									subjSubAttr.setLastModified(lastModified);
-									subjSubAttr.setUserUpdated(userUpdated);
-									addAttributeHistory(item, subjSubAttr, lastModified);
-								}
-							}
-							else if (subjSubAttr.getAttrType().equals(StoreAttributes.FOR_PERCENT)) {
-								hasPercent = true;
-								if (!subjSubAttr.getAttrValue().equals(subject.getPercentage())) {
-									subjSubAttr.setAttrValue(subject.getPercentage());
-									subjSubAttr.setLastModified(lastModified);
-									subjSubAttr.setUserUpdated(userUpdated);
-									addAttributeHistory(item, subjSubAttr, lastModified);
-								}
-							}
-							else if (subjSubAttr.getAttrType().equals(StoreAttributes.FOR_VALUE)) {
-								hasValue = true;
-								if (!subjSubAttr.getAttrValue().equals(subject.getValue())) {
-									subjSubAttr.setAttrValue(subject.getValue());
-									subjSubAttr.setLastModified(lastModified);
-									subjSubAttr.setUserUpdated(userUpdated);
-									addAttributeHistory(item, subjSubAttr, lastModified);
-								}
-							}
-						}
-						if (!hasCode && subject.getCode() != null && subject.getCode().trim().length() > 0) {
-							ItemAttribute attr = new ItemAttribute(item, StoreAttributes.FOR_CODE, subject.getCode(), lastModified);
-							attr.setItemAttribute(subjectAttr);
-							attr.setUserUpdated(userUpdated);
-							subjectAttr.getItemAttributes().add(attr);
-						}
-						if (!hasPercent && subject.getPercentage() != null && subject.getPercentage().trim().length() > 0) {
-							ItemAttribute attr = new ItemAttribute(item, StoreAttributes.FOR_PERCENT, subject.getPercentage(), lastModified);
-							attr.setItemAttribute(subjectAttr);
-							attr.setUserUpdated(userUpdated);
-							subjectAttr.getItemAttributes().add(attr);
-						}
-						if (!hasValue && subject.getValue() != null && subject.getValue().trim().length() > 0) {
-							ItemAttribute attr = new ItemAttribute(item, StoreAttributes.FOR_VALUE, subject.getValue(), lastModified);
-							attr.setItemAttribute(subjectAttr);
-							attr.setUserUpdated(userUpdated);
-							subjectAttr.getItemAttributes().add(attr);
-						}
-					}
-				}
-				if (!found) {
-					addAttributeHistory(item, subjectAttr, lastModified);
-					for (ItemAttribute subjAttr : subjectAttr.getItemAttributes()) {
-						addAttributeHistory(item, subjAttr, lastModified);
-					}
-					item.getItemAttributes().remove(subjectAttr);
-					item.getItemAttributes().removeAll(subjectAttr.getItemAttributes());
-					session.delete(subjectAttr);
-				}
-			}
-			for (int i = 0; i < subjects.size(); i++) {
-				if (!hasSubjects[i]) {
-					subject = subjects.get(i);
-					addForSubjectAttributes(item, subject, lastModified, userUpdated);
-				}
-			}
-		}
-		else if (subjects != null && subjects.size() > 0) {
-			for (Subject subject : subjects) {
-				addForSubjectAttributes(item, subject, lastModified, userUpdated);
-			}
-		}
-	}
-	
-	/**
-	 * Create the for subject and its child nodes
-	 * 
-	 * @param item The item to add the subject attributes to
-	 * @param subject The subject to add
-	 * @param lastModified The last modified date to set
-	 * @param userUpdated Whether the attributes are user updated
-	 */
-	private void addForSubjectAttributes(Item item, Subject subject, Date lastModified, Boolean userUpdated) {
-		ItemAttribute attr = new ItemAttribute(item, StoreAttributes.FOR_SUBJECT, subject.getCode(), lastModified);
-		if (subject.getCode() != null && subject.getCode().trim().length() > 0) {
-			ItemAttribute codeAttr = new ItemAttribute(item, StoreAttributes.FOR_CODE, subject.getCode(), lastModified);
-			codeAttr.setItemAttribute(attr);
-			codeAttr.setUserUpdated(userUpdated);
-			attr.getItemAttributes().add(codeAttr);
-		}
-		if (subject.getValue() != null && subject.getValue().trim().length() > 0) {
-			ItemAttribute valueAttr = new ItemAttribute(item, StoreAttributes.FOR_VALUE, subject.getValue(), lastModified);
-			valueAttr.setItemAttribute(attr);
-			valueAttr.setUserUpdated(userUpdated);
-			attr.getItemAttributes().add(valueAttr);
-		}
-		if (subject.getPercentage() != null && subject.getPercentage().trim().length() > 0) {
-			ItemAttribute percentAttr = new ItemAttribute(item, StoreAttributes.FOR_PERCENT, subject.getPercentage(), lastModified);
-			percentAttr.setItemAttribute(attr);
-			percentAttr.setUserUpdated(userUpdated);
-			attr.getItemAttributes().add(percentAttr);
-		}
-		item.getItemAttributes().add(attr);
-	}
 	
 	/**
 	 * Add a history row for the attribute
@@ -338,19 +61,6 @@ public abstract class AbstractItemService {
 		LOGGER.debug("Add history for: {}, {}, {}, {}", new Object[]{attr.getAid(), attr.getLastModified(), attr.getAttrType(), attr.getAttrValue()});
 		HistItemAttribute histAttr = new HistItemAttribute(attr, lastModified);
 		item.getHistItemAttributes().add(histAttr);
-	}
-	
-	/**
-	 * Get the single value from the attributes
-	 * 
-	 * @param attrs The attribute to retrieve the first for
-	 * @return The value of the attribute
-	 */
-	public String getSingleAttributeValue(List<ItemAttribute> attrs) {
-		if (attrs != null && attrs.size() > 0) {
-			return attrs.get(0).getAttrValue();
-		}
-		return null;
 	}
 	
 	/**
@@ -369,5 +79,169 @@ public abstract class AbstractItemService {
 			}
 		}
 		return value;
+	}
+	
+	/**
+	 * Update the item with the new values if they have changed
+	 * 
+	 * @param oldItem The currently saved item
+	 * @param newItem The item with the updated information
+	 * @param session The current session
+	 * @param lastModified The last modified date
+	 */
+	protected void updateAttributesFromItem(Item oldItem, Item newItem, Session session, Date lastModified) {
+		List<ItemAttribute> newAttrs = new ArrayList<ItemAttribute>();
+		List<ItemAttribute> removeAttrs = new ArrayList<ItemAttribute>();
+		
+		if (newItem.getTitle() != null) {
+			oldItem.setTitle(newItem.getTitle());
+		}
+		
+		Map<String, List<ItemAttribute>> oldItemMap = getAttributeMap(oldItem.getItemAttributes());
+		Map<String, List<ItemAttribute>> newItemMap = getAttributeMap(newItem.getItemAttributes());
+		
+		List<ItemAttribute> foundNewList;
+		
+		Set<String> oldKeySet = oldItemMap.keySet();
+		Set<String> newKeySet = newItemMap.keySet();
+
+		for (String key : oldKeySet) {
+			List<ItemAttribute> oldValues = oldItemMap.get(key);
+			List<ItemAttribute> newValues = newItemMap.get(key);
+			foundNewList = new ArrayList<ItemAttribute>();
+			boolean foundNewAttr = false;
+			if (newValues != null) {
+				for (ItemAttribute oldAttr : oldValues) {
+					for (ItemAttribute newAttr : newValues) {
+						if (oldAttr.getAttrValue().equals(newAttr.getAttrValue())) {
+							foundNewAttr = true;
+							foundNewList.add(newAttr);
+							checkSubAttributes(oldItem, oldAttr, newAttr, removeAttrs);
+							break;
+						}
+					}
+					if (!foundNewAttr) {
+						if (oldValues.size() == 1 && newValues.size() == 1) {
+							ItemAttribute newAttr = newValues.get(0);
+							foundNewList.add(newAttr);
+							addAttributeHistory(oldItem, oldAttr, lastModified);
+							
+							oldAttr.setAttrValue(newAttr.getAttrValue());
+							oldAttr.setLastModified(newAttr.getLastModified());
+							oldAttr.setUserUpdated(newAttr.getUserUpdated());
+						}
+						else {
+							if (oldAttr.getItemAttribute() == null) {
+								removeAttrs.add(oldAttr);
+							}
+						}
+					}
+					foundNewAttr = false;
+				}
+				newValues.removeAll(foundNewList);
+				if (newValues.size() > 0) {
+					newAttrs.addAll(newValues);
+				}
+				
+			}
+			else {
+				for (ItemAttribute attr : oldValues) {
+					if (attr.getItemAttribute() == null) {
+						removeAttrs.add(attr);
+					}
+				}
+			}
+		}
+		
+		newKeySet.removeAll(oldKeySet);
+		for (String key : newKeySet) {
+			newAttrs.addAll(newItemMap.get(key));
+		}
+		
+		for (ItemAttribute attr : removeAttrs) {
+			 addAttributeHistory(oldItem, attr, lastModified);
+			 oldItem.getItemAttributes().remove(attr);
+			 session.delete(attr);
+		}
+		
+		oldItem.getItemAttributes().addAll(getNewAttributes(oldItem, null, newAttrs));
+	}
+	
+	/**
+	 * Get the new attributes to added
+	 * 
+	 * @param item The item to add the attribute to
+	 * @param parentAttribute The parent attribute. null if there is no parent
+	 * @param newAttributes The collection of attributes to add
+	 * @return
+	 */
+	private List<ItemAttribute> getNewAttributes(Item item, ItemAttribute parentAttribute, Collection<ItemAttribute> newAttributes) {
+		List<ItemAttribute> attributes = new ArrayList<ItemAttribute>();
+		
+		for (ItemAttribute attr : newAttributes) {
+			ItemAttribute newAttr = new ItemAttribute(item, attr.getAttrType(), attr.getAttrValue(), attr.getLastModified());
+			newAttr.setItemAttribute(parentAttribute);
+			newAttr.setUserUpdated(attr.getUserUpdated());
+			if (attr.getItemAttributes().size() > 0) {
+				newAttr.getItemAttributes().addAll(getNewAttributes(item, newAttr, attr.getItemAttributes()));
+			}
+			attributes.add(newAttr);
+		}
+		
+		return attributes;
+	}
+	
+	/**
+	 * Get the attribute map
+	 * 
+	 * @param attributes The collection of attributes
+	 * @return A Map of attributes with the attribute type as the key
+	 */
+	private Map<String, List<ItemAttribute>> getAttributeMap(Collection<ItemAttribute> attributes) {
+		Map<String, List<ItemAttribute>> attrMap = new HashMap<String, List<ItemAttribute>>();
+		for (ItemAttribute attr : attributes) {
+			if (!attrMap.containsKey(attr.getAttrType())) {
+				List<ItemAttribute> attrList = new ArrayList<ItemAttribute>();
+				attrMap.put(attr.getAttrType(), attrList);
+			}
+			attrMap.get(attr.getAttrType()).add(attr);
+		}
+		return attrMap;
+	}
+	
+	/**
+	 * Check if sub attribute have been updated/removed
+	 * 
+	 * @param item The item for which the attributes are associated
+	 * @param oldAttr The old attribute
+	 * @param newAttr The new attribute
+	 * @param removeAttrList The list of attributes to remove
+	 */
+	private void checkSubAttributes(Item item, ItemAttribute oldAttr, ItemAttribute newAttr, List<ItemAttribute> removeAttrList) {
+		if (oldAttr.getItemAttributes().size() > 0) {
+			boolean foundSubAttr = false;
+			List<ItemAttribute> foundNewSubAttrList = new ArrayList<ItemAttribute>();
+			for (ItemAttribute oldSubAttr : oldAttr.getItemAttributes()) {
+				for (ItemAttribute newSubAttr : newAttr.getItemAttributes()) {
+					if (oldSubAttr.getAttrType().equals(newSubAttr.getAttrType()) && oldSubAttr.getAttrValue().equals(newSubAttr.getAttrValue())) {
+						foundSubAttr = true;
+						foundNewSubAttrList.add(newSubAttr);
+						break;
+					}
+				}
+				if (!foundSubAttr) {
+					LOGGER.info("Adding to remove list: {}, {}", oldSubAttr.getAttrType(), oldSubAttr.getAttrValue());
+					removeAttrList.add(oldSubAttr);
+				}
+				foundSubAttr = false;
+			}
+			oldAttr.getItemAttributes().removeAll(removeAttrList);
+			newAttr.getItemAttributes().removeAll(foundNewSubAttrList);
+			for (ItemAttribute newSubAttr : newAttr.getItemAttributes()) {
+				ItemAttribute attr = new ItemAttribute(item, newSubAttr.getAttrType(), newSubAttr.getAttrValue(), newSubAttr.getLastModified());
+				attr.setItemAttribute(oldAttr);
+				oldAttr.getItemAttributes().add(attr);
+			}
+		}
 	}
 }

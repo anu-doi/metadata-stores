@@ -28,6 +28,9 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import au.edu.anu.metadatastores.datamodel.store.annotations.ItemAttributeTrait;
+import au.edu.anu.metadatastores.datamodel.store.annotations.TraitType;
+import au.edu.anu.metadatastores.datamodel.store.ext.StoreAttributes;
 import au.edu.anu.metadatastores.store.misc.Subject;
 
 /**
@@ -109,6 +112,7 @@ public class Person {
 	 * 
 	 * @return The university id
 	 */
+	@ItemAttributeTrait(attrType=StoreAttributes.UNIVERSITY_ID, traitType=TraitType.STRING, level=1)
 	@XmlElement(name=UID)
 	public String getUid() {
 		return uid_;
@@ -128,6 +132,7 @@ public class Person {
 	 * 
 	 * @return The given name
 	 */
+	@ItemAttributeTrait(attrType=StoreAttributes.GIVEN_NAME, traitType=TraitType.STRING, level=4)
 	@XmlElement(name=GIVEN_NAME)
 	public String getGivenName() {
 		return givenName_;
@@ -147,6 +152,7 @@ public class Person {
 	 * 
 	 * @return The surname
 	 */
+	@ItemAttributeTrait(attrType=StoreAttributes.SURNAME, traitType=TraitType.STRING, level=4)
 	@XmlElement(name=SURNAME)
 	public String getSurname() {
 		return surname_;
@@ -166,6 +172,7 @@ public class Person {
 	 * 
 	 * @return The display name
 	 */
+	@ItemAttributeTrait(attrType=StoreAttributes.DISPLAY_NAME, traitType=TraitType.STRING, level=3)
 	@XmlElement(name=DISPLAY_NAME)
 	public String getDisplayName() {
 		return displayName_;
@@ -185,6 +192,7 @@ public class Person {
 	 * 
 	 * @return The aries id
 	 */
+	@ItemAttributeTrait(attrType=StoreAttributes.ARIES_ID, traitType=TraitType.STRING, level=2)
 	@XmlElement(name=ARIES_ID)
 	public String getAriesId() {
 		return ariesId_;
@@ -204,6 +212,7 @@ public class Person {
 	 * 
 	 * @return The email address
 	 */
+	@ItemAttributeTrait(attrType=StoreAttributes.EMAIL, traitType=TraitType.STRING, level=2)
 	@XmlElement(name=EMAIL)
 	public String getEmail() {
 		return email_;
@@ -223,6 +232,7 @@ public class Person {
 	 * 
 	 * @return The phone numbers
 	 */
+	@ItemAttributeTrait(attrType=StoreAttributes.PHONE, traitType=TraitType.STRING_LIST, level=2)
 	@XmlElement(name=PHONE)
 	public List<String> getPhoneNumbers() {
 		return phoneNumbers_;
@@ -242,6 +252,7 @@ public class Person {
 	 * 
 	 * @return The fax numbers
 	 */
+	@ItemAttributeTrait(attrType=StoreAttributes.FAX, traitType=TraitType.STRING_LIST, level=2)
 	@XmlElement(name=FAX)
 	public List<String> getFaxNumbers() {
 		return faxNumbers_;
@@ -261,6 +272,7 @@ public class Person {
 	 * 
 	 * @return The job title
 	 */
+	@ItemAttributeTrait(attrType=StoreAttributes.JOB_TITLE, traitType=TraitType.STRING, level=2)
 	@XmlElement(name=JOB_TITLE)
 	public String getJobTitle() {
 		return jobTitle_;
@@ -280,6 +292,7 @@ public class Person {
 	 * 
 	 * @return The preferred name
 	 */
+	@ItemAttributeTrait(attrType=StoreAttributes.PREFERRED_NAME, traitType=TraitType.STRING, level=2)
 	@XmlElement(name=PREFERRED_NAME)
 	public String getPreferredName() {
 		return preferredName_;
@@ -299,6 +312,7 @@ public class Person {
 	 * 
 	 * @return The staff type
 	 */
+	@ItemAttributeTrait(attrType=StoreAttributes.STAFF_TYPE, traitType=TraitType.STRING, level=3)
 	@XmlElement(name=STAFF_TYPE)
 	public String getStaffType() {
 		return staffType_;
@@ -318,6 +332,7 @@ public class Person {
 	 * 
 	 * @return The organisational unit
 	 */
+	@ItemAttributeTrait(attrType=StoreAttributes.ORGANISATIONAL_UNIT, traitType=TraitType.STRING, level=3)
 	@XmlElement(name=ORGANISATIONAL_UNIT)
 	public String getOrganisationalUnit() {
 		return organisationalUnit_;
@@ -337,6 +352,7 @@ public class Person {
 	 * 
 	 * @return The national library identifier
 	 */
+	@ItemAttributeTrait(attrType=StoreAttributes.NLA_ID, traitType=TraitType.STRING, level=2)
 	@XmlElement(name=NLA_ID)
 	public String getNlaId() {
 		return nlaId_;
@@ -356,6 +372,7 @@ public class Person {
 	 * 
 	 * @return The country
 	 */
+	@ItemAttributeTrait(attrType=StoreAttributes.COUNTRY, traitType=TraitType.STRING, level=3)
 	@XmlElement(name=COUNTRY)
 	public String getCountry() {
 		return country_;
@@ -375,6 +392,7 @@ public class Person {
 	 * 
 	 * @return The institution
 	 */
+	@ItemAttributeTrait(attrType=StoreAttributes.INSTITUTION, traitType=TraitType.STRING, level=3)
 	@XmlElement(name=INSTITUTION)
 	public String getInstitution() {
 		return institution_;
@@ -394,6 +412,7 @@ public class Person {
 	 * 
 	 * @return The description
 	 */
+	@ItemAttributeTrait(attrType=StoreAttributes.DESCRIPTION, traitType=TraitType.STRING, level=2)
 	@XmlElement(name=DESCRIPTION)
 	public String getDescription() {
 		return description_;
@@ -413,6 +432,7 @@ public class Person {
 	 * 
 	 * @return The fields of research
 	 */
+	@ItemAttributeTrait(attrType=StoreAttributes.FOR_SUBJECT, traitType=TraitType.SUBJECT_LIST, level=2)
 	@XmlElement(name=FOR_SUBJECT)
 	public List<Subject> getAnzforSubjects() {
 		return anzforSubjects_;

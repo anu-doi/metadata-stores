@@ -7,6 +7,8 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import au.edu.anu.metadatastores.store.misc.Subject;
+
 public class PublicationServiceTest {
 	static final Logger LOGGER = LoggerFactory.getLogger(PublicationServiceTest.class);
 	/*
@@ -78,6 +80,22 @@ public class PublicationServiceTest {
 		LOGGER.info("Authors: {}", publication.getAuthors().toString());
 		publicationService.savePublication(publication);
 	}*/
+	
+	/*@Test
+	public void singlePublicationTest() {
+		PublicationService publicationService = PublicationService.getSingleton();
+		Publication publication = publicationService.getPublicationByAriesId("f5625xPUB410");
+		printPublication(publication);
+	}*/
+	
+	private void printPublication(Publication publication) {
+		LOGGER.info("ARIES ID: {}, First Author: {}, Category: {}", new Object[] {publication.getAriesId(), publication.getFirstAuthor(), publication.getCategory()});
+		LOGGER.info("ISBN: {}, ISSN: {}", new Object[] {publication.getISBN(), publication.getISSN()});
+		LOGGER.info("Title: {}, Name: {}", new Object[] {publication.getTitle(), publication.getPublicationName()});
+		for (Subject subject : publication.getAnzforSubjects()) {
+			LOGGER.info("Code: {}, Value: {}, Percent: {}", new Object[]{subject.getCode(), subject.getValue(), subject.getPercentage()});
+		}
+	}
 	/*
 	@Test
 	public void testfetchPublication() {
@@ -103,7 +121,7 @@ public class PublicationServiceTest {
 	public void testGetPublicationsByYear() {
 		PublicationService publicationService = PublicationService.getSingleton();
 		Date startDate = new Date();
-		List<Publication> publications = publicationService.getPublicationsByYear("1997");
+		List<Publication> publications = publicationService.getPublicationsByYear("2011");
 		
 		for (Publication pub : publications) {
 			LOGGER.info("Publication: {}, {}, Year: {}, Number of Authors: {}", new Object[] {pub.getAriesId(), pub.getTitle(), pub.getYear(), pub.getAuthors().size()});

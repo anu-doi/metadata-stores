@@ -1,8 +1,6 @@
 package au.edu.anu.metadatastores.store.grant;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -10,8 +8,8 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import au.edu.anu.metadatastores.datamodel.store.ext.StoreAttributes;
 import au.edu.anu.metadatastores.store.grants.Grant;
+import au.edu.anu.metadatastores.store.grants.GrantItem;
 import au.edu.anu.metadatastores.store.grants.GrantService;
 import au.edu.anu.metadatastores.store.misc.Subject;
 import au.edu.anu.metadatastores.store.people.Person;
@@ -41,14 +39,16 @@ public class GrantServiceTest {
 		LOGGER.info("Done");
 	}*/
 
-	/*@Test
+	@Test
 	public void saveTest() {
-		List<Grant> grants = grantService_.fetchGrantsForPerson("u8808483");
+		//List<Grant> grants = grantService_.fetchGrantsForPerson("u8808483");
+		List<Grant> grants = grantService_.fetchGrantsForPerson("u4485658");
+		
 		for (Grant grant : grants) {
-			grantService_.saveGrant(grant);
+			GrantItem item = grantService_.saveGrant(grant);
 		}
 		LOGGER.info("Done");
-	}*/
+	}
 	
 	/*@Test
 	public void getGrantTest() {
@@ -63,7 +63,7 @@ public class GrantServiceTest {
 		LOGGER.info("Done");
 	}*/
 	
-	@Test
+	/*@Test
 	public void getGrantsForPerson() {
 		//List<Grant> grants = grantService_.getGrantsForPerson("u9909577");
 		List<Grant> grants = grantService_.getGrantsForPerson("u8808483");
@@ -77,7 +77,7 @@ public class GrantServiceTest {
 		else {
 			LOGGER.info("No Grants Found");
 		}
-	}
+	}*/
 	
 /*	@Test
 	public void getGrantTitleTest() {
@@ -94,14 +94,14 @@ public class GrantServiceTest {
 	private void printGrant(Grant grant) {
 		LOGGER.info("Code: {}, Title: {}, Start Date: {}, End Date: {}", new Object[]{grant.getContractCode(), grant.getTitle(), grant.getStartDate(), grant.getEndDate()});
 		LOGGER.info("Description: {}", grant.getDescription());
-	/*	if (grant.getFirstInvestigator() != null) {
+		if (grant.getFirstInvestigator() != null) {
 			LOGGER.info("First Investigator: {}, {} {}", grant.getFirstInvestigator().getExtId(), grant.getFirstInvestigator().getGivenName(), grant.getFirstInvestigator().getSurname());
 		}
 		for (Person person : grant.getAssociatedPeople()) {
-			LOGGER.info("Assocated Person: {}, {} {}", person.getExtId(), person.getGivenName(), person.getSurname());
+			LOGGER.info("Associated Person: {}, {} {}", person.getExtId(), person.getGivenName(), person.getSurname());
 		}
 		for (Subject subject : grant.getAnzforSubjects()) {
 			LOGGER.info("Subject: {}, {}, {}", new Object[] {subject.getCode(), subject.getValue(), subject.getPercentage()});
-		}*/
+		}
 	}
 }

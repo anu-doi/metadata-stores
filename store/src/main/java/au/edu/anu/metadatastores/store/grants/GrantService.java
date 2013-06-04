@@ -21,6 +21,7 @@
 
 package au.edu.anu.metadatastores.store.grants;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -37,6 +38,7 @@ import au.edu.anu.metadatastores.datamodel.store.Item;
 import au.edu.anu.metadatastores.datamodel.store.ItemAttribute;
 import au.edu.anu.metadatastores.datamodel.store.ItemRelation;
 import au.edu.anu.metadatastores.datamodel.store.ItemRelationId;
+import au.edu.anu.metadatastores.datamodel.store.annotations.ItemTraitParser;
 import au.edu.anu.metadatastores.datamodel.store.ext.StoreAttributes;
 import au.edu.anu.metadatastores.services.ands.ANDSService;
 import au.edu.anu.metadatastores.services.aries.ANUActivity;
@@ -231,56 +233,60 @@ public class GrantService extends AbstractItemService {
 		Query query = session.createQuery("from GrantItem where extId = :extId");
 		query.setParameter("extId", grant.getContractCode());
 		
-		GrantItem item =(GrantItem) query.uniqueResult();
-		
-		if (item == null) {
-			item = new GrantItem();
-			item.setExtId(grant.getContractCode());
-			item.setTitle(grant.getTitle());
-			session.save(item);
-		}
-		else {
-			item.setTitle(grant.getTitle());
-		}
-		
-		Date lastModified = new Date();
-		LOGGER.debug("Number of item attriubtes before: {}", item.getItemAttributes().size());
-		
-		setSingleAttribute(item, item.getContractCodes(), grant.getContractCode(), StoreAttributes.CONTRACT_CODE, session, lastModified, userUpdated);
-		setSingleAttribute(item, item.getGrantTitles(), grant.getTitle(), StoreAttributes.TITLE, session, lastModified, userUpdated);
-		setSingleAttribute(item, item.getStartDates(), grant.getStartDate(), StoreAttributes.START_DATE, session, lastModified, userUpdated);
-		setSingleAttribute(item, item.getEndDates(), grant.getEndDate(), StoreAttributes.END_DATE, session, lastModified, userUpdated);
-		setSingleAttribute(item, item.getStatus(), grant.getStatus(), StoreAttributes.STATUS, session, lastModified, userUpdated);
-		setSingleAttribute(item, item.getFundsProviders(), grant.getFundsProvider(), StoreAttributes.FUNDS_PROVIDER, session, lastModified, userUpdated);
-		setSingleAttribute(item, item.getReferenceNumbers(), grant.getReferenceNumber(), StoreAttributes.REFERENCE_NUMBER, session, lastModified, userUpdated);
-		setSingleAttribute(item, item.getDescriptions(), grant.getDescription(), StoreAttributes.DESCRIPTION, session, lastModified, userUpdated);
-		
-		if (grant.getFirstInvestigator() != null) {
-			setSingleAttribute(item, item.getFirstInvestigatorIds(), grant.getFirstInvestigator().getExtId(), StoreAttributes.FIRST_INVESTIGATOR_ID, session, lastModified, userUpdated);
-		}
-		
-		setForSubjectsForSave(item, item.getAnzforSubjects(), grant.getAnzforSubjects(), session, lastModified, userUpdated);
-		
-		associatePeople(item, grant, session);
-		
-		LOGGER.debug("Number of Item Attributes after: {}", item.getItemAttributes().size());
-		
+		GrantItem item = null;
 		try {
+			item =(GrantItem) query.uniqueResult();
+		
+			Date lastModified = new Date();
+			ItemTraitParser parser = new ItemTraitParser();
+			Item newItem = null;
+			newItem = parser.getItem(grant, lastModified);
+			
+			if (item == null) {
+				item = new GrantItem();
+				if (newItem.getExtId() == null) {
+					return null;
+				}
+				item.setExtId(newItem.getExtId());
+				session.save(item);
+			}
+			
+			updateAttributesFromItem(item, newItem, session, lastModified);
+
+			LOGGER.debug("Number of item attributes before: {}", item.getItemAttributes().size());
+			
+			associatePeople(item, grant, session);
+			
+			LOGGER.debug("Number of Item Attributes after: {}", item.getItemAttributes().size());
+			
 			item = (GrantItem) session.merge(item);
 			session.getTransaction().commit();
 		}
+		catch(IllegalAccessException e) {
+			LOGGER.error("Exception accessing field when trying to get a grant item", e);
+		}
+		catch (InvocationTargetException e) {
+			LOGGER.error("Exception invoking method when trying to get a grant item", e);
+		}
 		catch (Exception e) {
-			LOGGER.error("Error Merging Item {}", item.getIid(), e);
-			LOGGER.info("Error with item: {}, Title: {}, System: {}, Ext Id: {}", item.getIid(), item.getTitle(), item.getExtSystem(), item.getExtId());
-			for (ItemAttribute attr : item.getItemAttributes()) {
-				LOGGER.info("AID: {}, IID: {}, Type: {}, Value: {}", new Object[] {attr.getAid(), attr.getItem().getIid(), attr.getAttrType(), attr.getAttrValue()});
+			if (item == null) {
+				LOGGER.error("Exception querying item", e);
 			}
-			for (HistItemAttribute attr : item.getHistItemAttributes()) {
-				LOGGER.info("AID: {}, Date: {}, Type: {}, Value: {}", new Object[] {attr.getId().getAid(), attr.getId().getHistDatetime(), attr.getAttrType(), attr.getAttrValue()});
+			else {
+				LOGGER.error("Error Merging Item {}", item.getIid(), e);
+				LOGGER.info("Error with item: {}, Title: {}, System: {}, Ext Id: {}", item.getIid(), item.getTitle(), item.getExtSystem(), item.getExtId());
+				for (ItemAttribute attr : item.getItemAttributes()) {
+					LOGGER.info("AID: {}, IID: {}, Type: {}, Value: {}", new Object[] {attr.getAid(), attr.getItem().getIid(), attr.getAttrType(), attr.getAttrValue()});
+				}
+				for (HistItemAttribute attr : item.getHistItemAttributes()) {
+					LOGGER.info("AID: {}, Date: {}, Type: {}, Value: {}", new Object[] {attr.getId().getAid(), attr.getId().getHistDatetime(), attr.getAttrType(), attr.getAttrValue()});
+				}
 			}
 		}
+		finally {
+			session.close();
+		}
 		
-		session.close();
 		
 		return item;
 	}
@@ -296,7 +302,7 @@ public class GrantService extends AbstractItemService {
 		//TODO add the removing of people who are no longer associated
 		Session session = StoreHibernateUtil.getSessionFactory().openSession();
 		try {
-			LOGGER.info("Associate People");
+			LOGGER.debug("Associate People");
 			for (Person person : grant.getAssociatedPeople()) {
 				PersonItem personItem = personService_.getPersonItem(person.getExtId());
 				ItemRelationId relationId = null;
@@ -309,13 +315,13 @@ public class GrantService extends AbstractItemService {
 					}
 					ItemRelation relation = (ItemRelation) session.get(ItemRelation.class, relationId);
 					if (relation == null) {
-						LOGGER.info("Adding Relation: {}, {}, {}", relationId.getIid(), relationId.getRelatedIid(), relationId.getRelationValue());
+						LOGGER.debug("Adding Relation: {}, {}, {}", relationId.getIid(), relationId.getRelatedIid(), relationId.getRelationValue());
 						relation = new ItemRelation();
 						relation.setId(relationId);
 						item.getItemRelationsForIid().add(relation);
 					}
 					else {
-						LOGGER.info("Found Relation: {}, {}, {}", relationId.getIid(), relationId.getRelatedIid(), relationId.getRelationValue());
+						LOGGER.debug("Found Relation: {}, {}, {}", relationId.getIid(), relationId.getRelatedIid(), relationId.getRelationValue());
 					}
 				}
 				else {
@@ -358,51 +364,19 @@ public class GrantService extends AbstractItemService {
 	public Grant getGrant(GrantItem item) {
 		Grant grant = new Grant();
 		
-		String contractCode = getSingleAttributeValue(item, StoreAttributes.CONTRACT_CODE);
-		grant.setContractCode(contractCode);
-
-		String title = getSingleAttributeValue(item, StoreAttributes.TITLE);
-		grant.setTitle(title);
-		
-		String startDate = getSingleAttributeValue(item, StoreAttributes.START_DATE);
-		grant.setStartDate(startDate);
-		
-		String endDate = getSingleAttributeValue(item, StoreAttributes.END_DATE);
-		grant.setEndDate(endDate);
-		
-		String status = getSingleAttributeValue(item, StoreAttributes.STATUS);
-		grant.setStatus(status);
+		ItemTraitParser traitParser = new ItemTraitParser();
+		try {
+			grant = (Grant) traitParser.getItemObject(item, Grant.class);
+		}
+		catch (Exception e) {
+			LOGGER.error("Exception getting grant", e);
+		}
 		
 		String firstInvestigatorId = getSingleAttributeValue(item, StoreAttributes.FIRST_INVESTIGATOR_ID);
 		Person firstInvestigator = personService_.getBasicPerson(firstInvestigatorId);
 		grant.setFirstInvestigator(firstInvestigator);
 		
-		String fundsProvider = getSingleAttributeValue(item, StoreAttributes.FUNDS_PROVIDER);
-		grant.setFundsProvider(fundsProvider);
-		
-		String referenceNumber = getSingleAttributeValue(item, StoreAttributes.REFERENCE_NUMBER);
-		grant.setReferenceNumber(referenceNumber);
-		
-		String description = getSingleAttributeValue(item, StoreAttributes.DESCRIPTION);
-		grant.setDescription(description);
-		
 		LOGGER.debug("Number of subjects?: {}", item.getAnzforSubjects().size());
-		
-		for (ItemAttribute attr : item.getAnzforSubjects()) {
-			Subject subject = new Subject();
-			for (ItemAttribute subjectAttr : attr.getItemAttributes()) {
-				if (checkIfAttribute(subjectAttr, StoreAttributes.FOR_CODE)) {
-					subject.setCode(subjectAttr.getAttrValue());
-				}
-				else if (checkIfAttribute(subjectAttr, StoreAttributes.FOR_PERCENT)) {
-					subject.setPercentage(subjectAttr.getAttrValue());
-				}
-				else if (checkIfAttribute(subjectAttr, StoreAttributes.FOR_VALUE)) {
-					subject.setValue(subjectAttr.getAttrValue());
-				}
-			}
-			grant.getAnzforSubjects().add(subject);
-		}
 		
 		for (ItemRelation relation : item.getItemRelationsForIid()) {
 			Item relatedItem = relation.getItemByRelatedIid();
@@ -414,17 +388,6 @@ public class GrantService extends AbstractItemService {
 		}
 		
 		return grant;
-	}
-	
-	/**
-	 * Check if the attribute is the given type
-	 * 
-	 * @param attribute The attribute to check the type of
-	 * @param type The type to check
-	 * @return Whether the attribute is of that type
-	 */
-	private boolean checkIfAttribute(ItemAttribute attribute, String type) {
-		return attribute.getAttrType().equals(type);
 	}
 	
 	/**

@@ -82,6 +82,7 @@ public class RelationService {
 		Session session = StoreHibernateUtil.getSessionFactory().openSession();
 		
 		Query query = session.createQuery("SELECT pr FROM PotentialRelation pr WHERE pr.requireCheck = true");
+		@SuppressWarnings("unchecked")
 		List<PotentialRelation> potentialRelations = query.list();
 		
 		List<Relation> relations = convertToRelations(potentialRelations);
@@ -190,7 +191,8 @@ public class RelationService {
 		// Get the direct relations
 		Query query = session.createQuery("select i, ir.itemByRelatedIid, rm from Item i join i.itemRelationsForIid ir, RelationMapping rm where i.iid = :id and ir.id.relationValue = rm.code");
 		query.setParameter("id", iid);
-		
+
+		@SuppressWarnings("unchecked")
 		List<Object[]> results = query.list();
 		
 		Set<Relation> relations = new HashSet<Relation>();
@@ -209,6 +211,7 @@ public class RelationService {
 		// Get the reverse relations
 		Query reverseQuery = session.createQuery("select i, ir.itemByIid, rrm from Item i join i.itemRelationsForRelatedIid ir, RelationMapping rm, RelationMapping rrm where i.iid = :id and ir.id.relationValue = rm.code and rm.reverse = rrm.code");
 		reverseQuery.setParameter("id", iid);
+		@SuppressWarnings("unchecked")
 		List<Object[]> results2 = reverseQuery.list();
 		
 		for (Object[] result : results2) {
