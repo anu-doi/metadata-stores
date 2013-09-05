@@ -27,7 +27,6 @@ import java.util.List;
 import org.hibernate.ObjectNotFoundException;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,22 +75,22 @@ public class PublicationId {
 	 */
 	public String[] getAllPublicationCodes() {
 		Session session = AriesHibernateUtil.getSessionFactory().openSession();
-		Transaction transaction = session.beginTransaction();
-		
-		List<ResearchOutputsData1> researchOutputs = session.createQuery("from ResearchOutputsData1").list();
-		List<String> outputCodes = new ArrayList<String>();
-		
-		for (ResearchOutputsData1 researchOutput : researchOutputs) {
-			if (researchOutput != null) {
-				outputCodes.add(researchOutput.getChrOutput6code());
+		try {
+			@SuppressWarnings("unchecked")
+			List<ResearchOutputsData1> researchOutputs = session.createQuery("from ResearchOutputsData1").list();
+			List<String> outputCodes = new ArrayList<String>();
+			
+			for (ResearchOutputsData1 researchOutput : researchOutputs) {
+				if (researchOutput != null) {
+					outputCodes.add(researchOutput.getChrOutput6code());
+				}
 			}
+			
+			return outputCodes.toArray(new String[0]);
 		}
-		
-		transaction.commit();
-		session.flush();
-		session.close();
-		
-		return outputCodes.toArray(new String[0]);
+		finally {
+			session.close();
+		}
 	}
 	
 	/**
@@ -102,18 +101,18 @@ public class PublicationId {
 	 */
 	public Publication getSinglePublication(String publicationId) {
 		Session session = AriesHibernateUtil.getSessionFactory().openSession();
-		session.beginTransaction();
-		
-		Query query = session.createQuery("from ResearchOutputsData1 where chrOutput6code = :publicationId");
-		query.setParameter("publicationId", publicationId);
-		
-		ResearchOutputsData1 researchOutput = (ResearchOutputsData1) query.uniqueResult();
-		Publication tempPublication = getPublication(researchOutput);
-		
-		session.getTransaction().commit();
-		session.clear();
-		
-		return tempPublication;
+		try {
+			Query query = session.createQuery("from ResearchOutputsData1 where chrOutput6code = :publicationId");
+			query.setParameter("publicationId", publicationId);
+			
+			ResearchOutputsData1 researchOutput = (ResearchOutputsData1) query.uniqueResult();
+			Publication tempPublication = getPublication(researchOutput);
+			
+			return tempPublication;
+		}
+		finally {
+			session.close();
+		}
 	}
 	
 	/**
@@ -124,23 +123,25 @@ public class PublicationId {
 	 */
 	public Publication[] getPublicationsForYear(String year) {
 		Session session = AriesHibernateUtil.getSessionFactory().openSession();
-		session.beginTransaction();
-		
-		Query query = session.createQuery("from ResearchOutputsData1 where chrReportingYear = :year");
-		query.setParameter("year", year);
-		
-		Publication tempPublication = null;
-		List<Publication> publications = new ArrayList<Publication>();
-		
-		List<ResearchOutputsData1> researchOutputs = query.list();
-		for (ResearchOutputsData1 output : researchOutputs) {
-			tempPublication = getPublication(output);
-			publications.add(tempPublication);
+		try {
+			Query query = session.createQuery("from ResearchOutputsData1 where chrReportingYear = :year");
+			query.setParameter("year", year);
+			
+			Publication tempPublication = null;
+			List<Publication> publications = new ArrayList<Publication>();
+			
+			@SuppressWarnings("unchecked")
+			List<ResearchOutputsData1> researchOutputs = query.list();
+			for (ResearchOutputsData1 output : researchOutputs) {
+				tempPublication = getPublication(output);
+				publications.add(tempPublication);
+			}
+			
+			return publications.toArray(new Publication[0]);
 		}
-		
-		session.getTransaction().commit();
-		session.clear();
-		return publications.toArray(new Publication[0]);
+		finally {
+			session.close();
+		}
 	}
 	
 	/**
@@ -209,43 +210,36 @@ public class PublicationId {
 	 */
 	public String[] getFirstAuthorsUniIDs(String[] publicationCodes) {
 		Session session = AriesHibernateUtil.getSessionFactory().openSession();
-		Transaction transaction = session.beginTransaction();
 
-		//TODO this may need to be updated?
-		Query query = session.createQuery("from ResearchOutputsDataAuthors where chrOutputInvestigatorCode like :publicationCode || '%'");
-		//Query query = session.createQuery("from ResearchOutputsDataAuthors where chrOutputInvestigatorCode like :publicationCode");
-		
-		List<ResearchOutputsDataAuthors> outputAuthors = null;
-		//String tempCode = null;
-		String outputInvestigatorCode = null;
-		
-		//int index_1 = 0;
-		//int index_2 = 0;
-		
-		List<String> uniIDs = new ArrayList<String>();
-		String staffCode = null;
-		
-		for (String publicationCode : publicationCodes) {
-			//TODO figure out how to make this a named parameter that actually returns results...
-			query = session.createQuery("from ResearchOutputsDataAuthors where chrOutputInvestigatorCode like '" + publicationCode + "x%' and chrOrder = '01'");
-			//query = session.createQuery("from ResearchOutputsDataAuthors where chrOutputInvestigatorCode like :publicationCode and chrOrder = '01'");
-			//query.setParameter("publicationCode", publicationCode + "x%");
+		try {
+			Query query = session.createQuery("from ResearchOutputsDataAuthors where chrOutputInvestigatorCode like :publicationCode and chrOrder = '01'");
 			
-			outputAuthors = query.list();
-			for (ResearchOutputsDataAuthors outputAuthor : outputAuthors) {
-				outputInvestigatorCode = outputAuthor.getChrOutputInvestigatorCode();
-				if (publicationCode != null && outputInvestigatorCode.indexOf(publicationCode) != -1) {
-					staffCode = outputAuthor.getChrStaffNumber();
-					uniIDs.add(staffCode);
+			List<ResearchOutputsDataAuthors> outputAuthors = null;
+			
+			String outputInvestigatorCode = null;
+			
+			List<String> uniIDs = new ArrayList<String>();
+			String staffCode = null;
+			
+			for (String publicationCode : publicationCodes) {
+				query.setParameter("publicationCode", publicationCode + "x%");
+				
+				//@SuppressWarnings("unchecked")
+				outputAuthors = query.list();
+				for (ResearchOutputsDataAuthors outputAuthor : outputAuthors) {
+					outputInvestigatorCode = outputAuthor.getChrOutputInvestigatorCode();
+					if (publicationCode != null && outputInvestigatorCode.indexOf(publicationCode) != -1) {
+						staffCode = outputAuthor.getChrStaffNumber();
+						uniIDs.add(staffCode);
+					}
 				}
 			}
+			
+			return uniIDs.toArray(new String[0]);
 		}
-		
-		transaction.commit();
-		session.flush();
-		session.close();
-		
-		return uniIDs.toArray(new String[0]);
+		finally {
+			session.close();
+		}
 	}
 	
 	/**
@@ -256,28 +250,25 @@ public class PublicationId {
 	 */
 	public String[] getFirstAuthors(String[] publicationCodes) {
 		Session session = AriesHibernateUtil.getSessionFactory().openSession();
-		Transaction transaction = session.beginTransaction();
-		
-		//Query query = session.createQuery("from ResearchOutputData1 where chrOutput6code like");
-		
-		
-		Query query = session.createQuery("from ResearchOutputsData1 where chrOutput6code in :publicationCodes");
-		query.setParameterList("publicationCodes", publicationCodes);
-		
-		List<ResearchOutputsData1> researchOutputs = query.list();
-		
-		List<String> firstAuthors = new ArrayList<String>();
-		for (ResearchOutputsData1 researchOutput : researchOutputs) {
-			if (researchOutput != null && researchOutput.getChrFirstNamedAuthor() != null) {
-				System.out.println("chrOutput6code: " + researchOutput.getChrOutput6code());
-				firstAuthors.add(researchOutput.getChrFirstNamedAuthor());
+		try {
+			Query query = session.createQuery("from ResearchOutputsData1 where chrOutput6code in :publicationCodes");
+			query.setParameterList("publicationCodes", publicationCodes);
+			
+			@SuppressWarnings("unchecked")
+			List<ResearchOutputsData1> researchOutputs = query.list();
+			
+			List<String> firstAuthors = new ArrayList<String>();
+			for (ResearchOutputsData1 researchOutput : researchOutputs) {
+				if (researchOutput != null && researchOutput.getChrFirstNamedAuthor() != null) {
+					System.out.println("chrOutput6code: " + researchOutput.getChrOutput6code());
+					firstAuthors.add(researchOutput.getChrFirstNamedAuthor());
+				}
 			}
+			
+			return firstAuthors.toArray(new String[0]);
 		}
-		
-		transaction.commit();
-		session.flush();
-		session.close();
-		
-		return firstAuthors.toArray(new String[0]);
+		finally {
+			session.close();
+		}
 	}
 }

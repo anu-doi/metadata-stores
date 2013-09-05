@@ -36,7 +36,6 @@ import au.edu.anu.metadatastores.datamodel.store.ItemRelation;
 import au.edu.anu.metadatastores.datamodel.store.ItemRelationId;
 import au.edu.anu.metadatastores.datamodel.store.PotentialRelation;
 import au.edu.anu.metadatastores.datamodel.store.PotentialRelationId;
-import au.edu.anu.metadatastores.datamodel.store.RelationMapping;
 import au.edu.anu.metadatastores.services.store.StoreHibernateUtil;
 
 /**
@@ -80,16 +79,16 @@ public class RelationService {
 	 */
 	public List<Relation> getPotentialRelations() {
 		Session session = StoreHibernateUtil.getSessionFactory().openSession();
-		
-		Query query = session.createQuery("SELECT pr FROM PotentialRelation pr WHERE pr.requireCheck = true");
-		@SuppressWarnings("unchecked")
-		List<PotentialRelation> potentialRelations = query.list();
-		
-		List<Relation> relations = convertToRelations(potentialRelations);
-		
-		session.close();
-		
-		return relations;
+		try {
+			Query query = session.createQuery("SELECT new au.edu.anu.metadatastores.store.misc.Relation(pr.itemByIid.iid, pr.itemByIid.title, pr.id.relationValue, pr.itemByRelatedIid.iid, pr.itemByRelatedIid.title) FROM PotentialRelation pr WHERE pr.requireCheck = true");
+			@SuppressWarnings("unchecked")
+			List<Relation> relations = query.list();
+			
+			return relations;
+		}
+		finally {
+			session.close();
+		}
 	}
 	
 	/**
@@ -187,46 +186,30 @@ public class RelationService {
 	 */
 	public List<Relation> getRelatedItems(Long iid) {
 		Session session = StoreHibernateUtil.getSessionFactory().openSession();
-		
-		// Get the direct relations
-		Query query = session.createQuery("select i, ir.itemByRelatedIid, rm from Item i join i.itemRelationsForIid ir, RelationMapping rm where i.iid = :id and ir.id.relationValue = rm.code");
-		query.setParameter("id", iid);
-
-		@SuppressWarnings("unchecked")
-		List<Object[]> results = query.list();
-		
-		Set<Relation> relations = new HashSet<Relation>();
-		Relation relation = null;
-		
-		for (Object[] result : results) {
-			Item item = (Item) result[0];
-			Item relatedItem = (Item) result[1];
-			RelationMapping mapping = (RelationMapping) result[2];
-			relation = new Relation(item.getIid(), mapping.getDescription(), relatedItem.getIid());
-			relation.setItemTitle(item.getTitle());
-			relation.setRelatedItemTitle(relatedItem.getTitle());
-			relations.add(relation);
+		try {
+			// Get the direct relations
+			Query query = session.createQuery("select new au.edu.anu.metadatastores.store.misc.Relation(i.iid, i.title, rm.description, ir.itemByRelatedIid.iid, ir.itemByRelatedIid.title) from Item i join i.itemRelationsForIid ir, RelationMapping rm where i.iid = :id and ir.id.relationValue = rm.code");
+			query.setParameter("id", iid);
+	
+			@SuppressWarnings("unchecked")
+			List<Relation> results = query.list();
+			
+			Set<Relation> relations = new HashSet<Relation>();
+			relations.addAll(results);
+			
+			// Get the reverse relations
+			Query reverseQuery = session.createQuery("select new au.edu.anu.metadatastores.store.misc.Relation(i.iid, i.title, rrm.description, ir.itemByIid.iid, ir.itemByIid.title) from Item i join i.itemRelationsForRelatedIid ir, RelationMapping rm, RelationMapping rrm where i.iid = :id and ir.id.relationValue = rm.code and rm.reverse = rrm.code");
+			reverseQuery.setParameter("id", iid);
+			@SuppressWarnings("unchecked")
+			List<Relation> results2 = reverseQuery.list();
+			relations.addAll(results2);
+			
+			LOGGER.debug("Number of relations: {}", relations.size());
+			return new ArrayList<Relation>(relations);
 		}
-		
-		// Get the reverse relations
-		Query reverseQuery = session.createQuery("select i, ir.itemByIid, rrm from Item i join i.itemRelationsForRelatedIid ir, RelationMapping rm, RelationMapping rrm where i.iid = :id and ir.id.relationValue = rm.code and rm.reverse = rrm.code");
-		reverseQuery.setParameter("id", iid);
-		@SuppressWarnings("unchecked")
-		List<Object[]> results2 = reverseQuery.list();
-		
-		for (Object[] result : results2) {
-			Item item = (Item) result[0];
-			Item relatedItem = (Item) result[1];
-			RelationMapping mapping = (RelationMapping) result[2];
-			relation = new Relation(item.getIid(), mapping.getDescription(), relatedItem.getIid());
-			relation.setItemTitle(item.getTitle());
-			relation.setRelatedItemTitle(relatedItem.getTitle());
-			relations.add(relation);
+		finally {
+			session.close();
 		}
-		LOGGER.debug("Number of relations: {}", relations.size());
-		
-		session.close();
-		return new ArrayList<Relation>(relations);
 	}
 	
 	/**
@@ -237,11 +220,15 @@ public class RelationService {
 	 */
 	public Item getItem(Long iid) {
 		Session session = StoreHibernateUtil.getSessionFactory().openSession();
-		session.enableFetchProfile("item-with-attributes");
-		
-		Item item = (Item) session.get(Item.class, iid);
-		
-		session.close();
-		return item;
+		try {
+			session.enableFetchProfile("item-with-attributes");
+			
+			Item item = (Item) session.get(Item.class, iid);
+
+			return item;
+		}
+		finally {
+			session.close();
+		}
 	}
 }

@@ -43,7 +43,8 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "research_outputs_data_authors")
 public class ResearchOutputsDataAuthors implements java.io.Serializable {
-
+	private static final long serialVersionUID = 1L;
+	
 	private String chrOutputInvestigatorCode;
 	private ResearchOutputsData1 researchOutputsData1;
 	private String chrStatus;

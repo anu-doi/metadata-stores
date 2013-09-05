@@ -26,12 +26,15 @@
         <mapping class="au.edu.anu.metadatastores.store.datacommons.DataCommonsItem" />
         <mapping class="au.edu.anu.metadatastores.store.digitalcollections.DigitalCollectionsItem" />
         <mapping class="au.edu.anu.metadatastores.store.grants.GrantItem" />
+        <mapping class="au.edu.anu.metadatastores.store.epress.EpressItem" />
         <mapping class="au.edu.anu.metadatastores.datamodel.store.ItemAttribute" />
         <mapping class="au.edu.anu.metadatastores.datamodel.store.HistItemAttribute" />
         <mapping class="au.edu.anu.metadatastores.datamodel.store.ItemRelation" />
         <mapping class="au.edu.anu.metadatastores.datamodel.store.PotentialRelation" />
         <mapping class="au.edu.anu.metadatastores.datamodel.store.RelationMapping" />
         <mapping class="au.edu.anu.metadatastores.datamodel.store.HistItemAttribute" />
+        <mapping class="au.edu.anu.metadatastores.datamodel.store.SystemType" />
+        <mapping class="au.edu.anu.metadatastores.datamodel.store.AttributeType" />
 		
     </session-factory>
 </hibernate-configuration>

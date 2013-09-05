@@ -46,6 +46,8 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "research_outputs_level_2")
 public class ResearchOutputsLevel2 implements java.io.Serializable {
+	private static final long serialVersionUID = 1L;
+	
 	private String chrOutput3Code;
 	private String chrOutput2Description;
 	private Set<ResearchOutputsData1> researchOutputsData1s = new HashSet<ResearchOutputsData1>(0);

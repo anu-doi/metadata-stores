@@ -52,7 +52,7 @@ import org.hibernate.annotations.CascadeType;
  *
  */
 @Entity
-@Table(name = "item_attribute", schema = "public")
+@Table(name = "item_attribute")
 public class ItemAttribute implements java.io.Serializable {
 	private static final long serialVersionUID = 1L;
 	

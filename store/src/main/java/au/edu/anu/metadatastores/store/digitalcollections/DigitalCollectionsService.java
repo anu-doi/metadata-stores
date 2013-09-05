@@ -44,6 +44,7 @@ import au.edu.anu.metadatastores.datamodel.store.ItemRelation;
 import au.edu.anu.metadatastores.datamodel.store.ItemRelationId;
 import au.edu.anu.metadatastores.datamodel.store.PotentialRelation;
 import au.edu.anu.metadatastores.datamodel.store.PotentialRelationId;
+import au.edu.anu.metadatastores.datamodel.store.annotations.ItemTraitParser;
 import au.edu.anu.metadatastores.harvester.HarvestContentService;
 import au.edu.anu.metadatastores.services.ldap.LdapService;
 import au.edu.anu.metadatastores.services.store.StoreHibernateUtil;
@@ -123,23 +124,27 @@ public class DigitalCollectionsService extends DublinCoreService {
 	 */
 	private void processDeleted(HarvestContent content) {
 		Session session = StoreHibernateUtil.getSessionFactory().openSession();
-		session.beginTransaction();
-		
-		Query query = session.createQuery("FROM DigitalCollectionsItem WHERE extSystem = :extSystem AND extId = :extId");
-		query.setParameter("extSystem", extSystem_);
-		query.setParameter("extId", content.getIdentifier());
-		
-		DigitalCollectionsItem item = (DigitalCollectionsItem) query.uniqueResult();
-		
-		if (item != null) {
-			item.setDeleted(Boolean.TRUE);
-			session.merge(item);
+		try {
+			session.beginTransaction();
+			
+			Query query = session.createQuery("FROM DigitalCollectionsItem WHERE extSystem = :extSystem AND extId = :extId");
+			query.setParameter("extSystem", extSystem_);
+			query.setParameter("extId", content.getIdentifier());
+			
+			DigitalCollectionsItem item = (DigitalCollectionsItem) query.uniqueResult();
+			
+			if (item != null) {
+				item.setDeleted(Boolean.TRUE);
+				session.merge(item);
+			}
+			else {
+				LOGGER.debug("No record to be deleted: {}", content.getIdentifier());
+			}
+			session.getTransaction().commit();
 		}
-		else {
-			LOGGER.debug("No record to be deleted: {}", content.getIdentifier());
+		finally {
+			session.close();
 		}
-		session.getTransaction().commit();
-		session.close();
 	}
 	
 	/**
@@ -149,46 +154,50 @@ public class DigitalCollectionsService extends DublinCoreService {
 	 */
 	private void processRecord(HarvestContent content) {
 		Session session = StoreHibernateUtil.getSessionFactory().openSession();
-		session.beginTransaction();
-		session.enableFilter("attributes");
-		LOGGER.debug("Identifier: {}", content.getIdentifier());
-		
-		Query query = session.createQuery("FROM DigitalCollectionsItem WHERE extSystem = :extSystem AND extId = :extId");
-		query.setParameter("extSystem", extSystem_);
-		query.setParameter("extId", content.getIdentifier());
-		
-		DigitalCollectionsItem item = (DigitalCollectionsItem) query.uniqueResult();
-		if (item == null) {
-			item = new DigitalCollectionsItem();
-			item.setExtSystem(extSystem_);
-			item.setExtId(content.getIdentifier());
-			session.save(item);
-		}
-		
 		try {
-			JAXBContext context = JAXBContext.newInstance(DublinCore.class);
-			Unmarshaller unmarshaller = context.createUnmarshaller();
+			session.beginTransaction();
+			session.enableFilter("attributes");
+			LOGGER.debug("Identifier: {}", content.getIdentifier());
 			
-			DublinCore dublinCore = (DublinCore) unmarshaller.unmarshal(new StringReader(content.getContent()));
-			Date lastModified = new Date();
-			super.processRecord((DublinCoreItem) item, dublinCore, session, lastModified);
+			Query query = session.createQuery("FROM DigitalCollectionsItem WHERE extSystem = :extSystem AND extId = :extId");
+			query.setParameter("extSystem", extSystem_);
+			query.setParameter("extId", content.getIdentifier());
+			
+			DigitalCollectionsItem item = (DigitalCollectionsItem) query.uniqueResult();
+			if (item == null) {
+				item = new DigitalCollectionsItem();
+				item.setExtSystem(extSystem_);
+				item.setExtId(content.getIdentifier());
+				session.save(item);
+			}
+			
+			try {
+				JAXBContext context = JAXBContext.newInstance(DublinCore.class);
+				Unmarshaller unmarshaller = context.createUnmarshaller();
+				
+				DublinCore dublinCore = (DublinCore) unmarshaller.unmarshal(new StringReader(content.getContent()));
+				Date lastModified = new Date();
+				super.processRecord((DublinCoreItem) item, dublinCore, session, lastModified);
+			}
+			catch (JAXBException e) {
+				LOGGER.error("Exception transforming document", e);
+			}
+			catch (InvocationTargetException e) {
+				LOGGER.error("Error invoking method", e);
+			}
+			catch (IllegalAccessException e) {
+				LOGGER.error("Error accessing method", e);
+			}
+			
+			session.merge(item);
+			
+			LOGGER.info("Item Numbers: {}", item.getItemAttributes().size());
+			
+			session.getTransaction().commit();
 		}
-		catch (JAXBException e) {
-			LOGGER.error("Exception transforming document", e);
+		finally {
+			session.close();
 		}
-		catch (InvocationTargetException e) {
-			LOGGER.error("Error invoking method", e);
-		}
-		catch (IllegalAccessException e) {
-			LOGGER.error("Error accessing method", e);
-		}
-		
-		session.merge(item);
-		
-		LOGGER.info("Item Numbers: {}", item.getItemAttributes().size());
-		
-		session.getTransaction().commit();
-		session.close();
 	}
 	
 	/**
@@ -281,5 +290,38 @@ public class DigitalCollectionsService extends DublinCoreService {
 	 */
 	protected void setReverseRelations(DublinCoreItem item, DublinCore dublinCore, Session session) {
 		
+	}
+	
+	public DublinCore getDigitalCollection(String id) {
+		Session session = StoreHibernateUtil.getSessionFactory().openSession();
+		session.enableFetchProfile("attributes");
+		DublinCore digitalCollection = null;
+		try {
+			Query query = session.createQuery("FROM DigitalCollectionItem WHERE extId = :extId");
+			query.setParameter("extId", id);
+			
+			DigitalCollectionsItem item = (DigitalCollectionsItem) query.uniqueResult();
+			digitalCollection = getDigitalCollection(item);
+		}
+		finally {
+			session.close();
+		}
+		
+		return digitalCollection;
+	}
+	
+	public DublinCore getDigitalCollection(DigitalCollectionsItem item) {
+		DublinCore digitalCollection = null;
+		ItemTraitParser traitParser = new ItemTraitParser();
+		
+		try {
+			digitalCollection = (DublinCore) traitParser.getItemObject(item, DublinCore.class);
+		}
+		catch (Exception e) {
+			LOGGER.error("Exception getting digital collection", e);
+		}
+		//TODO get relations?
+		
+		return digitalCollection;
 	}
 }

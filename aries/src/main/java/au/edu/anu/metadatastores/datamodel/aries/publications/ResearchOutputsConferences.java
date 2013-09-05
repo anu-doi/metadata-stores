@@ -45,7 +45,8 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "research_outputs_conferences")
 public class ResearchOutputsConferences implements java.io.Serializable {
-
+	private static final long serialVersionUID = 1L;
+	
 	private Integer intConferenceCode;
 	private String chrConferenceName;
 	private String chrYear;

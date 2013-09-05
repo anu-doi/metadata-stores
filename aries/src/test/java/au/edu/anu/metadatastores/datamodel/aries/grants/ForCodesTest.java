@@ -51,19 +51,22 @@ public class ForCodesTest {
 	@Test
 	public void test() {
 		Session session = AriesHibernateUtil.getSessionFactory().openSession();
-		
-		Query query = session.createQuery("FROM ForCodes WHERE chrForObjectiveCode = :code");
-		query.setParameter("code", "111706");
-		
-		ForCodes forSubject = (ForCodes) query.uniqueResult();
-		
-		assertNotNull("No Field of Research Found", forSubject);
-		assertEquals("No subject description found", "Epidemiology", forSubject.getChrForDescription());
-		assertEquals("No subject division code found", "11", forSubject.getChrForDivisionCode());
-		assertEquals("No subject group code found", "1117", forSubject.getChrForGroupCode());
-		assertEquals("No subject objective code found", "111706", forSubject.getChrForObjectiveCode());
-		
-		session.close();
+
+		try {
+			Query query = session.createQuery("FROM ForCodes WHERE chrForObjectiveCode = :code");
+			query.setParameter("code", "111706");
+			
+			ForCodes forSubject = (ForCodes) query.uniqueResult();
+			
+			assertNotNull("No Field of Research Found", forSubject);
+			assertEquals("No subject description found", "Epidemiology", forSubject.getChrForDescription());
+			assertEquals("No subject division code found", "11", forSubject.getChrForDivisionCode());
+			assertEquals("No subject group code found", "1117", forSubject.getChrForGroupCode());
+			assertEquals("No subject objective code found", "111706", forSubject.getChrForObjectiveCode());
+		}
+		finally {
+			session.close();
+		}
 	}
 
 }

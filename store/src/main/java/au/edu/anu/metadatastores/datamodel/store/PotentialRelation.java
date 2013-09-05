@@ -42,7 +42,7 @@ import javax.persistence.Table;
  *
  */
 @Entity
-@Table(name = "potential_relation", schema = "public")
+@Table(name = "potential_relation")
 public class PotentialRelation implements java.io.Serializable {
 	private static final long serialVersionUID = 1L;
 	

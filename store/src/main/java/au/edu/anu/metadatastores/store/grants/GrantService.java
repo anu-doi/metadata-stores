@@ -227,14 +227,15 @@ public class GrantService extends AbstractItemService {
 	 */
 	public GrantItem saveGrant(Grant grant, Boolean userUpdated) {
 		Session session = StoreHibernateUtil.getSessionFactory().openSession();
-		session.enableFilter("attributes");
-		session.beginTransaction();
-		
-		Query query = session.createQuery("from GrantItem where extId = :extId");
-		query.setParameter("extId", grant.getContractCode());
 		
 		GrantItem item = null;
 		try {
+			session.enableFilter("attributes");
+			session.beginTransaction();
+			
+			Query query = session.createQuery("from GrantItem where extId = :extId");
+			query.setParameter("extId", grant.getContractCode());
+			
 			item =(GrantItem) query.uniqueResult();
 		
 			Date lastModified = new Date();
@@ -342,17 +343,19 @@ public class GrantService extends AbstractItemService {
 	 */
 	public Grant getGrant(String grantId) {
 		Session session = StoreHibernateUtil.getSessionFactory().openSession();
-		session.enableFilter("attributes");
-		
-		Query query = session.createQuery("FROM GrantItem WHERE extId = :extId");
-		query.setParameter("extId", grantId);
-		
-		GrantItem item = (GrantItem) query.uniqueResult();
-		Grant grant = getGrant(item);
-		
-		session.close();
-		
-		return grant;
+		try {
+			session.enableFilter("attributes");
+			
+			Query query = session.createQuery("FROM GrantItem WHERE extId = :extId");
+			query.setParameter("extId", grantId);
+			
+			GrantItem item = (GrantItem) query.uniqueResult();
+			Grant grant = getGrant(item);
+			return grant;
+		}
+		finally {
+			session.close();
+		}
 	}
 	
 	/**
@@ -398,24 +401,27 @@ public class GrantService extends AbstractItemService {
 	 */
 	public List<Grant> getGrantsForPerson(String staffId) {
 		Session session = StoreHibernateUtil.getSessionFactory().openSession();
-		session.enableFilter("attributes");
-		
-		Query query = session.createQuery("SELECT grant FROM GrantItem grant, PersonItem person join person.itemRelationsForRelatedIid personRelation WHERE personRelation.itemByIid = grant and person.extId = :staffId");
-		query.setParameter("staffId", staffId);
-		@SuppressWarnings("unchecked")
-		List<GrantItem> grantItems = query.list();
-		List<Grant> grants = new ArrayList<Grant>();
-		Grant grant = null;
-		for (GrantItem grantItem : grantItems) {
-			grant = getGrant(grantItem);
-			if (grant != null) {
-				grants.add(grant);
+		try {
+			session.enableFilter("attributes");
+			
+			Query query = session.createQuery("SELECT grant FROM GrantItem grant, PersonItem person join person.itemRelationsForRelatedIid personRelation WHERE personRelation.itemByIid = grant and person.extId = :staffId");
+			query.setParameter("staffId", staffId);
+			@SuppressWarnings("unchecked")
+			List<GrantItem> grantItems = query.list();
+			List<Grant> grants = new ArrayList<Grant>();
+			Grant grant = null;
+			for (GrantItem grantItem : grantItems) {
+				grant = getGrant(grantItem);
+				if (grant != null) {
+					grants.add(grant);
+				}
 			}
+			
+			return grants;
 		}
-		
-		session.close();
-		
-		return grants;
+		finally {
+			session.close();
+		}
 	}
 	
 	/**

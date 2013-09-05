@@ -34,20 +34,21 @@ public class ResearchOutputsConferencesTest {
 	@Test
 	public void test() {
 		Session session = AriesHibernateUtil.getSessionFactory().openSession();
-		
-		Query query =session.createQuery("FROM ResearchOutputsConferences where intConferenceCode = 0");
-		
-		ResearchOutputsConferences conf = (ResearchOutputsConferences) query.uniqueResult();
-		
-		if (conf != null) {
-			LOGGER.info("Name: {}, ISBN: {}, Year: {}", new Object[] {conf.getChrConferenceName(), conf.getChrISBN(), conf.getChrYear()});
+		try {
+			Query query =session.createQuery("FROM ResearchOutputsConferences where intConferenceCode = 0");
+			
+			ResearchOutputsConferences conf = (ResearchOutputsConferences) query.uniqueResult();
+			
+			if (conf != null) {
+				LOGGER.info("Name: {}, ISBN: {}, Year: {}", new Object[] {conf.getChrConferenceName(), conf.getChrISBN(), conf.getChrYear()});
+			}
+			else {
+				LOGGER.info("There is no conference with this id");
+			}
 		}
-		else {
-			LOGGER.info("There is no conference with this id");
+		finally {
+			session.close();
 		}
-		
-		session.close();
-		//fail("Not yet implemented");
 	}
 
 }

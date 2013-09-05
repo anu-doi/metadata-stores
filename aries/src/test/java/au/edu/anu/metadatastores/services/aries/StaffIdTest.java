@@ -1,12 +1,14 @@
 package au.edu.anu.metadatastores.services.aries;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class StaffIdTest {
 	static final Logger LOGGER = LoggerFactory.getLogger(StaffIdTest.class);
-	/*
+	
+	@Ignore
 	@Test
 	public void test() {
 		StaffId staffService = StaffId.getSingleton();
@@ -17,7 +19,8 @@ public class StaffIdTest {
 		}
 		System.out.println("Done");
 	}
-	
+
+	@Ignore
 	@Test
 	public void test2() {
 		StaffId staffService = StaffId.getSingleton();
@@ -28,7 +31,8 @@ public class StaffIdTest {
 		}
 		System.out.println("Done");
 	}
-	
+
+	@Ignore
 	@Test
 	public void test3() {
 		StaffId staffService = StaffId.getSingleton();
@@ -39,7 +43,8 @@ public class StaffIdTest {
 		}
 		System.out.println("Done");
 	}
-	
+
+	@Ignore
 	@Test
 	public void test4() {
 		StaffId staffService = StaffId.getSingleton();
@@ -49,8 +54,9 @@ public class StaffIdTest {
 			LOGGER.info("Staff: {} {}", member.getGivenName(), member.getSurname());
 		}
 		System.out.println("Done");
-	}*/
-	
+	}
+
+	@Ignore
 	@Test
 	public void testActivities() {
 		StaffId staffService = StaffId.getSingleton();
@@ -72,11 +78,12 @@ public class StaffIdTest {
 			}
 		}
 	}
-	/*
+
+	@Ignore
 	@Test
 	public void testExternalStaffById() {
 		StaffId staffService = StaffId.getSingleton();
 		ExternalStaff staff = staffService.getExternalStaffInformation("E29292");
 		LOGGER.info("ID: {}, Name: {} {}, Country: {}, Institution: {}", new Object[] {staff.getAriesStaffId(), staff.getGivenName(), staff.getSurname(), staff.getCountry(), staff.getInstitution()});
-	}*/
+	}
 }

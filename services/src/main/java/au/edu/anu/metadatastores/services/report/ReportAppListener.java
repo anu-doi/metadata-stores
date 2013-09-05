@@ -51,7 +51,6 @@ public class ReportAppListener implements ServletContextListener {
 	 */
 	@Override
 	public void contextInitialized(ServletContextEvent event) {
-		// TODO Auto-generated method stub
 		ReportGenerator.reloadReports(event.getServletContext());
 	}
 

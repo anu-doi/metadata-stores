@@ -85,4 +85,11 @@ public class StoreAttributes {
 	public static final String FUNDS_PROVIDER = "FUNDS_PROVIDER";
 	public static final String REFERENCE_NUMBER = "REF_NUMBER";
 	public static final String STATUS = "STATUS";
+	
+	//Added 2013-08-23
+	public static final String SERIES = "SERIES";
+	public static final String CONTENT = "CONTENT";
+	public static final String SERIES_DESCRIPTION = "SERIES_DESC";
+	public static final String CITATION_URL = "CITATION_URL";
+	public static final String AUTHORS = "AUTHORS";
 }

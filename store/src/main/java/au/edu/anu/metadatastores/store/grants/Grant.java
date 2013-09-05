@@ -264,7 +264,6 @@ public class Grant {
 	 * 
 	 * @return The fields of research
 	 */
-	//TODO for subjects in attributes
 	@ItemAttributeTrait(attrType=StoreAttributes.FOR_SUBJECT, traitType=TraitType.SUBJECT_LIST)
 	@XmlElement(name="for-subject")
 	public List<Subject> getAnzforSubjects() {

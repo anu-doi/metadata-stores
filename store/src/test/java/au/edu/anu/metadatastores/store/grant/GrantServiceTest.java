@@ -1,13 +1,17 @@
 package au.edu.anu.metadatastores.store.grant;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import au.edu.anu.metadatastores.datamodel.store.ext.StoreAttributes;
 import au.edu.anu.metadatastores.store.grants.Grant;
 import au.edu.anu.metadatastores.store.grants.GrantItem;
 import au.edu.anu.metadatastores.store.grants.GrantService;
@@ -28,7 +32,8 @@ public class GrantServiceTest {
 		grantService_ = GrantService.getSingleton();
 	}
 
-	/*@Test
+	@Ignore
+	@Test
 	public void test() {
 		//List<Grant> grants = grantService_.fetchGrantsForPerson("u9909577");
 		List<Grant> grants = grantService_.fetchGrantsForPerson("u8808483");
@@ -37,20 +42,23 @@ public class GrantServiceTest {
 			printGrant(grant);
 		}
 		LOGGER.info("Done");
-	}*/
+	}
 
+	@Ignore
 	@Test
 	public void saveTest() {
 		//List<Grant> grants = grantService_.fetchGrantsForPerson("u8808483");
 		List<Grant> grants = grantService_.fetchGrantsForPerson("u4485658");
 		
 		for (Grant grant : grants) {
+			@SuppressWarnings("unused")
 			GrantItem item = grantService_.saveGrant(grant);
 		}
 		LOGGER.info("Done");
 	}
-	
-	/*@Test
+
+	@Ignore
+	@Test
 	public void getGrantTest() {
 	//	Grant grant = grantService_.getGrant("CON25338");
 	//	Grant grant = grantService_.getGrant("CON9056");
@@ -61,9 +69,10 @@ public class GrantServiceTest {
 		printGrant(grant);
 		
 		LOGGER.info("Done");
-	}*/
-	
-	/*@Test
+	}
+
+	@Ignore
+	@Test
 	public void getGrantsForPerson() {
 		//List<Grant> grants = grantService_.getGrantsForPerson("u9909577");
 		List<Grant> grants = grantService_.getGrantsForPerson("u8808483");
@@ -77,9 +86,10 @@ public class GrantServiceTest {
 		else {
 			LOGGER.info("No Grants Found");
 		}
-	}*/
-	
-/*	@Test
+	}
+
+	@Ignore
+	@Test
 	public void getGrantTitleTest() {
 		Map<String, String> attributes = new HashMap<String, String>();
 		attributes.put(StoreAttributes.TITLE, "Control");
@@ -89,7 +99,7 @@ public class GrantServiceTest {
 		for (Grant grant : grants) {
 			printGrant(grant);
 		}
-	}*/
+	}
 	
 	private void printGrant(Grant grant) {
 		LOGGER.info("Code: {}, Title: {}, Start Date: {}, End Date: {}", new Object[]{grant.getContractCode(), grant.getTitle(), grant.getStartDate(), grant.getEndDate()});

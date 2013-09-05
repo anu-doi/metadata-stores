@@ -31,16 +31,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 /**
- * ItemRelation
- * 
- * The Australian National University
- * 
- * Entity class for the <i>item_relation</i> table
- * 
- * @author Genevieve Turner
- *
- */
-/**
  * <p>ItemRelation<p>
  * 
  * <p>The Australian National University</p>
@@ -51,7 +41,7 @@ import javax.persistence.Table;
  *
  */
 @Entity
-@Table(name = "item_relation", schema = "public")
+@Table(name = "item_relation")
 public class ItemRelation implements java.io.Serializable {
 	private static final long serialVersionUID = 1L;
 

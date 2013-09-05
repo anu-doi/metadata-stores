@@ -25,21 +25,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 
 import au.edu.anu.metadatastores.datamodel.aries.publications.ResearchOutputsData1;
 
-/**
- * OutputId
- * 
- * The Australian National University
- * 
- * Class to provide research outputs information
- * 
- * @author Rainbow Cai
- * @author Genevieve Turner
- *
- */
 /**
  * 
  * <p>OutputId<p>
@@ -81,22 +69,22 @@ public class OutputId {
 	 */
 	public String[] getAllOutput6Codes() {
 		Session session = AriesHibernateUtil.getSessionFactory().openSession();
-		Transaction transaction = session.beginTransaction();
-		
-		List<ResearchOutputsData1> researchOutputs = session.createQuery("from ResearchOutputsData1").list();
-		
-		List<String> outputCodes = new ArrayList<String>();
-		
-		for (ResearchOutputsData1 researchOutput : researchOutputs) {
-			if (researchOutput != null && researchOutput.getChrOutput6code() != null && !outputCodes.contains(researchOutput.getChrOutput6code())) {
-				outputCodes.add(researchOutput.getChrOutput6code());
+		try {
+			@SuppressWarnings("unchecked")
+			List<ResearchOutputsData1> researchOutputs = session.createQuery("from ResearchOutputsData1").list();
+			
+			List<String> outputCodes = new ArrayList<String>();
+			
+			for (ResearchOutputsData1 researchOutput : researchOutputs) {
+				if (researchOutput != null && researchOutput.getChrOutput6code() != null && !outputCodes.contains(researchOutput.getChrOutput6code())) {
+					outputCodes.add(researchOutput.getChrOutput6code());
+				}
 			}
+			
+			return outputCodes.toArray(new String[0]);
 		}
-		
-		transaction.commit();
-		session.flush();
-		session.close();
-		
-		return outputCodes.toArray(new String[0]);
+		finally {
+			session.close();
+		}
 	}
 }

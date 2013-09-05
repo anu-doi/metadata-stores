@@ -44,6 +44,7 @@ import au.edu.anu.metadatastores.datamodel.store.ItemAttribute;
 import au.edu.anu.metadatastores.datamodel.store.ItemRelation;
 import au.edu.anu.metadatastores.datamodel.store.ItemRelationId;
 import au.edu.anu.metadatastores.datamodel.store.RelationMapping;
+import au.edu.anu.metadatastores.datamodel.store.annotations.ItemTraitParser;
 import au.edu.anu.metadatastores.datamodel.store.ext.StoreAttributes;
 import au.edu.anu.metadatastores.harvester.HarvestContentService;
 import au.edu.anu.metadatastores.services.store.StoreHibernateUtil;
@@ -117,23 +118,27 @@ public class DataCommonsService extends DublinCoreService {
 	 */
 	private void processDeleted(HarvestContent content) {
 		Session session = StoreHibernateUtil.getSessionFactory().openSession();
-		session.beginTransaction();
-		
-		Query query = session.createQuery("FROM DataCommonsItem WHERE extSystem = :extSystem AND extId = :extId");
-		query.setParameter("extSystem", extSystem);
-		query.setParameter("extId", content.getIdentifier());
-		
-		DataCommonsItem item = (DataCommonsItem) query.uniqueResult();
-		
-		if (item != null) {
-			item.setDeleted(Boolean.TRUE);
-			session.merge(item);
+		try {
+			session.beginTransaction();
+			
+			Query query = session.createQuery("FROM DataCommonsItem WHERE extSystem = :extSystem AND extId = :extId");
+			query.setParameter("extSystem", extSystem);
+			query.setParameter("extId", content.getIdentifier());
+			
+			DataCommonsItem item = (DataCommonsItem) query.uniqueResult();
+			
+			if (item != null) {
+				item.setDeleted(Boolean.TRUE);
+				session.merge(item);
+			}
+			else {
+				LOGGER.debug("No record to be deleted: {}", content.getIdentifier());
+			}
+			session.getTransaction().commit();
 		}
-		else {
-			LOGGER.debug("No record to be deleted: {}", content.getIdentifier());
+		finally {
+			session.close();
 		}
-		session.getTransaction().commit();
-		session.close();
 	}
 	
 	/**
@@ -143,45 +148,48 @@ public class DataCommonsService extends DublinCoreService {
 	 */
 	private void processRecord(HarvestContent content) {
 		Session session = StoreHibernateUtil.getSessionFactory().openSession();
-		session.beginTransaction();
-		session.enableFilter("attributes");
-		
-		Query query = session.createQuery("FROM DataCommonsItem WHERE extSystem = :extSystem AND extId = :extId");
-		query.setParameter("extSystem", extSystem);
-		query.setParameter("extId", content.getIdentifier());
-		
-		DataCommonsItem item = (DataCommonsItem) query.uniqueResult();
-		if (item == null) {
-			item = new DataCommonsItem();
-			item.setExtId(content.getIdentifier());
-			session.save(item);
-		}
-		
-		//TODO make a dublin core item and process there
 		try {
-			JAXBContext context = JAXBContext.newInstance(DublinCore.class);
-			Unmarshaller unmarshaller = context.createUnmarshaller();
+			session.beginTransaction();
+			session.enableFilter("attributes");
 			
-			DublinCore dublinCore = (DublinCore) unmarshaller.unmarshal(new StringReader(content.getContent()));
-			Date lastModified = new Date();
-			super.processRecord((DublinCoreItem) item, dublinCore, session, lastModified);
+			Query query = session.createQuery("FROM DataCommonsItem WHERE extSystem = :extSystem AND extId = :extId");
+			query.setParameter("extSystem", extSystem);
+			query.setParameter("extId", content.getIdentifier());
+			
+			DataCommonsItem item = (DataCommonsItem) query.uniqueResult();
+			if (item == null) {
+				item = new DataCommonsItem();
+				item.setExtId(content.getIdentifier());
+				session.save(item);
+			}
+			
+			try {
+				JAXBContext context = JAXBContext.newInstance(DublinCore.class);
+				Unmarshaller unmarshaller = context.createUnmarshaller();
+				
+				DublinCore dublinCore = (DublinCore) unmarshaller.unmarshal(new StringReader(content.getContent()));
+				Date lastModified = new Date();
+				super.processRecord((DublinCoreItem) item, dublinCore, session, lastModified);
+			}
+			catch (JAXBException e) {
+				LOGGER.error("Exception transforming document", e);
+			}
+			catch (InvocationTargetException e) {
+				LOGGER.error("Error invoking method", e);
+			}
+			catch (IllegalAccessException e) {
+				LOGGER.error("Error accessing method", e);
+			}
+			
+			session.merge(item);
+			
+			LOGGER.debug("Item Numbers: {}", item.getItemAttributes().size());
+			
+			session.getTransaction().commit();
 		}
-		catch (JAXBException e) {
-			LOGGER.error("Exception transforming document", e);
+		finally {
+			session.close();
 		}
-		catch (InvocationTargetException e) {
-			LOGGER.error("Error invoking method", e);
-		}
-		catch (IllegalAccessException e) {
-			LOGGER.error("Error accessing method", e);
-		}
-		
-		session.merge(item);
-		
-		LOGGER.debug("Item Numbers: {}", item.getItemAttributes().size());
-		
-		session.getTransaction().commit();
-		session.close();
 	}
 	
 	/**
@@ -411,43 +419,47 @@ public class DataCommonsService extends DublinCoreService {
 	 */
 	protected void setReverseRelations(DublinCoreItem item, DublinCore dublinCore, Session session2) {
 		Session session = StoreHibernateUtil.getSessionFactory().openSession();
-		Query query = session.createQuery("FROM ItemAttribute WHERE attrType = :attrType AND attrValue = :attrValue");
-		query.setParameter("attrType", StoreAttributes.RELATION_VALUE);
-		dublinCore.getIdentifiers();
-		String identifier = null;
-		for (String id : dublinCore.getIdentifiers()) {
-			if (id.startsWith(StoreProperties.getProperty("relation.id.format.datacommons"))) {
-				identifier = id;
-				break;
-			}
-		}
-		if (identifier != null) {
-			query.setParameter("attrValue", identifier);
-			@SuppressWarnings("unchecked")
-			List<ItemAttribute> relatedAttributes = query.list();
-			
-			LOGGER.debug("Number of reverse relationships: {}", relatedAttributes.size());
-			ItemRelationId id = null;
-			for (ItemAttribute relatedAttribute : relatedAttributes) {
-				String relationText = relatedAttribute.getItemAttribute().getAttrValue();
-				
-				String[] relationParts = getRelationParts(relationText);
-				String relationType = getRelationType(relationParts[0]);
-				
-				id = new ItemRelationId(relatedAttribute.getItem().getIid(), relationType, item.getIid());
-				ItemRelation relation = (ItemRelation) session.get(ItemRelation.class, id);
-				if (relation == null) {
-					LOGGER.debug("Does not have relation");
-					ItemRelation newRelation = new ItemRelation();
-					newRelation.setId(id);
-					item.getItemRelationsForRelatedIid().add(newRelation);
-				}
-				else {
-					LOGGER.debug("has relation");
+		try {
+			Query query = session.createQuery("FROM ItemAttribute WHERE attrType = :attrType AND attrValue = :attrValue");
+			query.setParameter("attrType", StoreAttributes.RELATION_VALUE);
+			dublinCore.getIdentifiers();
+			String identifier = null;
+			for (String id : dublinCore.getIdentifiers()) {
+				if (id.startsWith(StoreProperties.getProperty("relation.id.format.datacommons"))) {
+					identifier = id;
+					break;
 				}
 			}
+			if (identifier != null) {
+				query.setParameter("attrValue", identifier);
+				@SuppressWarnings("unchecked")
+				List<ItemAttribute> relatedAttributes = query.list();
+				
+				LOGGER.debug("Number of reverse relationships: {}", relatedAttributes.size());
+				ItemRelationId id = null;
+				for (ItemAttribute relatedAttribute : relatedAttributes) {
+					String relationText = relatedAttribute.getItemAttribute().getAttrValue();
+					
+					String[] relationParts = getRelationParts(relationText);
+					String relationType = getRelationType(relationParts[0]);
+					
+					id = new ItemRelationId(relatedAttribute.getItem().getIid(), relationType, item.getIid());
+					ItemRelation relation = (ItemRelation) session.get(ItemRelation.class, id);
+					if (relation == null) {
+						LOGGER.debug("Does not have relation");
+						ItemRelation newRelation = new ItemRelation();
+						newRelation.setId(id);
+						item.getItemRelationsForRelatedIid().add(newRelation);
+					}
+					else {
+						LOGGER.debug("has relation");
+					}
+				}
+			}
 		}
+		finally {
 		session.close();
+		}
 	}
 	
 	/**
@@ -468,5 +480,39 @@ public class DataCommonsService extends DublinCoreService {
 			}
 		}
 		return relationType;
+	}
+	
+	public DublinCore getDataCommonsObject(String id) {
+		Session session = StoreHibernateUtil.getSessionFactory().openSession();
+		session.enableFilter("attributes");
+		DublinCore dataCommonsObject = null;
+		try {
+			Query query = session.createQuery("FROM DataCommonsItem WHERE extId = :extId");
+			query.setParameter("extId", id);
+			
+			DataCommonsItem item = (DataCommonsItem) query.uniqueResult();
+			dataCommonsObject = getDataCommonsObject(item);
+		}
+		finally {
+			session.close();
+		}
+		
+		return dataCommonsObject;
+	}
+	
+	public DublinCore getDataCommonsObject(DataCommonsItem item) {
+		DublinCore dataCommonsObject = new DublinCore();
+		
+		ItemTraitParser traitParser = new ItemTraitParser();
+		
+		try {
+			dataCommonsObject = (DublinCore) traitParser.getItemObject(item, DublinCore.class);
+		}
+		catch (Exception e) {
+			LOGGER.error("Exception getting data commons object", e);
+		}
+		//TODO get relations?
+		
+		return dataCommonsObject;
 	}
 }

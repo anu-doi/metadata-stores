@@ -2,6 +2,7 @@ package au.edu.anu.metadatastores.services.aries;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,18 +18,20 @@ public class PublicationIdTest {
 	public void setUp() throws Exception {
 	}
 
-/*	@Test
+	@Test
 	public void test() {
 		PublicationId publicationService = PublicationId.getSingleton();
 		
 		//Publication pub = publicationService.getSinglePublication("u9406909xPUB235");
 		//Publication pub = publicationService.getSinglePublication("u4353633xPUB104");
 		//Publication pub = publicationService.getSinglePublication("f2965xPUB2328");
-		Publication pub = publicationService.getSinglePublication("u4637548xPUB16");
+		//Publication pub = publicationService.getSinglePublication("u4637548xPUB16");
+		Publication pub = publicationService.getSinglePublication("f5625xPUB808");
 		LOGGER.info("Title: {}, Name: {}, Year: {}, ISBN: {}, ISSN: {}", new Object[] {pub.getPublicationTitle(), pub.getPublicationName(), pub.getPublicationDate(), pub.getISBN(), pub.getISSN()});
-	}*/
-	
-	/*@Test
+	}
+
+	@Ignore
+	@Test
 	public void multiplePublicationsTest() {
 		PublicationId publicationService = PublicationId.getSingleton();
 		
@@ -38,8 +41,9 @@ public class PublicationIdTest {
 			pub = publicationService.getSinglePublication(id);
 			LOGGER.info("{}, {}", pub.getAriesId(), pub.getPublicationTitle());
 		}
-	}*/
-	
+	}
+
+	@Ignore
 	@Test
 	public void publicationsByYearTest() {
 		PublicationId publicationService = PublicationId.getSingleton();

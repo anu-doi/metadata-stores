@@ -45,12 +45,13 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "research_outputs_journals")
 public class ResearchOutputsJournals implements java.io.Serializable {
-
+	private static final long serialVersionUID = 1L;
+	
 	private Integer intJournalCode;
 	private String chrJournalName;
 	private String chrYear;
 	private String chrISSN;
-	private Set<ResearchOutputsData1> researchOutputsData1s = new HashSet(0);
+	private Set<ResearchOutputsData1> researchOutputsData1s = new HashSet<ResearchOutputsData1>(0);
 
 	/**
 	 * Constructor

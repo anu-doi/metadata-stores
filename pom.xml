@@ -15,6 +15,7 @@
 		<module>stores-harvester</module>
 		<module>util</module>
 		<module>ands</module>
+		<module>metadata-service</module>
 	</modules>
 	
 	<properties>

@@ -64,7 +64,6 @@ public class ItemTraitParser {
 		Method[] methods = object.getClass().getMethods();
 		Item item = new Item();
 		if (object.getClass().isAnnotationPresent(ItemTrait.class)) {
-			//TODO fill out this!
 			ItemTrait itemTrait = object.getClass().getAnnotation(ItemTrait.class);
 			String extId = itemTrait.extId();
 			String title = itemTrait.title();
@@ -377,5 +376,17 @@ public class ItemTraitParser {
 				}
 			}
 		}
+	}
+	
+	public List<String> getTraitAttributeTypes(Class<?> clazz) {
+		List<String> attrTypes = new ArrayList<String>();
+		
+		for (Method method : clazz.getMethods()) {
+			if (method.isAnnotationPresent(ItemAttributeTrait.class)) {
+				ItemAttributeTrait trait = method.getAnnotation(ItemAttributeTrait.class);
+				attrTypes.add(trait.attrType());
+			}
+		}
+		return attrTypes;
 	}
 }

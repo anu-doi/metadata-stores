@@ -1,0 +1,36 @@
+div.term label {
+	display: inline-block;
+	width: 150px;
+}
+div.term select {
+	width: 200px;
+}
+div.term input[type='text'] {
+	width: 200px;
+}
+.title {
+	display: inline-block;
+	font-weight: bold;
+}
+span.title {
+	width: 20%;
+}
+ul.removebullet {
+	/*list-style-type: circle;*/
+	list-style-type: none;
+}
+ul.removebullet li:before {
+	content: "- ";
+	position: relative;
+	margin-left: -10px;
+	left: -5px;
+}
+.hidden {
+	display: none;
+}
+.hidden-text:after {
+	content: " [Show Relations]";
+}
+.show-text:after {
+	content: " [Hide Relations]";
+}

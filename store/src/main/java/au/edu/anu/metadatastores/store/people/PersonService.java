@@ -338,16 +338,20 @@ public class PersonService extends AbstractItemService {
 	private Person createBasicPerson(String givenName, String surname) {
 		Person person = new Person();
 		Session session = StoreHibernateUtil.getSessionFactory().openSession();
-		Query idQuery = session.createSQLQuery("SELECT nextval('person_seq')");
-		BigInteger id = (BigInteger) idQuery.uniqueResult();
-
-		person.setExtId("mu" + id.toString());
-		person.setGivenName(givenName);
-		person.setSurname(surname);
-		person.setStaffType("Unknown");
-		
-		session.close();
-		return person;
+		try {
+			Query idQuery = session.createSQLQuery("SELECT nextval('person_seq')");
+			BigInteger id = (BigInteger) idQuery.uniqueResult();
+	
+			person.setExtId("mu" + id.toString());
+			person.setGivenName(givenName);
+			person.setSurname(surname);
+			person.setStaffType("Unknown");
+			
+			return person;
+		}
+		finally {
+			session.close();
+		}
 	}
 	
 	/**
@@ -358,15 +362,19 @@ public class PersonService extends AbstractItemService {
 	 */
 	private PersonItem queryPersonByUid(String uid) {
 		Session session = StoreHibernateUtil.getSessionFactory().openSession();
-		session.enableFilter("attributes");
-		
-		Query query = session.createQuery("from PersonItem where lower(extId) = :extId");
-		query.setParameter("extId", uid.toLowerCase());
-		
-		PersonItem personItem = (PersonItem) query.uniqueResult();
-		session.close();
-		
-		return personItem;
+		try {
+			session.enableFilter("attributes");
+			
+			Query query = session.createQuery("from PersonItem where lower(extId) = :extId");
+			query.setParameter("extId", uid.toLowerCase());
+			
+			PersonItem personItem = (PersonItem) query.uniqueResult();
+			
+			return personItem;
+		}
+		finally {
+			session.close();
+		}
 	}
 	
 	/**
@@ -379,36 +387,40 @@ public class PersonService extends AbstractItemService {
 	private List<PersonItem> queryPeopleByName(String givenName, String surname) {
 		LOGGER.debug("Given Name: {}, Surname: {}", givenName, surname);
 		Session session = StoreHibernateUtil.getSessionFactory().openSession();
-		session.enableFilter("attributes");
-		
-		Query query = session.createQuery("select pi from PersonItem pi join pi.givenNames gn join pi.surnames sn where lower(gn.attrValue) = :givenName and lower(sn.attrValue) = :surname");
-		query.setParameter("givenName", givenName.toLowerCase());
-		query.setParameter("surname", surname.toLowerCase());
-		
-		@SuppressWarnings("unchecked")
-		List<PersonItem> people = query.list();
-		if (people != null) {
-			LOGGER.debug("Number of people found in first query: {}", people.size());
-		}
-		else {
-			LOGGER.debug("No people found in first query");
-		}
-		
-		if (people == null || people.size() == 0) {
-			query = session.createQuery("select pi from PersonItem pi join pi.commonNames cn where lower(cn.attrValue) = :commonName");
-			query.setParameter("commonName", givenName.toLowerCase() + " " + surname.toLowerCase());
+		try {
+			session.enableFilter("attributes");
 			
-			people = query.list();
+			Query query = session.createQuery("select pi from PersonItem pi join pi.givenNames gn join pi.surnames sn where lower(gn.attrValue) = :givenName and lower(sn.attrValue) = :surname");
+			query.setParameter("givenName", givenName.toLowerCase());
+			query.setParameter("surname", surname.toLowerCase());
+			
+			@SuppressWarnings("unchecked")
+			List<PersonItem> people = query.list();
 			if (people != null) {
-				LOGGER.debug("Number of people found in second query: {}", people.size());
+				LOGGER.debug("Number of people found in first query: {}", people.size());
 			}
 			else {
-				LOGGER.debug("No people found in second query");
+				LOGGER.debug("No people found in first query");
 			}
+			
+			if (people == null || people.size() == 0) {
+				query = session.createQuery("select pi from PersonItem pi join pi.commonNames cn where lower(cn.attrValue) = :commonName");
+				query.setParameter("commonName", givenName.toLowerCase() + " " + surname.toLowerCase());
+				
+				people = query.list();
+				if (people != null) {
+					LOGGER.debug("Number of people found in second query: {}", people.size());
+				}
+				else {
+					LOGGER.debug("No people found in second query");
+				}
+			}
+			
+			return people;
 		}
-		
-		session.close();
-		return people;
+		finally {
+			session.close();
+		}
 	}
 	
 	/**
@@ -420,49 +432,51 @@ public class PersonService extends AbstractItemService {
 	public List<Person> queryPersonByAttributes(Map<String, String> attributes) {
 		List<Person> people = new ArrayList<Person>();
 		Session session = StoreHibernateUtil.getSessionFactory().openSession();
-		
-		List<String> parameters = new ArrayList<String>();
-
-		StringBuilder fromString = new StringBuilder();
-		StringBuilder whereString = new StringBuilder();
-		
-		fromString.append(" FROM PersonItem pi");
-		whereString.append(" WHERE");
-		int i = 0;
-		for (Entry<String, String> entry : attributes.entrySet()) {
-			fromString.append(" LEFT JOIN pi.itemAttributes pia");
-			fromString.append(i);
-			if (i > 0) {
-				whereString.append(" AND");
-			}
-			whereString.append(" pia");
-			whereString.append(i);
-			whereString.append(".attrType = ? AND lower(pia");
-			whereString.append(i);
-			whereString.append(".attrValue) like ?");
-			parameters.add(entry.getKey());
-			parameters.add(entry.getValue().toLowerCase() + "%");
+		try {
+			List<String> parameters = new ArrayList<String>();
+	
+			StringBuilder fromString = new StringBuilder();
+			StringBuilder whereString = new StringBuilder();
 			
-			i++;
+			fromString.append(" FROM PersonItem pi");
+			whereString.append(" WHERE");
+			int i = 0;
+			for (Entry<String, String> entry : attributes.entrySet()) {
+				fromString.append(" LEFT JOIN pi.itemAttributes pia");
+				fromString.append(i);
+				if (i > 0) {
+					whereString.append(" AND");
+				}
+				whereString.append(" pia");
+				whereString.append(i);
+				whereString.append(".attrType = ? AND lower(pia");
+				whereString.append(i);
+				whereString.append(".attrValue) like ?");
+				parameters.add(entry.getKey());
+				parameters.add(entry.getValue().toLowerCase() + "%");
+				
+				i++;
+			}
+			String queryString = "SELECT pi " + fromString.toString() + " " + whereString.toString();
+			LOGGER.debug("Query: {}", queryString);
+			LOGGER.debug("Number of parameters: {}", parameters.size());
+			Query query = session.createQuery(queryString);
+			for (i = 0; i < parameters.size(); i++) {
+				query.setParameter(i, parameters.get(i));
+			}
+			
+			@SuppressWarnings("unchecked")
+			List<PersonItem> personItems = query.list();
+			
+			Person person = null;
+			for (PersonItem personItem : personItems) {
+				person = getPerson(personItem, false);
+				people.add(person);
+			}
 		}
-		String queryString = "SELECT pi " + fromString.toString() + " " + whereString.toString();
-		LOGGER.debug("Query: {}", queryString);
-		LOGGER.debug("Number of parameters: {}", parameters.size());
-		Query query = session.createQuery(queryString);
-		for (i = 0; i < parameters.size(); i++) {
-			query.setParameter(i, parameters.get(i));
+		finally {
+			session.close();
 		}
-		
-		@SuppressWarnings("unchecked")
-		List<PersonItem> personItems = query.list();
-		
-		Person person = null;
-		for (PersonItem personItem : personItems) {
-			person = getPerson(personItem, false);
-			people.add(person);
-		}
-		
-		session.close();
 		
 		return people;
 	}
@@ -524,49 +538,51 @@ public class PersonService extends AbstractItemService {
 	 * @return The item information for the person
 	 */
 	public PersonItem savePerson(Person person, Boolean userUpdated) {
-
 		if (person.getExtId() == null) {
 			return null;
 		}
 		
 		Session session = StoreHibernateUtil.getSessionFactory().openSession();
-		session.beginTransaction();
-		session.enableFilter("attributes");
-		
-		Query query = session.createQuery("from PersonItem where extId = :extId");
-		query.setParameter("extId", person.getExtId());
-		
-		PersonItem item = (PersonItem) query.uniqueResult();
-		String title = person.getGivenName() + " " + person.getSurname();
-		
-		Date lastModified = new Date();
-		ItemTraitParser parser = new ItemTraitParser();
-		Item newItem = null;
-		
 		try {
-			newItem = parser.getItem(person, lastModified);
-		}
-		catch (Exception e) {
-			LOGGER.error("Exception transforming person to an item", e);
-		}
-		
-		if (item == null) {
-			item = new PersonItem();
-			item.setExtId(person.getExtId().toLowerCase());
-			item.setTitle(title);
+			session.beginTransaction();
+			session.enableFilter("attributes");
+			
+			Query query = session.createQuery("from PersonItem where extId = :extId");
+			query.setParameter("extId", person.getExtId());
+			
+			PersonItem item = (PersonItem) query.uniqueResult();
+			String title = person.getGivenName() + " " + person.getSurname();
+			
+			Date lastModified = new Date();
+			ItemTraitParser parser = new ItemTraitParser();
+			Item newItem = null;
+			
+			try {
+				newItem = parser.getItem(person, lastModified);
+			}
+			catch (Exception e) {
+				LOGGER.error("Exception transforming person to an item", e);
+			}
+			
+			if (item == null) {
+				item = new PersonItem();
+				item.setExtId(person.getExtId().toLowerCase());
+				item.setTitle(title);
+				item = (PersonItem) session.merge(item);
+			}
+			else {
+				item.setTitle(title);
+			}
+			
+			updateAttributesFromItem(item, newItem, session, lastModified);
+			
 			item = (PersonItem) session.merge(item);
+			session.getTransaction().commit();
+			return item;
 		}
-		else {
-			item.setTitle(title);
+		finally {
+			session.close();
 		}
-		
-		updateAttributesFromItem(item, newItem, session, lastModified);
-		
-		item = (PersonItem) session.merge(item);
-		session.getTransaction().commit();
-		session.close();
-		
-		return item;
 	}
 	
 	/**
@@ -577,22 +593,26 @@ public class PersonService extends AbstractItemService {
 	 */
 	public Person getPerson(String uid) {
 		Session session = StoreHibernateUtil.getSessionFactory().openSession();
-		session.enableFilter("attributes");
-		Transaction transaction = session.beginTransaction();
-		
-		Query query = session.createQuery("from PersonItem where extId = :extId");
-		query.setParameter("extId", uid);
-		
-		PersonItem item = (PersonItem) query.uniqueResult();
-		
-		Person person = null;
-		if (item != null) {
-			person = getPerson(item);
+		try {
+			session.enableFilter("attributes");
+			Transaction transaction = session.beginTransaction();
+			
+			Query query = session.createQuery("from PersonItem where extId = :extId");
+			query.setParameter("extId", uid);
+			
+			PersonItem item = (PersonItem) query.uniqueResult();
+			
+			Person person = null;
+			if (item != null) {
+				person = getPerson(item);
+			}
+			transaction.commit();
+			
+			return person;
 		}
-		transaction.commit();
-		session.close();
-		
-		return person;
+		finally {
+			session.close();
+		}
 	}
 	
 	/**
@@ -614,21 +634,25 @@ public class PersonService extends AbstractItemService {
 	 */
 	public Person getBasicPerson(String uid, boolean extraInfo) {
 		Session session = StoreHibernateUtil.getSessionFactory().openSession();
-		session.enableFilter("attributes");
-		Transaction transaction = session.beginTransaction();
-		
-		Query query = session.createQuery("select pi from PersonItem pi join fetch pi.itemAttributes where pi.extId = :extId");
-		query.setParameter("extId", uid);
-		
-		PersonItem item = (PersonItem) query.uniqueResult();
-		Person person = null;
-		if (item != null) {
-			person = getBasicPerson(item, extraInfo);
+		try {
+			session.enableFilter("attributes");
+			Transaction transaction = session.beginTransaction();
+			
+			Query query = session.createQuery("select pi from PersonItem pi join fetch pi.itemAttributes where pi.extId = :extId");
+			query.setParameter("extId", uid);
+			
+			PersonItem item = (PersonItem) query.uniqueResult();
+			Person person = null;
+			if (item != null) {
+				person = getBasicPerson(item, extraInfo);
+			}
+			transaction.commit();
+			
+			return person;
 		}
-		transaction.commit();
-		session.close();
-		
-		return person;
+		finally {
+			session.close();
+		}
 	}
 	
 	/**
@@ -650,23 +674,26 @@ public class PersonService extends AbstractItemService {
 	 */
 	public List<Person> getBasicPeople(List<String> extIds, boolean extraInfo) {
 		Session session = StoreHibernateUtil.getSessionFactory().openSession();
-		Query query = session.createQuery("select distinct pi from PersonItem as pi left join fetch pi.itemAttributes where pi.extId in (:extIds)");
-		query.setParameterList("extIds", extIds);
-		
-		@SuppressWarnings("unchecked")
-		List<PersonItem> personItems = query.list();
-		LOGGER.debug("Number of People Found: {}", personItems.size());
-		List<Person> people = new ArrayList<Person>();
-		for (PersonItem personItem : personItems) {
-			Person person = getBasicPerson(personItem, extraInfo);
-			if (!people.contains(person)) {
-				people.add(person);
+		try {
+			Query query = session.createQuery("select distinct pi from PersonItem as pi left join fetch pi.itemAttributes where pi.extId in (:extIds)");
+			query.setParameterList("extIds", extIds);
+			
+			@SuppressWarnings("unchecked")
+			List<PersonItem> personItems = query.list();
+			LOGGER.debug("Number of People Found: {}", personItems.size());
+			List<Person> people = new ArrayList<Person>();
+			for (PersonItem personItem : personItems) {
+				Person person = getBasicPerson(personItem, extraInfo);
+				if (!people.contains(person)) {
+					people.add(person);
+				}
 			}
+			
+			return people;
 		}
-		
-		session.close();
-		
-		return people;
+		finally {
+			session.close();
+		}
 	}
 	
 	/**

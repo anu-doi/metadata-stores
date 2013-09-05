@@ -1,5 +1,6 @@
 package au.edu.anu.metadatastores.services.aries;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,24 +10,23 @@ public class AriesServiceTest {
 
 	AriesService ariesService = AriesService.getSingleton();
 	
-/*
+	@Ignore
 	@Test
 	public void test() {
 		LOGGER.info("Starting Test");
-		//AriesService ariesService = AriesService.getSingleton();
 	}
-	*/
-	/*
+	
+	@Ignore
 	@Test
 	public void testContracts() {
 		ANUActivity[] activities = ariesService.getContracts("u4464261");
 		LOGGER.info("Number of activities: {}", activities.length);
 		for (int i = 0; i < activities.length; i++) {
-			LOGGER.info("Activity ID: {}, Investigator Name: {}", activities[i].getActivityId(), activities[i].getInvestigatorFullName());
+			LOGGER.info("Activity ID: {}, Investigator Name: {}", activities[i].getActivityId(), activities[i].getFirstInvestigatorId());
 		}
 	}
-	*/
-	
+
+	@Ignore
 	@Test
 	public void testPublications() {
 		//Publication[] publications = ariesService.getPublications("u4464261");
@@ -47,14 +47,14 @@ public class AriesServiceTest {
 		}
 	}
 	
-	/*
+	@Ignore
 	@Test
 	public void testFundingAuthorityURL() {
 		String url = ariesService.getFundingAuthorityURLforANUActivity("CON18259");
 		LOGGER.info("Funding Authority: {}", url);
 	}
-	*/
-	/*
+
+	@Ignore
 	@Test
 	public void testAllContractInvestigatorCode() {
 		String[] investigatorCodes = ariesService.getAllContractInvestigatorCode();
@@ -62,8 +62,9 @@ public class AriesServiceTest {
 		for (int i = 0; i < investigatorCodes.length && i < 10; i++) {
 			LOGGER.info("Investigator Code: {}", investigatorCodes[i]);
 		}
-	}*/
-	/*
+	}
+
+	@Ignore
 	@Test
 	public void testAllOutput6Codes() {
 		String[] output6Codes = ariesService.getAllOutput6Codes();
@@ -72,8 +73,7 @@ public class AriesServiceTest {
 			LOGGER.info("Output 6 Code: {}", output6Codes[i]);
 		}
 	}
-	*/
-	/*
+
 	@Test
 	public void testInvestigatorUniIDs() {
 		String[] uniIds = ariesService.getInvestigatorsUniIDs("CON18271");
@@ -81,22 +81,15 @@ public class AriesServiceTest {
 			LOGGER.info("Uni ID: {}", uniIds[i]);
 		}
 	}
-	*/
-	/*
+	
+	@Ignore
 	@Test
 	public void testActivityDescription() {
 		String activityDescription = ariesService.getANUActivityDesc("CON23784");
 		LOGGER.info("Activity Description: {}", activityDescription);
 	}
-	*/
-	/*
-	@Test
-	public void testActivityAuthID() {
-		String activityAuthID = ariesService.getANUActivityAuthID("CON23784");
-		LOGGER.info("Activity Author ID: {}", activityAuthID);
-	}
-	*/
-	/*
+
+	@Ignore
 	@Test
 	public void testInvestigatorsFromGrants() {
 		String[] investigators = ariesService.getInvestigators(new String[] {"CON18259", "CON18271"});
@@ -105,8 +98,8 @@ public class AriesServiceTest {
 			LOGGER.info("Investigator: {}", investigators[i]);
 		}
 	}
-	*/
-	/*
+
+	@Ignore
 	@Test
 	public void testGrantDescriptions() {
 		String[] grantDescriptions = ariesService.getGrantDescriptions(new String[] {"CON18259", "CON18271"});
@@ -115,8 +108,8 @@ public class AriesServiceTest {
 			LOGGER.info("Grant Description: {}", grantDescriptions[i]);
 		}
 	}
-	*/
-	/*
+
+	@Ignore
 	@Test
 	public void testGrantNames() {
 		String[] grantNames = ariesService.getGrantNames(new String[] {"CON18259", "CON18271", "CON23838"});
@@ -125,8 +118,8 @@ public class AriesServiceTest {
 			LOGGER.info("Grant Name: {}", grantNames[i]);
 		}
 	}
-	*/
-	/*
+
+	@Ignore
 	@Test
 	public void testPublicationCodes() {
 		String[] publicationCodes = ariesService.getAllPublicationCodes();
@@ -135,8 +128,8 @@ public class AriesServiceTest {
 			LOGGER.info("Publication Code: {}", publicationCodes[i]);
 		}
 	}
-	*/
-	/*
+
+	@Ignore
 	@Test
 	public void testFirstAuthors() {
 		//String[] firstAuthors = ariesService.getFirstAuthors(new String[] {"a240288xPUB101", "a154704xPUB1"});
@@ -147,7 +140,7 @@ public class AriesServiceTest {
 		}
 	}
 	
-	
+	//@Ignore
 	@Test
 	public void testFirstAuthorsUniIDs() {
 		String[] firstAuthorsUniIDs = ariesService.getFirstAuthorsUniIDs(new String[] {"a240288xPUB1", "a154704xPUB1"});
@@ -157,8 +150,8 @@ public class AriesServiceTest {
 			LOGGER.info("First Author Uni ID: {}", firstAuthorsUniIDs[i]);
 		}
 	}
-	*/
-	/*
+	
+	@Ignore
 	@Test
 	public void testDepartmentCodes() {
 		String[] departmentCodes = ariesService.getDepartmentCodes();
@@ -167,8 +160,8 @@ public class AriesServiceTest {
 			LOGGER.info("Department Code: {}", departmentCodes[i]);
 		}
 	}
-	*/
-	/*
+	
+	@Ignore
 	@Test
 	public void testDeparmtentNames() {
 		String[] departmentNames = ariesService.getDepartmentNames(new String[] {"529", "275"});
@@ -176,31 +169,35 @@ public class AriesServiceTest {
 			LOGGER.info("Department Name: {}", departmentNames[i]);
 		}
 	}
-	*/
-	/*@Test
+	
+	@Ignore
+	@Test
 	public void testContractCodes() {
 		String[] contractCodes = ariesService.getAllContractCodes();
 		LOGGER.info("Number of contract codes: {}", contractCodes.length);
 		for (int i = 0; i < contractCodes.length && i < 10; i++) {
 			LOGGER.info("Contract Code: {}", contractCodes[i]);
 		}
-	}*/
+	}
 	
-	/*@Test
+	@Ignore
+	@Test
 	public void  testStaffInformation() {
 		//ANUStaff staff = ariesService.getStaffInformation("u4464261");
 		ANUStaff staff = ariesService.getStaffInformation("T1241");
 		LOGGER.info("Staff Name: {} {}, For Code: {}, Department: {}", new Object[] {staff.getGivenName(), staff.getSurname(), staff.getFORCode1(), staff.getDepartmentName()});
-	}*/
-	/*
+	}
+
+	@Ignore
 	@Test
 	public void testExternalStaff() {
 		ExternalStaff staff = ariesService.getExternalStaffInformation("E40140");
 		//E40140
 		LOGGER.info("Staff Name: {} {}, Country: {}, Institution: {}", new Object[] {staff.getGivenName(), staff.getSurname()});
 	}
-	*/
-/*	@Test
+
+	@Ignore
+	@Test
 	public void testGetPeoplesPublications() {
 		Publication[] publications = ariesService.getPublications("u3171954");
 		Publication pub = null;
@@ -208,5 +205,5 @@ public class AriesServiceTest {
 			pub = publications[i];
 			LOGGER.info("ID: {}, Title: {}", pub.getAriesId(), pub.getPublicationTitle());
 		}
-	}*/
+	}
 }

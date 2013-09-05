@@ -1,14 +1,27 @@
 package au.edu.anu.metadatastores.store.people;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.fail;
+
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import au.edu.anu.metadatastores.datamodel.store.ItemAttribute;
+import au.edu.anu.metadatastores.datamodel.store.ext.StoreAttributes;
+import au.edu.anu.metadatastores.services.store.StoreHibernateUtil;
 import au.edu.anu.metadatastores.store.misc.Subject;
 
 public class PersonServiceTest {
@@ -20,54 +33,52 @@ public class PersonServiceTest {
 	public void setUp() {
 		personService_ = PersonService.getSingleton();
 	}
-/*
+
+	@Ignore
 	@Test
 	public void test() {
-		PersonProcess process = new PersonProcess();
-		Person person = process.updatePerson("u5125986");
+		Person person = personService_.fetchPersonInformation("u5125986");
 		assertEquals("Genevieve", person.getGivenName());
 		assertEquals("Turner", person.getSurname());
 		System.out.println("Done");
-		//fail("Not yet implemented");
 	}
-	*/
-	/*@Test
+
+	@Ignore
+	@Test
 	public void queryItemTest() {
 		Session session = StoreHibernateUtil.getSessionFactory().openSession();
-		Transaction transaction = session.beginTransaction();
 		
 		Query query =session.createQuery("from ItemAttribute where attrType = :attrType and attrValue = :attrValue");
 		query.setParameter("attrType", StoreAttributes.GIVEN_NAME);
 		query.setParameter("attrValue", "Test");
+		@SuppressWarnings("unchecked")
 		List<ItemAttribute> attributes = query.list();
 		LOGGER.info("Number of rows of attributes found: {}", attributes.size());
 		
 		for (ItemAttribute attribute : attributes) {
-			Person person = process.getPerson(attribute.getItem());
+			Person person = personService_.getPerson(attribute.getItem(), false);
 			LOGGER.info("Name: {} {}", new Object[] {person.getGivenName(), person.getSurname()});
 		}
 		
-		transaction.commit();
-		session.flush();
 		session.close();
 		
 		System.out.println("Done");
-	}*/
-/*
+	}
+
+	@Ignore
 	@Test
 	public void getUidTest() {
 		Person person = personService_.getPerson("t1234569");
 		
 		if (person == null) {
-		//	fail("No Person Found");
-			LOGGER.info("No person");
-			return;
+			fail("No Person Found");
 		}
 		LOGGER.info("Name: {} {}", new Object[] {person.getGivenName(), person.getSurname()});
 		System.out.println("Done");
-	}*/
+	}
 	
-	/*@Test
+	@Ignore
+	@Test
 	public void updateItemTest() {
 		Person person = new Person();
 		person.setExtId("t1234569");
@@ -95,9 +106,10 @@ public class PersonServiceTest {
 		Person person2 = personService_.getPerson("t1234569");
 		printPersonInfo(Arrays.asList(person2));
 		System.out.println("Done saving");
-	}*/
+	}
 	
-	/*@Test
+	@Ignore
+	@Test
 	public void updatePersonTest() {
 		
 		Person person = personService_.fetchPersonInformation("u9909577");
@@ -108,8 +120,9 @@ public class PersonServiceTest {
 		personService_.savePerson(person);
 		
 		System.out.println("Done Updating");
-	}*/
-	
+	}
+
+	@Ignore
 	@Test
 	public void updateMultiplePeopleTest() {
 		//String[] ids = new String[] {"u5125986","u4464261","u9909577","u4346971","u4039549","u4254847","u9802772","u4269066","u4016705",
@@ -127,14 +140,16 @@ public class PersonServiceTest {
 		}
 	}
 	
-	/*@Test
+	@Ignore
+	@Test
 	public void updateExternalPersonTest() {
 		Person person = personService_.fetchExternalUser("E29292");
 		personService_.savePerson(person);
 		System.out.println("Done");
-	}*/
+	}
 	
-	/*@Test
+	@Ignore
+	@Test
 	public void updateExternalPeopleTest() {
 		String[] ids = new String[] {"e26568","e54817","e26432","e26562","e27865","e22700","e42112","e26450","e33807","e26659","e29893","e21985",
 "e54996","e33521","e26630","e26566","e26638","e26656","e6599","e26468","e7404","e27881","e26544","e27903",
@@ -149,9 +164,10 @@ public class PersonServiceTest {
 			Person person = personService_.fetchExternalUser(id);
 			personService_.savePerson(person);
 		}
-	}*/
-	
-	/*@Test
+	}
+
+	@Ignore
+	@Test
 	public void partialUpdate() {
 		String uid = "t1234569";
 		
@@ -179,18 +195,17 @@ public class PersonServiceTest {
 		LOGGER.info("Phone Numbers 2: {}", afterPerson.getPhoneNumbers());
 		LOGGER.info("Fax Numbers 1: {}", beforePerson.getFaxNumbers());
 		LOGGER.info("Fax Numbers 2: {}", afterPerson.getFaxNumbers());
-	}*/
+	}
 	
-	/*@Test
+	@Ignore
+	@Test
 	public void testFetchProfile() {
 		List<Person> people = personService_.getBasicPeople(Arrays.asList("u5125986"), false);
-		//for (Person person : people) {
-			//LOGGER.info("Person: {}, {} {}", new Object[] {person.getUid(), person.getGivenName(), person.getSurname()});
 		printPersonInfo(people);
-		//}
 		LOGGER.info("Done");
-	}*/
-	/*
+	}
+	
+	@Ignore
 	@Test
 	public void testSomething() {
 		Session session = StoreHibernateUtil.getSessionFactory().openSession();
@@ -207,9 +222,10 @@ public class PersonServiceTest {
 			LOGGER.info("Type: {}, Value: {}", itemAttribute.getAttrType(), itemAttribute.getAttrValue());
 		}
 		session.close();
-	}*/
+	}
 	
-	/*@Test
+	@Ignore
+	@Test
 	public void testQueryMap() {
 		Map<String, String> values = new HashMap<String, String>();
 		values.put(StoreAttributes.EMAIL, "genevieve.turner@anu.edu.au");
@@ -221,7 +237,7 @@ public class PersonServiceTest {
 		values.put(StoreAttributes.SURNAME, "Turner");
 		people = personService_.queryPersonByAttributes(values);
 		printPersonInfo(people);
-	}*/
+	}
 	
 	private void printPersonInfo(List<Person> people) {
 		LOGGER.info("List of people:");

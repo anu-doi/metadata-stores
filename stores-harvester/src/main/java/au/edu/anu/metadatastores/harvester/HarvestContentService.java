@@ -68,15 +68,17 @@ public class HarvestContentService {
 	 */
 	public HarvestContent getNextHarvestContent(String system) {
 		Session session = HarvesterHibernateUtil.getSessionFactory().openSession();
-		
-		Query query = session.createQuery("FROM HarvestContent WHERE system = :system ORDER BY hid");
-		query.setParameter("system", system);
-		
-		HarvestContent content = (HarvestContent) query.setMaxResults(1).uniqueResult();
-		
-		session.close();
-		
-		return content;
+		try {
+			Query query = session.createQuery("FROM HarvestContent WHERE system = :system ORDER BY hid");
+			query.setParameter("system", system);
+			
+			HarvestContent content = (HarvestContent) query.setMaxResults(1).uniqueResult();
+			
+			return content;
+		}
+		finally {
+			session.close();
+		}
 	}
 	
 	/**
@@ -86,12 +88,16 @@ public class HarvestContentService {
 	 */
 	public void deleteHarvestContent(HarvestContent content) {
 		Session session = HarvesterHibernateUtil.getSessionFactory().openSession();
-		session.beginTransaction();
-		
-		session.delete(content);
-		
-		session.getTransaction().commit();
-		session.close();
+		try {
+			session.beginTransaction();
+			
+			session.delete(content);
+			
+			session.getTransaction().commit();
+		}
+		finally {
+			session.close();
+		}
 	}
 	
 	/**
@@ -101,10 +107,13 @@ public class HarvestContentService {
 	 */
 	public List<Location> getHarvestLocations() {
 		Session session = HarvesterHibernateUtil.getSessionFactory().openSession();
-		
-		List<Location> locations = session.createQuery("FROM Location").list();
-		
-		session.close();
-		return locations;
+		try {
+			@SuppressWarnings("unchecked")
+			List<Location> locations = session.createQuery("FROM Location").list();
+			return locations;
+		}
+		finally {
+			session.close();
+		}
 	}
 }

@@ -247,76 +247,81 @@ public class PublicationService extends AbstractItemService {
 		}
 		
 		Session session = StoreHibernateUtil.getSessionFactory().openSession();
-		session.beginTransaction();
-		session.enableFilter("attributes");
-		
-		//note this may need to be updated if we retrieve publications from other systems without an aries id
-		Query query = session.createQuery("SELECT pi FROM PublicationItem as pi inner join pi.itemAttributes as pia WHERE pia.attrType = :attrType and pia.attrValue = :attrValue");
-		query.setParameter("attrType", StoreAttributes.ARIES_ID);
-		query.setParameter("attrValue", publication.getAriesId());
-		
-		PublicationItem item = (PublicationItem) query.uniqueResult();
-		
-
-		Date lastModified = new Date();
-		ItemTraitParser parser = new ItemTraitParser();
-		Item newItem = null;
 		try {
-			newItem = parser.getItem(publication, lastModified);
-		}
-		catch (Exception e) {
-			LOGGER.error("Exception transforming grant to an item", e);
-		}
-		
-		if (item == null) {
-			item = new PublicationItem();
-			Query idQuery = session.createSQLQuery("SELECT nextval('publication_seq')");
-			BigInteger id = (BigInteger) idQuery.uniqueResult();
-			item.setExtId("p" + id.toString());
-			item.setTitle(publication.getTitle());
-			item = (PublicationItem) session.merge(item);
-		}
-		else if (publication.getTitle() != null && publication.getTitle().trim().length() > 0) {
-			item.setTitle(publication.getTitle());
-		}
-		updateAttributesFromItem(item, newItem, session, lastModified);
-		
-		//TODO remove people who are no longer related
-		Item personItem = null;
-		ItemRelation itemRelation = null;
-		ItemRelationId id = null;
-		List<Item> peopleItems = new ArrayList<Item>();
-		for (Person person : publication.getAuthors()) {
-			personItem = personService_.getPersonItem(person.getUid());
-			if (personItem != null) {
-				peopleItems.add(personItem);
+			session.beginTransaction();
+			session.enableFilter("attributes");
+			
+			//note this may need to be updated if we retrieve publications from other systems without an aries id
+			Query query = session.createQuery("SELECT pi FROM PublicationItem as pi inner join pi.itemAttributes as pia WHERE pia.attrType = :attrType and pia.attrValue = :attrValue");
+			query.setParameter("attrType", StoreAttributes.ARIES_ID);
+			query.setParameter("attrValue", publication.getAriesId());
+			
+			PublicationItem item = (PublicationItem) query.uniqueResult();
+			
+	
+			Date lastModified = new Date();
+			ItemTraitParser parser = new ItemTraitParser();
+			Item newItem = null;
+			try {
+				newItem = parser.getItem(publication, lastModified);
 			}
-			else {
-				LOGGER.error("No person found to add relation for id: {}", person.getUid());
+			catch (Exception e) {
+				LOGGER.error("Exception transforming grant to an item", e);
 			}
-		}
-		boolean hasPerson = false;
-		for (Item item2 : peopleItems) {
-			for (ItemRelation relation : item.getItemRelationsForIid()) {
-				if (relation.getId().getRelatedIid().equals(item2.getIid())) {
-					hasPerson = true;
-					break;
+			
+			if (item == null) {
+				item = new PublicationItem();
+				Query idQuery = session.createSQLQuery("SELECT nextval('publication_seq')");
+				BigInteger id = (BigInteger) idQuery.uniqueResult();
+				item.setExtId("p" + id.toString());
+				item.setTitle(publication.getTitle());
+				item = (PublicationItem) session.merge(item);
+			}
+			else if (publication.getTitle() != null && publication.getTitle().trim().length() > 0) {
+				item.setTitle(publication.getTitle());
+			}
+			updateAttributesFromItem(item, newItem, session, lastModified);
+		
+			//TODO remove people who are no longer related
+			Item personItem = null;
+			ItemRelation itemRelation = null;
+			ItemRelationId id = null;
+			List<Item> peopleItems = new ArrayList<Item>();
+			for (Person person : publication.getAuthors()) {
+				personItem = personService_.getPersonItem(person.getUid());
+				if (personItem != null) {
+					peopleItems.add(personItem);
+				}
+				else {
+					LOGGER.error("No person found to add relation for id: {}", person.getUid());
 				}
 			}
-			if (!hasPerson) {
-				itemRelation = new ItemRelation();
-				id = new ItemRelationId(item.getIid(), StoreProperties.getProperty("publication.author.type"), item2.getIid());
-				itemRelation.setId(id);
-				item.getItemRelationsForIid().add(itemRelation);
+			boolean hasPerson = false;
+			for (Item item2 : peopleItems) {
+				for (ItemRelation relation : item.getItemRelationsForIid()) {
+					if (relation.getId().getRelatedIid().equals(item2.getIid())) {
+						hasPerson = true;
+						break;
+					}
+				}
+				if (!hasPerson) {
+					itemRelation = new ItemRelation();
+					id = new ItemRelationId(item.getIid(), StoreProperties.getProperty("publication.author.type"), item2.getIid());
+					itemRelation.setId(id);
+					item.getItemRelationsForIid().add(itemRelation);
+				}
+				hasPerson = false;
 			}
-			hasPerson = false;
+			
+			item = (PublicationItem) session.merge(item);
+			
+			session.getTransaction().commit();
+			
+			return item;
 		}
-		
-		item = (PublicationItem) session.merge(item);
-		
-		session.getTransaction().commit();
-		session.close();
-		return item;
+		finally {
+			session.close();
+		}
 	}
 	
 	/**
@@ -327,25 +332,29 @@ public class PublicationService extends AbstractItemService {
 	 */
 	public PublicationItem getPublicationItem(String ariesId) {
 		Session session = StoreHibernateUtil.getSessionFactory().openSession();
-		session.enableFilter("attributes");
-		session.beginTransaction();
-		
-		Query query = session.createQuery("SELECT pi FROM PublicationItem as pi inner join pi.itemAttributes as pia WHERE pia.attrType = :attrType and pia.attrValue = :attrValue");
-		query.setParameter("attrType", StoreAttributes.ARIES_ID);
-		query.setParameter("attrValue", ariesId);
-		
-		PublicationItem item = (PublicationItem) query.uniqueResult();
-		if (item != null) {
+		try {
+			session.enableFilter("attributes");
+			session.beginTransaction();
+			
+			Query query = session.createQuery("SELECT pi FROM PublicationItem as pi inner join pi.itemAttributes as pia WHERE pia.attrType = :attrType and pia.attrValue = :attrValue");
+			query.setParameter("attrType", StoreAttributes.ARIES_ID);
+			query.setParameter("attrValue", ariesId);
+			
+			PublicationItem item = (PublicationItem) query.uniqueResult();
+			if (item != null) {
+				return item;
+			}
+			
+			Publication publication = fetchPublication(ariesId);
+			item = savePublication(publication);
+	
+			session.getTransaction().commit();
+			
 			return item;
 		}
-		
-		Publication publication = fetchPublication(ariesId);
-		item = savePublication(publication);
-
-		session.getTransaction().commit();
-		session.close();
-		
-		return item;
+		finally {
+			session.close();
+		}
 	}
 	
 	/**
@@ -358,20 +367,22 @@ public class PublicationService extends AbstractItemService {
 	 */
 	public List<PersonItem> searchPublicationPerson(Long iid, String givenName, String surname) {
 		Session session = StoreHibernateUtil.getSessionFactory().openSession();
-		session.enableFilter("attributes");
-		
-		Query query = session.createQuery("SELECT pi FROM ItemRelation ir join ir.itemByRelatedIid pi join pi.givenNames gn join pi.surnames sn WHERE ir.id.iid = :iid AND pi.extSystem = :extSystem AND lower(gn.attrValue) like :givenName and lower(sn.attrValue) = :surname");
-		query.setParameter("iid", iid);
-		query.setParameter("extSystem", "PERSON");
-		query.setParameter("givenName", givenName.toLowerCase() + "%");
-		query.setParameter("surname", surname.toLowerCase());
-
-		@SuppressWarnings("unchecked")
-		List<PersonItem> people = query.list();
-		
-		session.close();
-		
-		return people;
+		try {
+			session.enableFilter("attributes");
+			
+			Query query = session.createQuery("SELECT pi FROM ItemRelation ir join ir.itemByRelatedIid pi join pi.givenNames gn join pi.surnames sn WHERE ir.id.iid = :iid AND pi.extSystem = :extSystem AND lower(gn.attrValue) like :givenName and lower(sn.attrValue) = :surname");
+			query.setParameter("iid", iid);
+			query.setParameter("extSystem", "PERSON");
+			query.setParameter("givenName", givenName.toLowerCase() + "%");
+			query.setParameter("surname", surname.toLowerCase());
+	
+			@SuppressWarnings("unchecked")
+			List<PersonItem> people = query.list();
+			return people;
+		}
+		finally {
+			session.close();
+		}
 	}
 	
 	/**
@@ -382,25 +393,29 @@ public class PublicationService extends AbstractItemService {
 	 */
 	public Publication getPublicationByAriesId(String ariesId) {
 		Session session = StoreHibernateUtil.getSessionFactory().openSession();
-		session.enableFilter("attributes");
-		session.beginTransaction();
-
-		Query query = session.createQuery("SELECT pi FROM PublicationItem as pi inner join pi.itemAttributes as pia WHERE pia.attrType = :attrType and pia.attrValue = :attrValue");
-		query.setParameter("attrType", StoreAttributes.ARIES_ID);
-		query.setParameter("attrValue", ariesId);
-		
-		PublicationItem item = (PublicationItem) query.uniqueResult();
-		
-		Publication publication = null;
-		
-		if (item != null) {
-			publication = getPublication(item);
+		try {
+			session.enableFilter("attributes");
+			session.beginTransaction();
+	
+			Query query = session.createQuery("SELECT pi FROM PublicationItem as pi inner join pi.itemAttributes as pia WHERE pia.attrType = :attrType and pia.attrValue = :attrValue");
+			query.setParameter("attrType", StoreAttributes.ARIES_ID);
+			query.setParameter("attrValue", ariesId);
+			
+			PublicationItem item = (PublicationItem) query.uniqueResult();
+			
+			Publication publication = null;
+			
+			if (item != null) {
+				publication = getPublication(item);
+			}
+			
+			session.getTransaction().commit();
+			
+			return publication;
 		}
-		
-		session.getTransaction().commit();
-		session.close();
-		
-		return publication;
+		finally {
+			session.close();
+		}
 	}
 	
 	/**
@@ -411,29 +426,32 @@ public class PublicationService extends AbstractItemService {
 	 */
 	public List<Publication> getPublicationsByYear(String year) {
 		Session session = StoreHibernateUtil.getSessionFactory().openSession();
-		session.enableFilter("attributes");
-		Date startDate = new Date();
-		Query query = session.createQuery("SELECT DISTINCT pub FROM PublicationItem pub inner join pub.itemAttributes pubYear join fetch pub.itemAttributes attrs left join fetch attrs.itemAttributes WHERE pubYear.attrType = :yearType and pubYear.attrValue = :yearValue");
-		query.setParameter("yearType", StoreAttributes.YEAR);
-		query.setParameter("yearValue", year);
-
-		@SuppressWarnings("unchecked")
-		List<PublicationItem> items = query.list();
-		Date endDate = new Date();
-		long difference = endDate.getTime() - startDate.getTime();
-		LOGGER.debug("Time For Query: {}, Number of Records: {}", difference, items.size());
-		
-		List<Publication> publications = new ArrayList<Publication>();
-		Publication publication = null;
-		for (PublicationItem item : items) {
-			publication = getPublication(item, true);
-			publications.add(publication);
+		try {
+			session.enableFilter("attributes");
+			Date startDate = new Date();
+			Query query = session.createQuery("SELECT DISTINCT pub FROM PublicationItem pub inner join pub.itemAttributes pubYear join fetch pub.itemAttributes attrs left join fetch attrs.itemAttributes WHERE pubYear.attrType = :yearType and pubYear.attrValue = :yearValue");
+			query.setParameter("yearType", StoreAttributes.YEAR);
+			query.setParameter("yearValue", year);
+	
+			@SuppressWarnings("unchecked")
+			List<PublicationItem> items = query.list();
+			Date endDate = new Date();
+			long difference = endDate.getTime() - startDate.getTime();
+			LOGGER.debug("Time For Query: {}, Number of Records: {}", difference, items.size());
+			
+			List<Publication> publications = new ArrayList<Publication>();
+			Publication publication = null;
+			for (PublicationItem item : items) {
+				publication = getPublication(item, true);
+				publications.add(publication);
+			}
+			LOGGER.debug("Number of Publications: {}", items.size());
+			
+			return publications;
 		}
-		LOGGER.debug("Number of Publications: {}", items.size());
-		
+		finally {
 		session.close();
-		
-		return publications;
+		}
 	}
 	
 	/**
@@ -444,28 +462,32 @@ public class PublicationService extends AbstractItemService {
 	 */
 	public List<Publication> getPersonsPublications(String uid) {
 		Session session = StoreHibernateUtil.getSessionFactory().openSession();
-		session.enableFilter("attributes");
-		session.beginTransaction();
-		
-		Query query = session.createQuery("SELECT pub FROM PersonItem person inner join person.itemRelationsForRelatedIid pirfri inner join pirfri.itemByIid pubItem, PublicationItem pub WHERE person.extId = :extId and pubItem = pub");
-		
-		query.setParameter("extId", uid);
-		
-		@SuppressWarnings("unchecked")
-		List<PublicationItem> publicationItems = query.list();
-		
-		List<Publication> publications = new ArrayList<Publication>();
-		for (PublicationItem publicationItem : publicationItems) {
-			Publication publication = getPublication(publicationItem);
-			publications.add(publication);
+		try {
+			session.enableFilter("attributes");
+			session.beginTransaction();
+			
+			Query query = session.createQuery("SELECT pub FROM PersonItem person inner join person.itemRelationsForRelatedIid pirfri inner join pirfri.itemByIid pubItem, PublicationItem pub WHERE person.extId = :extId and pubItem = pub");
+			
+			query.setParameter("extId", uid);
+			
+			@SuppressWarnings("unchecked")
+			List<PublicationItem> publicationItems = query.list();
+			
+			List<Publication> publications = new ArrayList<Publication>();
+			for (PublicationItem publicationItem : publicationItems) {
+				Publication publication = getPublication(publicationItem);
+				publications.add(publication);
+			}
+			
+			LOGGER.debug("Number of publications: {}", publications.size());
+			
+			session.getTransaction().commit();
+			
+			return publications;
 		}
-		
-		LOGGER.debug("Number of publications: {}", publications.size());
-		
-		session.getTransaction().commit();
-		session.close();
-		
-		return publications;
+		finally {
+			session.close();
+		}
 	}
 	
 	/**

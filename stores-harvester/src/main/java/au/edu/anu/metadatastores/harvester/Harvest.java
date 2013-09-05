@@ -86,20 +86,8 @@ public class Harvest {
 		try {
 			harvest.harvest(args[0]);
 		}
-		catch (TransformerException e) {
-			LOGGER.error("Transformation exception", e);
-		}
-		catch (SAXException e) {
-			LOGGER.error("SAXException exception", e);
-		}
-		catch (IOException e) {
-			LOGGER.error("IOException exception", e);
-		}
-		catch (ParserConfigurationException e) {
-			LOGGER.error("ParserConfigurationException exception", e);
-		}
-		catch (NoSuchFieldException e) {
-			LOGGER.error("NoSuchFieldException exception", e);
+		catch (HarvestException e) {
+			LOGGER.error("Exception harvesting content", e);
 		}
 	}
 	
@@ -114,35 +102,35 @@ public class Harvest {
 	 * Harvest the records from the given system
 	 * 
 	 * @param harvestSystem The string of the system to harvest records for
-	 * @throws TransformerException
-	 * @throws SAXException
-	 * @throws IOException
-	 * @throws ParserConfigurationException
-	 * @throws NoSuchFieldException
+	 * @throws HarvestException
 	 */
-	public void harvest(String harvestSystem) throws TransformerException, SAXException, IOException, ParserConfigurationException, NoSuchFieldException {
+	public void harvest(String harvestSystem) throws HarvestException {
 		Session session = HarvesterHibernateUtil.getSessionFactory().openSession();
-		
-		Query query = session.createQuery("FROM Location WHERE system = :system");
-		query.setParameter("system", harvestSystem);
-		
-		Location location = (Location) query.uniqueResult();
-		session.close();
-		//TODO throw exception if no location
-		harvest(location);
+		Location location = null;
+		try {
+			Query query = session.createQuery("FROM Location WHERE system = :system");
+			query.setParameter("system", harvestSystem);
+			
+			location = (Location) query.uniqueResult();
+		}
+		finally {
+			session.close();
+		}
+		if (location == null) {
+			harvest(location);
+		}
+		else {
+			throw new HarvestException("No location found for the system: " + harvestSystem);
+		}
 	}
 	
 	/**
 	 * Harvest the records from the given system
 	 * 
 	 * @param location The location to harvest from
-	 * @throws TransformerException
-	 * @throws SAXException
-	 * @throws IOException
-	 * @throws ParserConfigurationException
-	 * @throws NoSuchFieldException
+	 * @throws HarvestException
 	 */
-	public void harvest(Location location) throws TransformerException, SAXException, IOException, ParserConfigurationException, NoSuchFieldException {
+	public void harvest(Location location) throws HarvestException {
 		LOGGER.info("Begin Harvest");
 		location.getSystem();
 		Date lastHarvestDate = location.getLastHarvestDate();
@@ -153,34 +141,49 @@ public class Harvest {
 		String from = null;
 		String until = null;
 		if (lastHarvestDate != null) {
-			//TODO put back in the from
 			from = sdf.format(lastHarvestDate);
 			until = sdf.format(now);
 			LOGGER.info("From: {}, Until: {}", from, until);
 		}
 		location.setLastHarvestDate(new Date());
-		
-		ListRecords listRecords = new ListRecords(location.getUrl(), from, until, null, location.getMetadataPrefix());
-		while (listRecords != null) {
-			NodeList errors = listRecords.getErrors();
-			if (errors != null && errors.getLength() > 0) {
-				processErrors(errors);
-				break;
+		try {
+			ListRecords listRecords = new ListRecords(location.getUrl(), from, until, null, location.getMetadataPrefix());
+			while (listRecords != null) {
+				NodeList errors = listRecords.getErrors();
+				if (errors != null && errors.getLength() > 0) {
+					processErrors(errors);
+					break;
+				}
+				
+				List<HarvestContent> harvestContents = processList(listRecords.getDocument(), location.getSystem());
+				saveList(harvestContents);
+	
+				String resumptionToken = listRecords.getResumptionToken();
+				if (resumptionToken == null || resumptionToken.length() == 0) {
+					listRecords = null;
+				}
+				else {
+					listRecords = new ListRecords(location.getUrl(), resumptionToken);
+				}
 			}
-			
-			List<HarvestContent> harvestContents = processList(listRecords.getDocument(), location.getSystem());
-			saveList(harvestContents);
-
-			String resumptionToken = listRecords.getResumptionToken();
-			if (resumptionToken == null || resumptionToken.length() == 0) {
-				listRecords = null;
-			}
-			else {
-				listRecords = new ListRecords(location.getUrl(), resumptionToken);
-			}
+			updateLocation(location);
 		}
-		updateLocation(location);
-		LOGGER.info("End Harvest");
+		catch (TransformerException e) {
+			throw new HarvestException(e.getMessage(), e);
+		}
+		catch (SAXException e) {
+			throw new HarvestException(e.getMessage(), e);
+		}
+		catch (ParserConfigurationException e) {
+			throw new HarvestException(e.getMessage(), e);
+		}
+		catch (IOException e) {
+			throw new HarvestException(e.getMessage(), e);
+		}
+		catch (NoSuchFieldException e) {
+			throw new HarvestException(e.getMessage(), e);
+		}
+		LOGGER.info("Harvest Complete");
 	}
 	
 	/**
@@ -211,12 +214,16 @@ public class Harvest {
 	 */
 	public void updateLocation(Location location) {
 		Session session = HarvesterHibernateUtil.getSessionFactory().openSession();
-		session.beginTransaction();
-		
-		session.merge(location);
-		
-		session.getTransaction().commit();
-		session.close();
+		try {
+			session.beginTransaction();
+			
+			session.merge(location);
+			
+			session.getTransaction().commit();
+		}
+		finally {
+			session.close();
+		}
 	}
 	
 	/**
@@ -272,20 +279,24 @@ public class Harvest {
 	 */
 	private void saveList(List<HarvestContent> harvestContents) {
 		Session session = HarvesterHibernateUtil.getSessionFactory().openSession();
-		session.beginTransaction();
-		
-		HarvestContent content = null;
-		for (int i = 0; i < harvestContents.size(); i++) {
-			content = harvestContents.get(i);
-			session.save(content);
-			if (i % 20 == 0) {
-				session.flush();
-				session.clear();
+		try {
+			session.beginTransaction();
+			
+			HarvestContent content = null;
+			for (int i = 0; i < harvestContents.size(); i++) {
+				content = harvestContents.get(i);
+				session.save(content);
+				if (i % 20 == 0) {
+					session.flush();
+					session.clear();
+				}
 			}
+			
+			session.getTransaction().commit();
 		}
-		
-		session.getTransaction().commit();
-		session.close();
+		finally {
+			session.close();
+		}
 	}
 	
 	/**

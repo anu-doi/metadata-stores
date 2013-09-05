@@ -62,6 +62,14 @@ public class Relation {
 		this.relatedIid = relatedIid;
 	}
 	
+	public Relation(Long iid, String itemTitle, String relationValue, Long relatedIid, String relatedItemTitle) {
+		this.iid = iid;
+		this.itemTitle = itemTitle;
+		this.relationValue = relationValue;
+		this.relatedIid = relatedIid;
+		this.relatedItemTitle = relatedItemTitle;
+	}
+	
 	/**
 	 * Get the item id
 	 * 

@@ -54,7 +54,7 @@ import org.hibernate.annotations.NotFoundAction;
  *
  */
 @Entity
-@Table(name = "item", schema = "public", uniqueConstraints = @UniqueConstraint(columnNames = {
+@Table(name = "item", uniqueConstraints = @UniqueConstraint(columnNames = {
 		"ext_system", "ext_id" }))
 @DiscriminatorColumn(name="ext_system")
 @FilterDef(name="attributes")

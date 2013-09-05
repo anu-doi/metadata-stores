@@ -26,7 +26,6 @@ import java.util.List;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,26 +69,26 @@ public class ContractId {
 	 */
 	public String[] getInvestigatorUniId(String contractId) {
 		Session session = AriesHibernateUtil.getSessionFactory().openSession();
-		Transaction transaction = session.beginTransaction();
-		
-		Query query = session.createQuery("from ContractsGrantsInvestigators where chrContractCode = :contractId");
-		query.setParameter("contractId", contractId);
-		List<ContractsGrantsInvestigators> investigators = query.list();
-		List<String> staffIds = new ArrayList<String>();
-		
-		for (ContractsGrantsInvestigators investigator : investigators) {
-			if (investigator != null) {
-				if (investigator.getChrStaffNumber() != null && !staffIds.contains(investigator.getChrStaffNumber())) {
-					staffIds.add(investigator.getChrStaffNumber());
+		try {
+			Query query = session.createQuery("from ContractsGrantsInvestigators where chrContractCode = :contractId");
+			query.setParameter("contractId", contractId);
+			@SuppressWarnings("unchecked")
+			List<ContractsGrantsInvestigators> investigators = query.list();
+			List<String> staffIds = new ArrayList<String>();
+			
+			for (ContractsGrantsInvestigators investigator : investigators) {
+				if (investigator != null) {
+					if (investigator.getChrStaffNumber() != null && !staffIds.contains(investigator.getChrStaffNumber())) {
+						staffIds.add(investigator.getChrStaffNumber());
+					}
 				}
 			}
+			
+			return staffIds.toArray(new String[0]);
 		}
-		
-		transaction.commit();
-		session.flush();
-		session.close();
-		
-		return staffIds.toArray(new String[0]);
+		finally {
+			session.close();
+		}
 	}
 	
 	/**
@@ -100,23 +99,23 @@ public class ContractId {
 	 */
 	public String getANUActivityAuthorizeID(String anuActivityId) {
 		Session session = AriesHibernateUtil.getSessionFactory().openSession();
-		Transaction transaction = session.beginTransaction();
-		
-		Query query = session.createQuery("from ContractsGrantsMain where chrContractCode = :activityId");
-		query.setParameter("activityId", anuActivityId);
-		
-		List<ContractsGrantsMain> grants = query.list();
-		
-		String authorId = null;
-		if (grants != null && grants.size() > 0) {
-			authorId = grants.get(0).getChrSchemeRef();
+		try {
+			Query query = session.createQuery("from ContractsGrantsMain where chrContractCode = :activityId");
+			query.setParameter("activityId", anuActivityId);
+			
+			@SuppressWarnings("unchecked")
+			List<ContractsGrantsMain> grants = query.list();
+			
+			String authorId = null;
+			if (grants != null && grants.size() > 0) {
+				authorId = grants.get(0).getChrSchemeRef();
+			}
+			
+			return authorId;
 		}
-		
-		transaction.commit();
-		session.flush();
-		session.close();
-		
-		return authorId;
+		finally {
+			session.close();
+		}
 	}
 	
 	/**
@@ -127,24 +126,24 @@ public class ContractId {
 	 */
 	public String getANUActivityDesc(String anuActivityId) {
 		Session session = AriesHibernateUtil.getSessionFactory().openSession();
-		Transaction transaction = session.beginTransaction();
-		
-		Query query = session.createQuery("from ContractsGrantsMain where chrContractCode = :activityId");
-		query.setParameter("activityId", anuActivityId);
-		
-		List<ContractsGrantsMain> grants = query.list();
-		
-		String description = null;
-		
-		if (grants != null && grants.size() > 0) {
-			description = grants.get(0).getChrShortTitle();
+		try {
+			Query query = session.createQuery("from ContractsGrantsMain where chrContractCode = :activityId");
+			query.setParameter("activityId", anuActivityId);
+
+			@SuppressWarnings("unchecked")
+			List<ContractsGrantsMain> grants = query.list();
+			
+			String description = null;
+			
+			if (grants != null && grants.size() > 0) {
+				description = grants.get(0).getChrShortTitle();
+			}
+			
+			return description;
 		}
-		
-		transaction.commit();
-		session.flush();
-		session.close();
-		
-		return description;
+		finally {
+			session.close();
+		}
 	}
 	
 	/**
@@ -154,27 +153,27 @@ public class ContractId {
 	 */
 	public String[] getAllContractInvestigatorCode() {
 		Session session = AriesHibernateUtil.getSessionFactory().openSession();
-		Transaction transaction = session.beginTransaction();
-		
-		List<ContractsGrantsInvestigators> investigators = session.createQuery("from ContractsGrantsInvestigators").list();
-		List<String> codes = new ArrayList<String>();
-		
-		String investigatorCode = null;
-		
-		for (ContractsGrantsInvestigators investigator : investigators) {
-			if (investigator != null) {
-				investigatorCode = investigator.getChrContractInvestigatorCode();
-				if (investigatorCode != null && !codes.contains(investigatorCode)) {
-					codes.add(investigatorCode);
+		try {
+			@SuppressWarnings("unchecked")
+			List<ContractsGrantsInvestigators> investigators = session.createQuery("from ContractsGrantsInvestigators").list();
+			List<String> codes = new ArrayList<String>();
+			
+			String investigatorCode = null;
+			
+			for (ContractsGrantsInvestigators investigator : investigators) {
+				if (investigator != null) {
+					investigatorCode = investigator.getChrContractInvestigatorCode();
+					if (investigatorCode != null && !codes.contains(investigatorCode)) {
+						codes.add(investigatorCode);
+					}
 				}
 			}
+			
+			return codes.toArray(new String[0]);
 		}
-		
-		transaction.commit();
-		session.flush();
-		session.close();
-		
-		return codes.toArray(new String[0]);
+		finally {
+			session.close();
+		}
 	}
 	
 	/**
@@ -205,34 +204,33 @@ public class ContractId {
 	 */
 	public ANUActivity[] getActivitiesByUniID(String uniID) {
 		Session session = AriesHibernateUtil.getSessionFactory().openSession();
-		Transaction transaction = session.beginTransaction();
-		
-		//Rainbow had first query for some reason.  Must investigate at some point
-		//Query query = session.createQuery("from ContractsGrantsInvestigators where chrContractInvestigatorCode like '%' || :uniID || '%'");
-		Query query = session.createQuery("from ContractsGrantsInvestigators where chrStaffNumber = :uniID");
-		query.setParameter("uniID", uniID);
-		List<ContractsGrantsInvestigators> investigators = query.list();
-		List<ANUActivity> activities = new ArrayList<ANUActivity>();
-		
-		ANUActivityImpl tempActivity = null;
-		String investigatorCode = null;
-		
-		for (ContractsGrantsInvestigators investigator : investigators) {
-			investigatorCode = investigator.getChrContractInvestigatorCode();
-			investigatorCode = investigatorCode.substring(0, investigatorCode.indexOf(uniID));
-			if (investigatorCode != null) {
-				tempActivity = new ANUActivityImpl();
-				tempActivity.setActivityId(investigatorCode);
-				//TODO flesh this out
-			//	tempActivity.setFirstInvestigatorId(uniID);
-				activities.add(tempActivity);
+		try {
+			Query query = session.createQuery("from ContractsGrantsInvestigators where chrStaffNumber = :uniID");
+			query.setParameter("uniID", uniID);
+			@SuppressWarnings("unchecked")
+			List<ContractsGrantsInvestigators> investigators = query.list();
+			List<ANUActivity> activities = new ArrayList<ANUActivity>();
+			
+			ANUActivityImpl tempActivity = null;
+			String investigatorCode = null;
+			
+			for (ContractsGrantsInvestigators investigator : investigators) {
+				investigatorCode = investigator.getChrContractInvestigatorCode();
+				investigatorCode = investigatorCode.substring(0, investigatorCode.indexOf(uniID));
+				if (investigatorCode != null) {
+					tempActivity = new ANUActivityImpl();
+					tempActivity.setActivityId(investigatorCode);
+					//TODO flesh this out
+				//	tempActivity.setFirstInvestigatorId(uniID);
+					activities.add(tempActivity);
+				}
 			}
+			
+			return activities.toArray(new ANUActivity[0]);
+		}
+		finally {
+			session.close();
 		}
 		
-		transaction.commit();
-		session.flush();
-		session.close();
-		
-		return activities.toArray(new ANUActivity[0]);
 	}
 }
