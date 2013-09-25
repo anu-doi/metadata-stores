@@ -64,7 +64,7 @@ public class SearchResource {
 	@GET
 	@Produces(MediaType.TEXT_HTML)
 	public Viewable getSearchPage(@QueryParam("search-val") String value, @QueryParam("rows") int rows, @QueryParam("page") int page) {
-		Map<String, Object> model = new SearchOptions().search(value);
+		Map<String, Object> model = new SearchOptions().search(value, getOffset(rows, page), rows);
 		
 		return new Viewable("index.jsp", model);
 	}
@@ -80,10 +80,15 @@ public class SearchResource {
 	@GET
 	@Path("/advanced")
 	@Produces(MediaType.TEXT_HTML)
-	public Viewable advancedSearchMultiple(@QueryParam("search-val[]") List<String> values, @QueryParam("system") String system, @QueryParam("field[]") List<String> fields) {
-		Map<String, Object> model = new SearchOptions().advancedSearch(values, system, fields);
+	public Viewable advancedSearch(@QueryParam("search-val[]") List<String> values, @QueryParam("system") String system, @QueryParam("field[]") List<String> fields, @QueryParam("rows") int rows, @QueryParam("page") int page) {
+		Map<String, Object> model = new SearchOptions().advancedSearch(values, system, fields, getOffset(rows, page), rows);
 		
 		return new Viewable("advanced_search.jsp", model);
+	}
+	
+	private int getOffset(int rows, int page) {
+		int offset = rows * page;
+		return offset;
 	}
 	
 	/**

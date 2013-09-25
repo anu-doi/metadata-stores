@@ -51,7 +51,7 @@ public class SearchServiceTest {
 		itemService_ = SearchService.getSingleton();
 	}
 	
-	@Ignore
+	//@Ignore
 	@Test
 	public void basicSearchTest() {
 		//List<ItemDTO> items = itemService_.queryItems("Contemporary");

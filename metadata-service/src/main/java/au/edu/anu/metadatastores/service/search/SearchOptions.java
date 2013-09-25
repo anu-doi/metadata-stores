@@ -27,6 +27,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import au.edu.anu.metadatastores.datamodel.store.AttributeType;
 import au.edu.anu.metadatastores.datamodel.store.SystemType;
 import au.edu.anu.metadatastores.store.search.ItemDTO;
@@ -45,21 +48,35 @@ import au.edu.anu.metadatastores.store.util.ItemResolver;
  *
  */
 public class SearchOptions {
+	static final Logger LOGGER = LoggerFactory.getLogger(SearchOptions.class);
 	/**
 	 * Search metadata stores for the value
 	 * 
 	 * @param searchValue The value to search for
 	 * @return The model
 	 */
-	public Map<String, Object> search(String searchValue) {
+	public Map<String, Object> search(String searchValue, int offset, int rows) {
 		Map<String, Object> model = new HashMap<String, Object>();
+		model.put("rows", getRows(rows));
 		if (searchValue != null && searchValue.length() > 0) {
 			SearchService itemService = SearchService.getSingleton();
 			List<ItemDTO> items = itemService.queryItems(searchValue);
+			model.put("numItems", items.size());
+			if (rows > 0) {
+				items = items.subList(offset, Math.min(items.size(), offset + rows));
+			}
 			model.put("items", items);
 		}
 		
 		return model;
+	}
+	
+	private int getRows(int rows) {
+		if (rows == 0) {
+			//TODO get this value from a properties file
+			rows = 10;
+		}
+		return rows;
 	}
 	
 	/**
@@ -70,7 +87,7 @@ public class SearchOptions {
 	 * @param fields The fields
 	 * @return The model
 	 */
-	public Map<String, Object> advancedSearch(String[] values, String system, String[] fields) {
+	public Map<String, Object> advancedSearch(String[] values, String system, String[] fields, int offset, int rows) {
 		List<SearchTerm> searchTerms = new ArrayList<SearchTerm>();
 		for (int i = 0; i < fields.length; i++) {
 			if (values[i] != null && values[i].length() > 0) {
@@ -78,7 +95,7 @@ public class SearchOptions {
 				searchTerms.add(searchTerm);
 			}
 		}
-		return advancedSearch(system, searchTerms);
+		return advancedSearch(system, searchTerms, offset, rows);
 	}
 	
 	/**
@@ -89,7 +106,7 @@ public class SearchOptions {
 	 * @param fields The fields
 	 * @return
 	 */
-	public Map<String, Object> advancedSearch(List<String> values, String system, List<String> fields) {
+	public Map<String, Object> advancedSearch(List<String> values, String system, List<String> fields, int offset, int rows) {
 		List<SearchTerm> searchTerms = new ArrayList<SearchTerm>();
 		for (int i = 0; i < values.size(); i++) {
 			if (values.get(i) != null && values.get(i).length() > 0) {
@@ -97,7 +114,7 @@ public class SearchOptions {
 				searchTerms.add(searchTerm);
 			}
 		}
-		return advancedSearch(system, searchTerms);
+		return advancedSearch(system, searchTerms, offset, rows);
 	}
 
 	/**
@@ -107,12 +124,17 @@ public class SearchOptions {
 	 * @param searchTerms The search terms defined by their field and value
 	 * @return
 	 */
-	public Map<String, Object> advancedSearch(String system, List<SearchTerm> searchTerms) {
+	public Map<String, Object> advancedSearch(String system, List<SearchTerm> searchTerms, int offset, int rows) {
 		Map<String, Object> model = new HashMap<String, Object>();
+		model.put("rows", getRows(rows));
 		SearchService searchService = SearchService.getSingleton();
 		
 		if (searchTerms != null && searchTerms.size() > 0) {
 			List<ItemDTO> items = searchService.queryItems(system, searchTerms);
+			model.put("numItems", items.size());
+			if (rows > 0) {
+				items = items.subList(offset, Math.min(items.size(), offset + rows));
+			}
 			model.put("items", items);
 		}
 		

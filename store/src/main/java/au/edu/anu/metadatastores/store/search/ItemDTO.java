@@ -129,4 +129,33 @@ public class ItemDTO {
 	public void setExtId(String extId) {
 		this.extId = extId;
 	}
+	
+	public boolean equals(Object obj) {
+		if (obj == null) {
+			return false;
+		}
+		if (obj == this) {
+			return true;
+		}
+		if (!(obj instanceof ItemDTO)) {
+			return false;
+		}
+		ItemDTO other = (ItemDTO) obj;
+		return (
+				((this.getId() == other.getId()) || (this.getId() != null && this.getId().equals(other.getId()))) &&
+				((this.getExtId() == other.getExtId()) || (this.getExtId() != null && this.getExtId().equals(other.getExtId()))) &&
+				((this.getExtSystem() == other.getExtSystem()) || (this.getExtSystem() != null && this.getExtSystem().equals(other.getExtSystem()))) &&
+				((this.getTitle() == other.getTitle()) || (this.getTitle() != null && this.getTitle().equals(other.getTitle())))
+				);
+	}
+	
+	public int hashCode() {
+		int hashCode = 0;
+		hashCode = hashCode + 17 * id.hashCode();
+		hashCode = hashCode + 17 * title.hashCode();
+		hashCode = hashCode + 17 * extSystem.hashCode();
+		hashCode = hashCode + 17 * extId.hashCode();
+		
+		return hashCode;
+	}
 }

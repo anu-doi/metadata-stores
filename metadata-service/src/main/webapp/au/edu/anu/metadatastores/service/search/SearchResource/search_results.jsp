@@ -2,6 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 <c:if test="${not empty it.items}">
+	${it.numItems} results found<br/>
 	<table>
 		<tr>
 			<th>Source</th>
