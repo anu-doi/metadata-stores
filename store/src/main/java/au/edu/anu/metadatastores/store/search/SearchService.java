@@ -54,9 +54,8 @@ public class SearchService {
 	static final Logger LOGGER = LoggerFactory.getLogger(SearchService.class);
 	
 	private static SearchService itemService_;
-	//private static RDFService rdfService_ = RDFService.getSingleton();
-	private static Search search_ = RDFService.getSingleton();
-	//private static Search search_ = DBSearch.getSingleton();
+	//private static Search search_ = RDFService.getSingleton();
+	private static Search search_ = DBSearch.getSingleton();
 	
 	/**
 	 * Get the singleton object of the search service
