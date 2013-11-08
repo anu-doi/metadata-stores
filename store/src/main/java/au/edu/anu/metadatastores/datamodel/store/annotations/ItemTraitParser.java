@@ -117,6 +117,9 @@ public class ItemTraitParser {
 						@SuppressWarnings("unchecked")
 						Collection<String> relations = (Collection<String>) value;
 						fillItemAttributeRelations(item, relations, method, lastModified);
+						break;
+					default:
+						break;
 					}
 				}
 			}
@@ -274,6 +277,8 @@ public class ItemTraitParser {
 							attr.getItemAttributes().add(subjAttr);
 						}
 						break;
+					default:
+						break;
 					}
 				}
 			}
@@ -311,6 +316,17 @@ public class ItemTraitParser {
 	public Object getItemObject(Item item, Class<?> clazz, int level)
 			throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, InstantiationException {
 		Object object = clazz.newInstance();
+		/*LOGGER.info("In getItemObject");
+		if (clazz.isAnnotationPresent(ItemTrait.class)) {
+			//TODO doesn't do what i want with people!
+			LOGGER.info("Class has item trait");
+			ItemTrait trait = clazz.getAnnotation(ItemTrait.class);
+			String extIdField = trait.extId();
+			LOGGER.info("Ext id field: {}", extIdField);
+			String setExtIdMethodName = "set" + extIdField.substring(0,1).toUpperCase() + extIdField.substring(1);
+			Method method = clazz.getMethod(setExtIdMethodName, String.class);
+			method.invoke(object, item.getExtId());
+		}*/
 		
 		processAttributes(item.getItemAttributes(), clazz, level, object);
 		
@@ -373,18 +389,31 @@ public class ItemTraitParser {
 					List<Subject> subjectList = (List<Subject>)method.invoke(object);
 					subjectList.add(subject);
 					break;
+				default:
+					break;
 				}
 			}
 		}
 	}
 	
+	/**
+	 * Get the attribute types associated with an object
+	 * 
+	 * @param clazz The class to get the attribute types for
+	 * @return A list of attribute types
+	 */
 	public List<String> getTraitAttributeTypes(Class<?> clazz) {
 		List<String> attrTypes = new ArrayList<String>();
 		
 		for (Method method : clazz.getMethods()) {
 			if (method.isAnnotationPresent(ItemAttributeTrait.class)) {
 				ItemAttributeTrait trait = method.getAnnotation(ItemAttributeTrait.class);
-				attrTypes.add(trait.attrType());
+				if (trait.traitType().equals(TraitType.SUBJECT_LIST)) {
+					attrTypes.addAll(getTraitAttributeTypes(Subject.class));
+				}
+				else {
+					attrTypes.add(trait.attrType());
+				}
 			}
 		}
 		return attrTypes;

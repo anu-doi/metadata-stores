@@ -16,7 +16,8 @@
 		<module>util</module>
 		<module>ands</module>
 		<module>metadata-service</module>
-	</modules>
+    <module>rdf</module>
+  </modules>
 	
 	<properties>
 		<slf4j.api.version>1.7.2</slf4j.api.version>
@@ -31,8 +32,12 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>2.5.1</version>
 				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+				<!-- 
 					<source>1.6</source>
 					<target>1.6</target>
+					 -->
 					<encoding>UTF-8</encoding>
 				</configuration>
 			</plugin>

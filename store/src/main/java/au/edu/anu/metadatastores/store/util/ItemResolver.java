@@ -23,7 +23,9 @@ package au.edu.anu.metadatastores.store.util;
 import java.lang.reflect.Method;
 
 import au.edu.anu.metadatastores.store.datacommons.DataCommonsItem;
+import au.edu.anu.metadatastores.store.datacommons.DataCommonsObject;
 import au.edu.anu.metadatastores.store.datacommons.DataCommonsService;
+import au.edu.anu.metadatastores.store.digitalcollections.DigitalCollection;
 import au.edu.anu.metadatastores.store.digitalcollections.DigitalCollectionsItem;
 import au.edu.anu.metadatastores.store.digitalcollections.DigitalCollectionsService;
 import au.edu.anu.metadatastores.store.dublincore.xml.DublinCore;
@@ -140,10 +142,7 @@ public class ItemResolver {
 	 */
 	public static Class<?> resolveTypeBySystemId(String extSystem) {
 		Class<?> clazz = null;
-		if ("DATA_COMMONS".equals(extSystem) || "DIGITAL_COLLECTIONS".equals(extSystem)) {
-			clazz = DublinCore.class;
-		}
-		else if ("GRANT".equals(extSystem)) {
+		if ("GRANT".equals(extSystem)) {
 			clazz = Grant.class;
 		}
 		else if ("PERSON".equals(extSystem)) {
@@ -154,6 +153,14 @@ public class ItemResolver {
 		}
 		else if ("EPRESS".equals(extSystem)) {
 			clazz = Epress.class;
+		}
+		else if ("DATA_COMMONS".equals(extSystem)) {
+			//clazz = DublinCore.class;
+			clazz = DataCommonsObject.class;
+		}
+		else if ("DIGITAL_COLLECTIONS".equals(extSystem)) {
+			//clazz = DublinCore.class;
+			clazz = DigitalCollection.class;
 		}
 		return clazz;
 	}

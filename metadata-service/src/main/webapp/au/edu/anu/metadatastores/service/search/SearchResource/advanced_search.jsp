@@ -77,7 +77,8 @@
 	<jsp:include page="search_results.jsp" />
 	
 	<c:if test="${not empty it.numItems}">
-		<fmt:formatNumber var="numPages" value="${it.numItems / it.rows}" maxFractionDigits="0" />
+		<fmt:formatNumber var="numPages" value="${it.numItems / it.rows }" groupingUsed="false" />
+		<c:set var="numPages" value="${fn:substringBefore(numPages, '.')}" />
 		<c:url var="startURL" value="${searchURLPart}">
 			<c:param name="rows">${it.rows}</c:param>
 			<c:param name="page">0</c:param>

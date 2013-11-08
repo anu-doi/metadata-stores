@@ -32,6 +32,9 @@ import au.edu.anu.metadatastores.datamodel.store.annotations.ItemTrait;
 import au.edu.anu.metadatastores.datamodel.store.annotations.RelationTrait;
 import au.edu.anu.metadatastores.datamodel.store.annotations.TraitType;
 import au.edu.anu.metadatastores.datamodel.store.ext.StoreAttributes;
+import au.edu.anu.metadatastores.rdf.annotation.RDFSubject;
+import au.edu.anu.metadatastores.rdf.annotation.RDFUri;
+import au.edu.anu.metadatastores.rdf.namespace.StoreNS;
 
 /**
  * <p>DublinCore<p>
@@ -69,6 +72,8 @@ public class DublinCore {
 	 */
 	@ItemAttributeTrait(attrType=StoreAttributes.TITLE, traitType=TraitType.STRING_LIST)
 	@XmlElement(name="title", namespace=DublinCoreConstants.DC)
+	@RDFUri(uri=StoreNS.TITLE)
+	@RDFSubject
 	public List<String> getTitles() {
 		return titles;
 	}
@@ -89,6 +94,8 @@ public class DublinCore {
 	 */
 	@ItemAttributeTrait(attrType=StoreAttributes.CREATOR, traitType=TraitType.STRING_LIST)
 	@XmlElement(name="creator", namespace=DublinCoreConstants.DC)
+	@RDFUri(uri=StoreNS.CREATOR)
+	@RDFSubject
 	public List<String> getCreators() {
 		return creators;
 	}
@@ -109,6 +116,8 @@ public class DublinCore {
 	 */
 	@ItemAttributeTrait(attrType=StoreAttributes.SUBJECT, traitType=TraitType.STRING_LIST)
 	@XmlElement(name="subject", namespace=DublinCoreConstants.DC)
+	@RDFUri(uri=StoreNS.SUBJECT)
+	@RDFSubject
 	public List<String> getSubjects() {
 		return subjects;
 	}
@@ -129,6 +138,8 @@ public class DublinCore {
 	 */
 	@ItemAttributeTrait(attrType=StoreAttributes.DESCRIPTION, traitType=TraitType.STRING_LIST)
 	@XmlElement(name="description", namespace=DublinCoreConstants.DC)
+	@RDFUri(uri=StoreNS.DESCRIPTION)
+	@RDFSubject
 	public List<String> getDescriptions() {
 		return descriptions;
 	}
@@ -149,6 +160,8 @@ public class DublinCore {
 	 */
 	@ItemAttributeTrait(attrType=StoreAttributes.PUBLISHER, traitType=TraitType.STRING_LIST)
 	@XmlElement(name="publisher", namespace=DublinCoreConstants.DC)
+	@RDFUri(uri=StoreNS.PUBLISHER)
+	@RDFSubject
 	public List<String> getPublishers() {
 		return publishers;
 	}
@@ -169,6 +182,8 @@ public class DublinCore {
 	 */
 	@ItemAttributeTrait(attrType=StoreAttributes.CONTRIBUTOR, traitType=TraitType.STRING_LIST)
 	@XmlElement(name="contributor", namespace=DublinCoreConstants.DC)
+	@RDFUri(uri=StoreNS.CONTRIBUTOR)
+	@RDFSubject
 	public List<String> getContributors() {
 		return contributors;
 	}
@@ -189,6 +204,8 @@ public class DublinCore {
 	 */
 	@ItemAttributeTrait(attrType=StoreAttributes.DATE, traitType=TraitType.STRING_LIST)
 	@XmlElement(name="date", namespace=DublinCoreConstants.DC)
+	@RDFUri(uri=StoreNS.DATE)
+	@RDFSubject
 	public List<String> getDates() {
 		return dates;
 	}
@@ -209,6 +226,8 @@ public class DublinCore {
 	 */
 	@ItemAttributeTrait(attrType=StoreAttributes.TYPE, traitType=TraitType.STRING_LIST)
 	@XmlElement(name="type", namespace=DublinCoreConstants.DC)
+	@RDFUri(uri=StoreNS.TYPE)
+	@RDFSubject
 	public List<String> getTypes() {
 		return types;
 	}
@@ -229,6 +248,8 @@ public class DublinCore {
 	 */
 	@ItemAttributeTrait(attrType=StoreAttributes.FORMAT, traitType=TraitType.STRING_LIST)
 	@XmlElement(name="format", namespace=DublinCoreConstants.DC)
+	@RDFUri(uri=StoreNS.FORMAT)
+	@RDFSubject
 	public List<String> getFormats() {
 		return formats;
 	}
@@ -249,6 +270,8 @@ public class DublinCore {
 	 */
 	@ItemAttributeTrait(attrType=StoreAttributes.IDENTIFIER, traitType=TraitType.STRING_LIST)
 	@XmlElement(name="identifier", namespace=DublinCoreConstants.DC)
+	@RDFUri(uri=StoreNS.IDENTIFIER)
+	@RDFSubject
 	public List<String> getIdentifiers() {
 		return identifiers;
 	}
@@ -269,6 +292,8 @@ public class DublinCore {
 	 */
 	@ItemAttributeTrait(attrType=StoreAttributes.SOURCE, traitType=TraitType.STRING_LIST)
 	@XmlElement(name="source", namespace=DublinCoreConstants.DC)
+	@RDFUri(uri=StoreNS.SOURCE)
+	@RDFSubject
 	public List<String> getSources() {
 		return sources;
 	}
@@ -289,6 +314,8 @@ public class DublinCore {
 	 */
 	@ItemAttributeTrait(attrType=StoreAttributes.LANGUAGE, traitType=TraitType.STRING_LIST)
 	@XmlElement(name="language", namespace=DublinCoreConstants.DC)
+	@RDFUri(uri=StoreNS.LANGUAGE)
+	@RDFSubject
 	public List<String> getLanguages() {
 		return languages;
 	}
@@ -310,6 +337,8 @@ public class DublinCore {
 	@ItemAttributeTrait(attrType=StoreAttributes.RELATION, traitType=TraitType.RELATION_LIST)
 	@RelationTrait(partTypes={StoreAttributes.RELATION_TYPE, StoreAttributes.RELATION_VALUE}, delimiter="http")
 	@XmlElement(name="relation", namespace=DublinCoreConstants.DC)
+	@RDFUri(uri=StoreNS.RELATION)
+	@RDFSubject
 	public List<String> getRelations() {
 		return relations;
 	}
@@ -330,6 +359,8 @@ public class DublinCore {
 	 */
 	@ItemAttributeTrait(attrType=StoreAttributes.COVERAGE, traitType=TraitType.STRING_LIST)
 	@XmlElement(name="coverage", namespace=DublinCoreConstants.DC)
+	@RDFUri(uri=StoreNS.COVERAGE)
+	@RDFSubject
 	public List<String> getCoverage() {
 		return coverage;
 	}
@@ -350,6 +381,8 @@ public class DublinCore {
 	 */
 	@ItemAttributeTrait(attrType=StoreAttributes.RIGHTS, traitType=TraitType.STRING_LIST)
 	@XmlElement(name="rights", namespace=DublinCoreConstants.DC)
+	@RDFUri(uri=StoreNS.RIGHTS)
+	@RDFSubject
 	public List<String> getRights() {
 		return rights;
 	}

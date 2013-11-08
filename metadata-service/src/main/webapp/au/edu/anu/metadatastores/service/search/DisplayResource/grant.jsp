@@ -54,7 +54,7 @@
 	<span class="title text-uni">Subjects</span><br/>
 	<ul class="removebullet">
 	<c:forEach items="${it.grant.anzforSubjects}" var="subject">
-		<li>${subject.code}<c:if test="${subject.value}"> - ${subject.value}</c:if>, ${subject.percentage}%</li>
+		<li>${subject.code}<c:if test="${not empty subject.value}"> - ${subject.value}</c:if>, ${subject.percentage}%</li>
 	</c:forEach>
 	</ul>
 </div>

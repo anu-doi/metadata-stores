@@ -25,6 +25,11 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import au.edu.anu.metadatastores.rdf.annotation.RDFSubject;
+import au.edu.anu.metadatastores.rdf.annotation.RDFType;
+import au.edu.anu.metadatastores.rdf.annotation.RDFUri;
+import au.edu.anu.metadatastores.rdf.namespace.StoreNS;
+
 /**
  * <p>SystemType<p>
  * 
@@ -37,6 +42,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name="system_types")
+@RDFType("SYSTEMTYPE")
 public class SystemType {
 	private String extSystem;
 	private String title;
@@ -68,6 +74,8 @@ public class SystemType {
 	 * @return The title of the system
 	 */
 	@Column(name="title")
+	@RDFUri(uri=StoreNS.TITLE)
+	@RDFSubject
 	public String getTitle() {
 		return title;
 	}
@@ -87,6 +95,8 @@ public class SystemType {
 	 * @return The description
 	 */
 	@Column(name="description")
+	@RDFUri(uri=StoreNS.DESCRIPTION)
+	@RDFSubject
 	public String getDescription() {
 		return description;
 	}

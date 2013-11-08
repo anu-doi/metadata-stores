@@ -42,12 +42,9 @@ public class ANUStaffImpl implements ANUStaff {
 	private String fax;
 	private String phone;
 	private String email;
-	private String forCode1;
-	private String forCode1Percent;
-	private String forCode2;
-	private String forCode2Percent;
-	private String forCode3;
-	private String forCode3Percent;
+	private Subject forSubject1;
+	private Subject forSubject2;
+	private Subject forSubject3;
 	private String departmentName;
 	
 	/**
@@ -195,39 +192,21 @@ public class ANUStaffImpl implements ANUStaff {
 	}
 
 	/**
-	 * Get the first field of research
+	 * Get the first field of research subject
 	 * 
-	 * @return  The percentage
+	 * @return The field of research
 	 */
-	public String getFORCode1() {
-		return forCode1;
+	public Subject getForSubject1() {
+		return forSubject1;
 	}
 
 	/**
-	 * Set the first field of research
+	 * Set the first field of research subject
 	 * 
-	 * @param FORCode The field of research
+	 * @param forSubject1 The field of research
 	 */
-	public void setFORCode1(String FORCode) {
-		this.forCode1 = FORCode;
-	}
-
-	/**
-	 * Get the first field of research percentage
-	 * 
-	 * @return The percentage
-	 */
-	public String getFORPercentage1() {
-		return forCode1Percent;
-	}
-
-	/**
-	 * Set the first field of research percentage
-	 * 
-	 * @param percentage The percentage
-	 */
-	public void setFORPercentage1(String percentage) {
-		this.forCode1Percent = percentage;
+	public void setForSubject1(Subject forSubject1) {
+		this.forSubject1 = forSubject1;
 	}
 
 	/**
@@ -235,35 +214,17 @@ public class ANUStaffImpl implements ANUStaff {
 	 * 
 	 * @return The field of research
 	 */
-	public String getFORCode2() {
-		return forCode2;
+	public Subject getForSubject2() {
+		return forSubject2;
 	}
 
 	/**
 	 * Set the second field of research
 	 * 
-	 * @param FORCode The field of research
+	 * @param forSubject2 The field of research
 	 */
-	public void setFORCode2(String FORCode) {
-		this.forCode2 = FORCode;
-	}
-
-	/**
-	 * Get the second field of research percentage
-	 * 
-	 * @return The percentage
-	 */
-	public String getFORPercentage2() {
-		return forCode2Percent;
-	}
-
-	/**
-	 * Set the second field of research percentage
-	 * 
-	 * @param percentage The percentage
-	 */
-	public void setFORPercentage2(String percentage) {
-		this.forCode2Percent = percentage;
+	public void setForSubject2(Subject forSubject2) {
+		this.forSubject2 = forSubject2;
 	}
 
 	/**
@@ -271,35 +232,17 @@ public class ANUStaffImpl implements ANUStaff {
 	 * 
 	 * @return The field of research
 	 */
-	public String getFORCode3() {
-		return forCode3;
+	public Subject getForSubject3() {
+		return forSubject3;
 	}
 
 	/**
-	 * Set the third field of research
+	 * Set the third field of  research
 	 * 
-	 * @param FORCode The field of research
+	 * @param forSubject3 The field of research
 	 */
-	public void setFORCode3(String FORCode) {
-		this.forCode3 = FORCode;
-	}
-
-	/**
-	 * Get the third field of research percentage
-	 * 
-	 * @return The percentage
-	 */
-	public String getFORPercentage3() {
-		return forCode3Percent;
-	}
-
-	/**
-	 * Set the third field of research percentage
-	 * 
-	 * @param percentage The percentage
-	 */
-	public void setFORPercentage3(String percentage) {
-		this.forCode3Percent = percentage;
+	public void setForSubject3(Subject forSubject3) {
+		this.forSubject3 = forSubject3;
 	}
 
 	/**

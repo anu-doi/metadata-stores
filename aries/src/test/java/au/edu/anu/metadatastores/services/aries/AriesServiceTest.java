@@ -185,7 +185,7 @@ public class AriesServiceTest {
 	public void  testStaffInformation() {
 		//ANUStaff staff = ariesService.getStaffInformation("u4464261");
 		ANUStaff staff = ariesService.getStaffInformation("T1241");
-		LOGGER.info("Staff Name: {} {}, For Code: {}, Department: {}", new Object[] {staff.getGivenName(), staff.getSurname(), staff.getFORCode1(), staff.getDepartmentName()});
+		LOGGER.info("Staff Name: {} {}, For Code: {}, Department: {}", new Object[] {staff.getGivenName(), staff.getSurname(), staff.getForSubject1().getCode(), staff.getDepartmentName()});
 	}
 
 	@Ignore

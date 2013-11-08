@@ -31,6 +31,10 @@ import au.edu.anu.metadatastores.datamodel.store.annotations.ItemAttributeTrait;
 import au.edu.anu.metadatastores.datamodel.store.annotations.ItemTrait;
 import au.edu.anu.metadatastores.datamodel.store.annotations.TraitType;
 import au.edu.anu.metadatastores.datamodel.store.ext.StoreAttributes;
+import au.edu.anu.metadatastores.rdf.annotation.RDFSubject;
+import au.edu.anu.metadatastores.rdf.annotation.RDFType;
+import au.edu.anu.metadatastores.rdf.annotation.RDFUri;
+import au.edu.anu.metadatastores.rdf.namespace.StoreNS;
 
 /**
  * <p>Epress<p>
@@ -44,6 +48,7 @@ import au.edu.anu.metadatastores.datamodel.store.ext.StoreAttributes;
  */
 @ItemTrait(extId="extId", title="title")
 @XmlRootElement(name="epress")
+@RDFType("EPRESS")
 public class Epress {
 	private String extId;
 	private List<String> ISBNs = new ArrayList<String>();
@@ -89,6 +94,8 @@ public class Epress {
 	 */
 	@ItemAttributeTrait(attrType=StoreAttributes.ISBN, traitType=TraitType.STRING_LIST)
 	@XmlElement(name="isbn")
+	@RDFUri(uri=StoreNS.ISBN)
+	@RDFSubject
 	public List<String> getISBNs() {
 		return ISBNs;
 	}
@@ -109,6 +116,8 @@ public class Epress {
 	 */
 	@ItemAttributeTrait(attrType=StoreAttributes.ISSN, traitType=TraitType.STRING_LIST)
 	@XmlElement(name="issn")
+	@RDFUri(uri=StoreNS.ISSN)
+	@RDFSubject
 	public List<String> getISSNs() {
 		return ISSNs;
 	}
@@ -129,6 +138,8 @@ public class Epress {
 	 */
 	@ItemAttributeTrait(attrType=StoreAttributes.TITLE, traitType=TraitType.STRING)
 	@XmlElement(name="title")
+	@RDFUri(uri=StoreNS.TITLE)
+	@RDFSubject
 	public String getTitle() {
 		return title;
 	}
@@ -149,6 +160,8 @@ public class Epress {
 	 */
 	@ItemAttributeTrait(attrType=StoreAttributes.AUTHORS, traitType=TraitType.STRING)
 	@XmlElement(name="authors")
+	@RDFUri(uri=StoreNS.AUTHORS)
+	@RDFSubject
 	public String getAuthors() {
 		return authors;
 	}
@@ -169,6 +182,8 @@ public class Epress {
 	 */
 	@ItemAttributeTrait(attrType=StoreAttributes.SERIES, traitType=TraitType.STRING_LIST)
 	@XmlElement(name="series")
+	@RDFUri(uri=StoreNS.SERIES)
+	@RDFSubject
 	public List<String> getSeries() {
 		return series;
 	}
@@ -189,6 +204,8 @@ public class Epress {
 	 */
 	@ItemAttributeTrait(attrType=StoreAttributes.CONTENT, traitType=TraitType.STRING_LIST)
 	@XmlElement(name="content")
+	@RDFUri(uri=StoreNS.CONTENT)
+	@RDFSubject
 	public List<String> getContent() {
 		return content;
 	}
@@ -209,6 +226,8 @@ public class Epress {
 	 */
 	@ItemAttributeTrait(attrType=StoreAttributes.DESCRIPTION, traitType=TraitType.STRING_LIST)
 	@XmlElement(name="description")
+	@RDFUri(uri=StoreNS.DESCRIPTION)
+	@RDFSubject
 	public List<String> getDescriptions() {
 		return descriptions;
 	}
@@ -229,6 +248,8 @@ public class Epress {
 	 */
 	@ItemAttributeTrait(attrType=StoreAttributes.SERIES_DESCRIPTION, traitType=TraitType.STRING_LIST)
 	@XmlElement(name="series-description")
+	@RDFUri(uri=StoreNS.SERIES_DESCRIPTION)
+	@RDFSubject
 	public List<String> getSeriesDescriptions() {
 		return seriesDescriptions;
 	}
@@ -249,6 +270,8 @@ public class Epress {
 	 */
 	@ItemAttributeTrait(attrType=StoreAttributes.CITATION_URL, traitType=TraitType.STRING_LIST)
 	@XmlElement(name="citation-url")
+	@RDFUri(uri=StoreNS.CITATION_URL)
+	@RDFSubject
 	public List<String> getCitationURLs() {
 		return citationURLs;
 	}

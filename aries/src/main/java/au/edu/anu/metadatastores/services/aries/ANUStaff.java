@@ -147,88 +147,46 @@ public interface ANUStaff {
 	public void setEmail(String email);
 	
 	/**
-	 * Get the first field of research
+	 * Get the first field of research subject
 	 * 
-	 * @return  The percentage
+	 * @return The field of research
 	 */
-	public String getFORCode1();
+	public Subject getForSubject1();
 	
 	/**
-	 * Set the first field of research
+	 * Set the first field of research subject
 	 * 
-	 * @param FORCode The field of research
+	 * @param forSubject1 The field of research
 	 */
-	public void setFORCode1(String FORCode);
-	
-	/**
-	 * Get the first field of research percentage
-	 * 
-	 * @return The percentage
-	 */
-	public String getFORPercentage1();
-	
-	/**
-	 * Set the first field of research percentage
-	 * 
-	 * @param percentage The percentage
-	 */
-	public void setFORPercentage1(String percentage);
-	
+	public void setForSubject1(Subject forSubject1);
+
 	/**
 	 * Get the second field of research
 	 * 
 	 * @return The field of research
 	 */
-	public String getFORCode2();
+	public Subject getForSubject2();
 	
 	/**
 	 * Set the second field of research
 	 * 
-	 * @param FORCode The field of research
+	 * @param forSubject2 The field of research
 	 */
-	public void setFORCode2(String FORCode);
-	
-	/**
-	 * Get the second field of research percentage
-	 * 
-	 * @return The percentage
-	 */
-	public String getFORPercentage2();
-	
-	/**
-	 * Set the second field of research percentage
-	 * 
-	 * @param percentage The percentage
-	 */
-	public void setFORPercentage2(String percentage);
+	public void setForSubject2(Subject forSubject2);
 	
 	/**
 	 * Get the third field of research
 	 * 
 	 * @return The field of research
 	 */
-	public String getFORCode3();
+	public Subject getForSubject3();
 	
 	/**
-	 * Set the third field of research
+	 * Set the third field of  research
 	 * 
-	 * @param FORCode The field of research
+	 * @param forSubject3 The field of research
 	 */
-	public void setFORCode3(String FORCode);
-	
-	/**
-	 * Get the third field of research percentage
-	 * 
-	 * @return The percentage
-	 */
-	public String getFORPercentage3();
-	
-	/**
-	 * Set the third field of research percentage
-	 * 
-	 * @param percentage The percentage
-	 */
-	public void setFORPercentage3(String percentage);
+	public void setForSubject3(Subject forSubject3);
 	
 	/**
 	 * Get the department of the staff member

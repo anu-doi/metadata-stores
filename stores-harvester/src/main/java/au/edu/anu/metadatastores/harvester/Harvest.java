@@ -24,6 +24,7 @@ package au.edu.anu.metadatastores.harvester;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.net.ConnectException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -176,6 +177,12 @@ public class Harvest {
 		}
 		catch (ParserConfigurationException e) {
 			throw new HarvestException(e.getMessage(), e);
+		}
+		catch (ConnectException e) {
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.error("Exception ", e);
+			}
+			throw new HarvestException("Unable to connect to " + location.getUrl());
 		}
 		catch (IOException e) {
 			throw new HarvestException(e.getMessage(), e);

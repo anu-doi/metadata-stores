@@ -127,6 +127,9 @@ public class PersonResource {
 		StoreService storeService = StoreService.getSingleton();
 		
 		Map<String, List<String>> aMap = new HashMap<String, List<String>>(multivaluedMap);
+		for (String key : aMap.keySet()) {
+			LOGGER.info("Key: {}", key);
+		}
 		Person person = storeService.updatePerson(uid, aMap);
 		
 		return Response.ok(person).build();

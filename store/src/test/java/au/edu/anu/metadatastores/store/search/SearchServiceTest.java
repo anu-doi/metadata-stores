@@ -20,7 +20,9 @@
  ******************************************************************************/
 package au.edu.anu.metadatastores.store.search;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.junit.Before;
@@ -30,6 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import au.edu.anu.metadatastores.datamodel.store.SystemType;
+import au.edu.anu.metadatastores.store.people.Person;
 
 /**
  * <p>ItemServiceTest<p>
@@ -51,7 +54,7 @@ public class SearchServiceTest {
 		itemService_ = SearchService.getSingleton();
 	}
 	
-	//@Ignore
+	@Ignore
 	@Test
 	public void basicSearchTest() {
 		//List<ItemDTO> items = itemService_.queryItems("Contemporary");
@@ -78,11 +81,13 @@ public class SearchServiceTest {
 	public void itemByIdTest() {
 		Object object = itemService_.getItemById(new Long(3603));
 		LOGGER.info("Object Class: {}", object.getClass().getName());
+		Person person = (Person) object;
+		LOGGER.info("{}, {}", person.getExtId(), person.getDisplayName());
 	}
 	
 	@Ignore
 	@Test
-	public void advancedSearch2Test() {
+	public void advancedSearchTest1() {
 		List<SearchTerm> searchTerms = new ArrayList<SearchTerm>();
 		searchTerms.add(new SearchTerm(null, "Louise"));
 		//searchTerms.add(new SearchTerm("GIVEN_NAME", "Louise"));
@@ -93,6 +98,132 @@ public class SearchServiceTest {
 		//List<ItemDTO> items = itemService_.queryItems(null, searchTerms);
 		printItems(items);
 	}
+
+	@Ignore
+	@Test
+	public void advancedSearchTest2() {
+		List<SearchTerm> searchTerms = new ArrayList<SearchTerm>();
+		SearchTerm term = new SearchTerm("TITLE", "health");
+		searchTerms.add(term);
+		term = new SearchTerm("YEAR", "2010");
+		searchTerms.add(term);
+		
+		List<ItemDTO> items = itemService_.queryItems("PUBLICATION", searchTerms);
+		printItems(items);
+		LOGGER.info("Query Complete");
+		
+	}
+
+	@Ignore
+	@Test
+	public void advancedSearchTest3() {
+		List<SearchTerm> searchTerms = new ArrayList<SearchTerm>();
+		SearchTerm term = new SearchTerm("EMAIL", "9");
+		searchTerms.add(term);
+		
+		List<ItemDTO> items = itemService_.queryItems("PERSON", searchTerms);
+		printItems(items);
+		LOGGER.info("Query Complete");
+	}
+
+	@Ignore
+	@Test
+	public void advancedSearchTest4() {
+		List<SearchTerm> searchTerms = new ArrayList<SearchTerm>();
+		SearchTerm term = new SearchTerm("GIVEN_NAME", "ri");
+		searchTerms.add(term);
+		List<ItemDTO> items = itemService_.queryItems("PERSON", searchTerms);
+		printItems(items);
+		LOGGER.info("Query Complete");
+	}
+
+	@Ignore
+	@Test
+	public void advancedSearchTest5() {
+		List<SearchTerm> searchTerms = new ArrayList<SearchTerm>();
+		SearchTerm term = new SearchTerm("FOR_SUBJECT", "10");
+		searchTerms.add(term);
+		
+		List<ItemDTO> items = itemService_.queryItems("PERSON", searchTerms);
+		printItems(items);
+		LOGGER.info("Query Complete");
+	}
+
+	@Ignore
+	@Test
+	public void advancedSearchTest6() {
+		List<SearchTerm> searchTerms = new ArrayList<SearchTerm>();
+		//SearchTerm term = new SearchTerm("TITLE", "role");
+		SearchTerm term = new SearchTerm(null, "role");
+		searchTerms.add(term);
+		term = new SearchTerm(null, "louise");
+		searchTerms.add(term);
+		
+		List<ItemDTO> items = itemService_.queryItems("PUBLICATION", searchTerms);
+		printItems(items);
+		LOGGER.info("Query Complete");
+	}
+	
+	@Ignore
+	@Test
+	public void advancedSearchTest7() {
+		Date startDate = getStartDate();
+		List<SearchTerm> searchTerms = new ArrayList<SearchTerm>();
+		SearchTerm term = new SearchTerm("TITLE", "effect");
+		searchTerms.add(term);
+		
+		List<ItemDTO> items = itemService_.queryItems("DIGITAL_COLLECTIONS", searchTerms);
+		printItems(items);
+		LOGGER.info("Query Complete");
+		printCompletion(startDate);
+	}
+	
+	//@Ignore
+	@Test
+	public void advancedSearchTest8() {
+		//LOGGER.info(arg0);
+		LOGGER.info("Starting all search for 'some'");
+		Date startDate = getStartDate();
+		
+		List<SearchTerm> searchTerms = new ArrayList<SearchTerm>();
+		SearchTerm term = new SearchTerm(null, "some");
+		searchTerms.add(term);
+		//term = new SearchTerm(null, "chrom");
+		//searchTerms.add(term);
+		
+		List<ItemDTO> items = itemService_.queryItems(null, searchTerms);
+		//printItems(items);
+		printCompletion(startDate);
+	}
+
+	//@Ignore
+	@Test
+	public void searchTest1() {
+		LOGGER.info("Starting basic search for 'some'");
+		//LOGGER.info(arg0);
+		Date startDate = getStartDate();
+		
+		List<ItemDTO> items = itemService_.queryItems("some");
+		//printItems(items);
+		
+		printCompletion(startDate);
+	}
+	
+	private Date getStartDate() {
+		return new Date();
+	}
+	
+	private void printCompletion(Date startDate) {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+		LOGGER.info("Search Started At: {}", sdf.format(startDate));
+
+		Date endDate = new Date();
+		long diff = endDate.getTime() - startDate.getTime();
+		double sec = diff / 1000;
+		double min = sec / 60;
+		LOGGER.info("Search Finished At: {}", sdf.format(endDate));
+		LOGGER.info("Time taken to update in: Milliseconds - {}, Seconds - {}, Minutes - {}", diff, sec, min);
+	}
 	
 	private void printItems(List<ItemDTO> items) {
 		for (ItemDTO item : items) {
@@ -101,6 +232,7 @@ public class SearchServiceTest {
 		LOGGER.info("Number of Results: {}", items.size());
 	}
 	
+	@Ignore
 	@Test
 	public void getRelationsTest() {
 		//List<ItemDTO> items = itemService_.getRelations(new Long(2798), null);

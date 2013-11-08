@@ -28,9 +28,12 @@ import org.glassfish.jersey.server.mvc.Viewable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import au.edu.anu.metadatastores.store.datacommons.DataCommonsObject;
+import au.edu.anu.metadatastores.store.digitalcollections.DigitalCollection;
 import au.edu.anu.metadatastores.store.dublincore.xml.DublinCore;
 import au.edu.anu.metadatastores.store.epress.Epress;
 import au.edu.anu.metadatastores.store.grants.Grant;
+import au.edu.anu.metadatastores.store.misc.Subject;
 import au.edu.anu.metadatastores.store.people.Person;
 import au.edu.anu.metadatastores.store.publication.Publication;
 import au.edu.anu.metadatastores.store.search.SearchService;
@@ -107,6 +110,9 @@ public class DisplayPage {
 	public Viewable getPage(Publication publication) {
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("publication", publication);
+		for (Subject subj : publication.getAnzforSubjects()) {
+			LOGGER.info("Code: {}, Value: {}, Percentage: {}", subj.getCode(), subj.getValue(), subj.getPercentage());
+		}
 		
 		return new Viewable("publication.jsp", model);
 	}
@@ -135,6 +141,14 @@ public class DisplayPage {
 		model.put("dublinCore", dublinCore);
 		
 		return new Viewable("dublin_core.jsp", model);
+	}
+	
+	public Viewable getPage(DataCommonsObject dataCommons) {
+		return getPage((DublinCore) dataCommons);
+	}
+	
+	public Viewable getPage(DigitalCollection digitalCollection) {
+		return getPage((DublinCore) digitalCollection);
 	}
 	
 	/**

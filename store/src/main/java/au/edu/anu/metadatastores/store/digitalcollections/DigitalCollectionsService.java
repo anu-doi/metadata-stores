@@ -292,36 +292,39 @@ public class DigitalCollectionsService extends DublinCoreService {
 		
 	}
 	
-	public DublinCore getDigitalCollection(String id) {
+	public DigitalCollection getDigitalCollection(String id) {
 		Session session = StoreHibernateUtil.getSessionFactory().openSession();
 		session.enableFetchProfile("attributes");
-		DublinCore digitalCollection = null;
+		//DublinCore digitalCollection = null;
 		try {
 			Query query = session.createQuery("FROM DigitalCollectionItem WHERE extId = :extId");
 			query.setParameter("extId", id);
 			
 			DigitalCollectionsItem item = (DigitalCollectionsItem) query.uniqueResult();
-			digitalCollection = getDigitalCollection(item);
+			//digitalCollection = getDigitalCollection(item);
+			return getDigitalCollection(item);
 		}
 		finally {
 			session.close();
 		}
 		
-		return digitalCollection;
+		//return digitalCollection;
 	}
 	
-	public DublinCore getDigitalCollection(DigitalCollectionsItem item) {
-		DublinCore digitalCollection = null;
+	public DigitalCollection getDigitalCollection(DigitalCollectionsItem item) {
+		//DublinCore digitalCollection = null;
 		ItemTraitParser traitParser = new ItemTraitParser();
 		
 		try {
-			digitalCollection = (DublinCore) traitParser.getItemObject(item, DublinCore.class);
+			//DublinCore digitalCollection = (DublinCore) traitParser.getItemObject(item, DublinCore.class);
+			DigitalCollection digitalCollection = (DigitalCollection) traitParser.getItemObject(item, DigitalCollection.class);
+			return digitalCollection;
 		}
 		catch (Exception e) {
 			LOGGER.error("Exception getting digital collection", e);
 		}
 		//TODO get relations?
-		
-		return digitalCollection;
+		return null;
+		//return digitalCollection;
 	}
 }

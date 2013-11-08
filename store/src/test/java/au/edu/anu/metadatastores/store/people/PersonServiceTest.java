@@ -6,6 +6,7 @@ import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -241,8 +242,10 @@ public class PersonServiceTest {
 	
 	private void printPersonInfo(List<Person> people) {
 		LOGGER.info("List of people:");
-		for (Person person : people) {
-			LOGGER.info("Name: {}, Email: {}, Given Name: {}, Surname: {}, UID: {}", new Object[]{person.getDisplayName(), person.getEmail(), person.getGivenName(), person.getSurname(), person.getUid()});
+		if (people != null) {
+			for (Person person : people) {
+				LOGGER.info("Name: {}, Email: {}, Given Name: {}, Surname: {}, UID: {}", new Object[]{person.getDisplayName(), person.getEmail(), person.getGivenName(), person.getSurname(), person.getUid()});
+			}
 		}
 	}
 }

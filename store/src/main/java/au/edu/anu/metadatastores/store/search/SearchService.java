@@ -36,6 +36,7 @@ import au.edu.anu.metadatastores.datamodel.store.AttributeType;
 import au.edu.anu.metadatastores.datamodel.store.Item;
 import au.edu.anu.metadatastores.datamodel.store.SystemType;
 import au.edu.anu.metadatastores.datamodel.store.annotations.ItemTraitParser;
+import au.edu.anu.metadatastores.rdf.RDFService;
 import au.edu.anu.metadatastores.services.store.StoreHibernateUtil;
 import au.edu.anu.metadatastores.store.util.ItemResolver;
 
@@ -53,6 +54,9 @@ public class SearchService {
 	static final Logger LOGGER = LoggerFactory.getLogger(SearchService.class);
 	
 	private static SearchService itemService_;
+	//private static RDFService rdfService_ = RDFService.getSingleton();
+	private static Search search_ = RDFService.getSingleton();
+	//private static Search search_ = DBSearch.getSingleton();
 	
 	/**
 	 * Get the singleton object of the search service
@@ -80,104 +84,21 @@ public class SearchService {
 	 * @return A list of items associated with the query value
 	 */
 	public List<ItemDTO> queryItems(String queryValue) {
-		Session session = StoreHibernateUtil.getSessionFactory().openSession();
-		session.enableFilter("attributes");
-		try {
-			List<ItemDTO> results = executeQueryWithParameters(session, getFirstQueryString(), queryValue);
-			Set<ItemDTO> items = new HashSet<ItemDTO>(results);
-			
-			results = executeQueryWithParameters(session, getSecondQueryString(), queryValue);
-			items.addAll(results);
-			
-			return getSortedItems(items);
-		}
-		finally {
-			session.close();
-		}
-	}
-
-	/**
-	 * Execute the query 
-	 * 
-	 * @param session The hibernate session
-	 * @param queryString The query string
-	 * @param queryValue The value to search for
-	 * @return
-	 */
-	private List<ItemDTO> executeQueryWithParameters(Session session, String queryString, String queryValue) {
-		Query query = session.createQuery(queryString);
-		query.setParameter("attrValue", "%" + queryValue.toLowerCase() + "%");
-		@SuppressWarnings("unchecked")
-		List<ItemDTO> items = query.list();
-		return items;
-	}
-
-	/**
-	 * Generate the first query string for searching metadata stores by a value (searches for objects with that value)
-	 * 
-	 * @return The query string
-	 */
-	private String getFirstQueryString() {
-		StringBuilder queryBuilder = new StringBuilder();
-
-		queryBuilder.append("SELECT new au.edu.anu.metadatastores.store.search.ItemDTO(item.iid, item.title, sysType.title, item.extId) ");
-		
-		queryBuilder.append("FROM Item item, SystemType sysType ");
-		queryBuilder.append("WHERE sysType.extSystem = item.extSystem ");
-		queryBuilder.append("AND EXISTS (SELECT 1 ");
-		queryBuilder.append("FROM item.itemAttributes ia ");
-		queryBuilder.append("WHERE lower(ia.attrValue) like :attrValue ) ");
-		
-		return queryBuilder.toString();
-	}
-
-	/**
-	 * Generate the second query string for searching metadata stores by a value (searches for associated people with that value)
-	 * 
-	 * @return The query string
-	 */
-	private String getSecondQueryString() {
-		StringBuilder queryBuilder = new StringBuilder();
-
-		queryBuilder.append("SELECT new au.edu.anu.metadatastores.store.search.ItemDTO(item.iid, item.title, sysType.title, item.extId) ");
-		queryBuilder.append("FROM Item item, SystemType sysType, ItemRelation ir, Item item2 ");
-		queryBuilder.append("WHERE sysType.extSystem = item.extSystem ");
-		queryBuilder.append("AND item2.extSystem = 'PERSON'");
-		queryBuilder.append("AND EXISTS (SELECT 1 ");
-		queryBuilder.append("FROM item2.itemAttributes ia ");
-		queryBuilder.append("WHERE lower(ia.attrValue) like :attrValue ) ");
-		queryBuilder.append("AND ir.itemByRelatedIid = item2 ");
-		queryBuilder.append("AND ir.itemByIid = item");
-		
-		return queryBuilder.toString();
+		List<ItemDTO> results = search_.search(queryValue);
+		//Set<ItemDTO> items = new HashSet<ItemDTO>(results);
+		return getSortedItems(results);
 	}
 	
 	/**
-	 * Query the metadata stores for the given search terms
+	 * Search the metdata stores limiting the results by the system type and given search fields and values
 	 * 
-	 * @param system The source system to search
-	 * @param searchTerms A list of fields and values to search
-	 * @return The list of item results
+	 * @param system The system type
+	 * @param searchTerms The search terms (field and value pairs)
+	 * @return The list of items found
 	 */
 	public List<ItemDTO> queryItems(String system, List<SearchTerm> searchTerms) {
-		Session session = StoreHibernateUtil.getSessionFactory().openSession();
-		try {
-			List<String> parameters = new ArrayList<String>();
-			
-			List<ItemDTO> queryVals = executeQueryWithParameters(session, getFirstQueryString(system, searchTerms, parameters), parameters);
-			Set<ItemDTO> items = new HashSet<ItemDTO>(queryVals);
-			//If the system is a person this query is unnecessary as we will have already retrieved the people
-			if (!"PERSON".equals(system)) {
-				parameters.clear();
-				queryVals = executeQueryWithParameters(session, getSecondQueryString(system, searchTerms, parameters), parameters);
-				items.addAll(queryVals);
-			}
-
-			return getSortedItems(items);
-		}
-		finally {
-			session.close();
-		}
+		List<ItemDTO> items = search_.search(system, searchTerms);
+		return getSortedItems(items);
 	}
 	
 	/**
@@ -199,87 +120,21 @@ public class SearchService {
 	}
 	
 	/**
-	 * Execute the query with the given parameters
+	 * Sort the return results
 	 * 
-	 * @param session The hibernate session
-	 * @param queryString The query string
-	 * @param parameters The parameters
-	 * @return The list of items resulting from the query
+	 * @param items The items to sort
+	 * @return The sorted items
 	 */
-	private List<ItemDTO> executeQueryWithParameters(Session session, String queryString, List<String> parameters) {
-		Query query = session.createQuery(queryString);
-		for (int i = 0; i < parameters.size(); i++) {
-			query.setParameter(i, parameters.get(i));
-		}
-		@SuppressWarnings("unchecked")
-		List<ItemDTO> items = query.list();
-		return items;
-	}
-	
-	/**
-	 * Get the first query string that finds the fields with the values in it
-	 * 
-	 * @param system The source system
-	 * @param searchTerms The search terms
-	 * @param parameters The list of parameters to populate
-	 * @return The query string
-	 */
-	private String getFirstQueryString(String system, List<SearchTerm> searchTerms, List<String> parameters) {
-		StringBuilder queryString = new StringBuilder();
-		queryString.append("SELECT new au.edu.anu.metadatastores.store.search.ItemDTO(item.iid, item.title, sysType.title, item.extId) ");
-		queryString.append("FROM Item item, SystemType sysType ");
-		queryString.append("WHERE sysType.extSystem = item.extSystem ");
-		
-		if (system != null && system.length() > 0) {
-			queryString.append("AND item.extSystem = ? ");
-			parameters.add(system);
-		}
-		for (SearchTerm term : searchTerms) {
-			queryString.append("AND EXISTS (SELECT ia FROM item.itemAttributes ia WHERE ");
-			if (term.getField() != null && term.getField().length() > 0) {
-				queryString.append(" ia.attrType = ? AND ");
-				parameters.add(term.getField());
+	private List<ItemDTO> getSortedItems(List<ItemDTO> items) {
+		Set<ItemDTO> itemsSet = new HashSet<ItemDTO>(items);
+		List<ItemDTO> sortedItems = new ArrayList<ItemDTO>(itemsSet);
+		Collections.sort(sortedItems, new Comparator<ItemDTO>() {
+			public int compare(ItemDTO o1, ItemDTO o2) {
+				return o1.getId().compareTo(o2.getId());
 			}
-			queryString.append("lower(ia.attrValue) like ? ");
-			queryString.append(")");
-			parameters.add("%" + term.getValue().toLowerCase() + "%");
-		}
+		});
 		
-		return queryString.toString();
-	}
-	
-	/**
-	 * Get the second query string that fields the people with the values in it
-	 * 
-	 * @param system The source ssytem
-	 * @param searchTerms The search terms
-	 * @param parameters The parameters
-	 * @return The query string
-	 */
-	private String getSecondQueryString(String system, List<SearchTerm> searchTerms, List<String> parameters) {
-		StringBuilder queryString = new StringBuilder();
-		queryString.append("SELECT new au.edu.anu.metadatastores.store.search.ItemDTO(item.iid, item.title, sysType.title, item.extId) ");
-		queryString.append("FROM Item item, SystemType sysType, ItemRelation ir, Item item2 ");
-		queryString.append("WHERE sysType.extSystem = item.extSystem ");
-		queryString.append("AND item2.extSystem = 'PERSON' ");
-		if (system != null && system.length() > 0) {
-			queryString.append(" AND item.extSystem = ?");
-			parameters.add(system);
-		}
-		for (SearchTerm term : searchTerms) {
-			queryString.append(" AND EXISTS (SELECT ia FROM item2.itemAttributes ia WHERE ");
-			if (term.getField() != null && term.getField().length() > 0) {
-				queryString.append(" ia.attrType = ? AND ");
-				parameters.add(term.getField());
-			}
-			queryString.append(" lower(ia.attrValue) like ? ");
-			queryString.append(")");
-			parameters.add("%" + term.getValue().toLowerCase() + "%");
-		}
-		queryString.append("AND ir.itemByRelatedIid = item2 ");
-		queryString.append("AND ir.itemByIid = item");
-
-		return queryString.toString();
+		return sortedItems;
 	}
 	
 	/**
@@ -346,10 +201,10 @@ public class SearchService {
 	 */
 	public List<AttributeType> getAttributeTypes(Class<?> clazz) {
 		ItemTraitParser parser = new ItemTraitParser();
-		List<AttributeType> attrTypes = getAttributeTypes();
 		List<AttributeType> retAttrTypes = new ArrayList<AttributeType>();
 		retAttrTypes.add(new AttributeType("","All",null));
 		if (clazz != null) {
+			List<AttributeType> attrTypes = getAttributeTypes();
 			List<String> classAttrTypes = parser.getTraitAttributeTypes(clazz);
 			
 			for (AttributeType attrType : attrTypes) {
@@ -360,9 +215,6 @@ public class SearchService {
 					}
 				}
 			}
-		}
-		else {
-			retAttrTypes.addAll(attrTypes);
 		}
 		
 		return retAttrTypes;

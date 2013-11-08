@@ -151,10 +151,16 @@ public class ItemDTO {
 	
 	public int hashCode() {
 		int hashCode = 0;
-		hashCode = hashCode + 17 * id.hashCode();
-		hashCode = hashCode + 17 * title.hashCode();
-		hashCode = hashCode + 17 * extSystem.hashCode();
-		hashCode = hashCode + 17 * extId.hashCode();
+		hashCode = 17 * hashCode + id.hashCode();
+		if (title != null) {
+			hashCode = 17 * hashCode + title.hashCode();
+		}
+		if (extSystem != null) {
+			hashCode = 17 * hashCode + extSystem.hashCode();
+		}
+		if (extId != null) {
+			hashCode = 17 * hashCode + extId.hashCode();
+		}
 		
 		return hashCode;
 	}

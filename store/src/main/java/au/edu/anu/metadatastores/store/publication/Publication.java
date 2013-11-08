@@ -30,6 +30,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 import au.edu.anu.metadatastores.datamodel.store.annotations.ItemAttributeTrait;
 import au.edu.anu.metadatastores.datamodel.store.annotations.TraitType;
 import au.edu.anu.metadatastores.datamodel.store.ext.StoreAttributes;
+import au.edu.anu.metadatastores.rdf.annotation.RDFSubject;
+import au.edu.anu.metadatastores.rdf.annotation.RDFType;
+import au.edu.anu.metadatastores.rdf.annotation.RDFUri;
+import au.edu.anu.metadatastores.rdf.namespace.StoreNS;
 import au.edu.anu.metadatastores.store.misc.Subject;
 import au.edu.anu.metadatastores.store.people.Person;
 
@@ -44,6 +48,7 @@ import au.edu.anu.metadatastores.store.people.Person;
  *
  */
 @XmlRootElement(name="publication")
+@RDFType("PUBLICATION")
 public class Publication {
 	private String ariesId;
 	private String type;
@@ -64,6 +69,8 @@ public class Publication {
 	 */
 	@ItemAttributeTrait(attrType=StoreAttributes.ARIES_ID, traitType=TraitType.STRING)
 	@XmlElement(name="aries-id")
+	@RDFUri(uri=StoreNS.ARIES_ID)
+	@RDFSubject
 	public String getAriesId() {
 		return ariesId;
 	}
@@ -84,6 +91,9 @@ public class Publication {
 	 */
 	@ItemAttributeTrait(attrType=StoreAttributes.TYPE, traitType=TraitType.STRING)
 	@XmlElement(name="type")
+	//TODO should this be a RDF.type?
+	@RDFUri(uri=StoreNS.TYPE)
+	@RDFSubject
 	public String getType() {
 		return type;
 	}
@@ -104,6 +114,8 @@ public class Publication {
 	 */
 	@ItemAttributeTrait(attrType=StoreAttributes.TITLE, traitType=TraitType.STRING)
 	@XmlElement(name="title")
+	@RDFUri(uri=StoreNS.TITLE)
+	@RDFSubject
 	public String getTitle() {
 		return title;
 	}
@@ -124,6 +136,8 @@ public class Publication {
 	 */
 	@ItemAttributeTrait(attrType=StoreAttributes.YEAR, traitType=TraitType.STRING)
 	@XmlElement(name="publication-year")
+	@RDFUri(uri=StoreNS.YEAR)
+	@RDFSubject
 	public String getYear() {
 		return year;
 	}
@@ -145,6 +159,8 @@ public class Publication {
 	//TODO double check this?
 	@ItemAttributeTrait(attrType=StoreAttributes.FIRST_AUTHOR_ID, traitType=TraitType.STRING)
 	@XmlElement(name="first-author")
+	@RDFUri(uri=StoreNS.FIRST_AUTHOR_ID)
+	@RDFSubject
 	public String getFirstAuthor() {
 		return firstAuthor;
 	}
@@ -165,6 +181,8 @@ public class Publication {
 	 */
 	@ItemAttributeTrait(attrType=StoreAttributes.PUBLICATION_NAME, traitType=TraitType.STRING)
 	@XmlElement(name="publication-name")
+	@RDFUri(uri=StoreNS.PUBLICATION_NAME)
+	@RDFSubject
 	public String getPublicationName() {
 		return publicationName;
 	}
@@ -184,6 +202,7 @@ public class Publication {
 	 * @return The authors
 	 */
 	@XmlElement(name="author")
+	//TODO
 	public List<Person> getAuthors() {
 		return authors;
 	}
@@ -204,6 +223,8 @@ public class Publication {
 	 */
 	@ItemAttributeTrait(attrType=StoreAttributes.CATEGORY, traitType=TraitType.STRING)
 	@XmlElement(name="category")
+	@RDFUri(uri=StoreNS.CATEGORY)
+	@RDFSubject
 	public String getCategory() {
 		return category;
 	}
@@ -224,6 +245,8 @@ public class Publication {
 	 */
 	@ItemAttributeTrait(attrType=StoreAttributes.ISBN, traitType=TraitType.STRING)
 	@XmlElement(name="isbn")
+	@RDFUri(uri=StoreNS.ISBN)
+	@RDFSubject
 	public String getISBN() {
 		return ISBN;
 	}
@@ -244,6 +267,8 @@ public class Publication {
 	 */
 	@ItemAttributeTrait(attrType=StoreAttributes.ISSN, traitType=TraitType.STRING)
 	@XmlElement(name="issn")
+	@RDFUri(uri=StoreNS.ISSN)
+	@RDFSubject
 	public String getISSN() {
 		return ISSN;
 	}
@@ -264,6 +289,8 @@ public class Publication {
 	 */
 	@ItemAttributeTrait(attrType=StoreAttributes.FOR_SUBJECT, traitType=TraitType.SUBJECT_LIST)
 	@XmlElement(name="for-subject")
+	@RDFUri(uri=StoreNS.SUBJECT)
+	@RDFSubject
 	public List<Subject> getAnzforSubjects() {
 		return anzforSubjects;
 	}

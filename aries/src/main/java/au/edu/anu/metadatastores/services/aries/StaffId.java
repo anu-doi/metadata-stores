@@ -394,13 +394,20 @@ public class StaffId {
 		staff.setFax(userAccount.getChrFax());
 		staff.setPhone(userAccount.getChrTelephone());
 		staff.setEmail(userAccount.getChrEmail());
-		staff.setFORCode1(userAccount.getChrForcode1());
-		staff.setFORPercentage1(userAccount.getChrForpercentage1());
-		staff.setFORCode2(userAccount.getChrForcode2());
-		staff.setFORPercentage2(userAccount.getChrForpercentage2());
-		staff.setFORCode3(userAccount.getChrForcode3());
-		staff.setFORPercentage3(userAccount.getChrForpercentage3());
-
+		
+		if (userAccount.getForCodes1() != null) {
+			Subject forSubject = new FORSubjectImpl(userAccount.getForCodes1().getChrForObjectiveCode(),userAccount.getForCodes1().getChrForDescription(),userAccount.getChrForpercentage1());
+			staff.setForSubject1(forSubject);
+		}
+		if (userAccount.getForCodes2() != null) {
+			Subject forSubject = new FORSubjectImpl(userAccount.getForCodes2().getChrForObjectiveCode(),userAccount.getForCodes2().getChrForDescription(),userAccount.getChrForpercentage1());
+			staff.setForSubject2(forSubject);
+		}
+		if (userAccount.getForCodes3() != null) {
+			Subject forSubject = new FORSubjectImpl(userAccount.getForCodes3().getChrForObjectiveCode(),userAccount.getForCodes3().getChrForDescription(),userAccount.getChrForpercentage1());
+			staff.setForSubject3(forSubject);
+		}
+		
 		Query departmentQuery = session.createQuery("from Departments where chrTier3Code = :departmentId");
 		departmentQuery.setParameter("departmentId", userAccount.getChrDepartmentCode());
 		

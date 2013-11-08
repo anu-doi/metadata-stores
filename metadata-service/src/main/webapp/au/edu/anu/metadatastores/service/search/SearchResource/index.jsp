@@ -1,6 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="anu" uri="http://www.anu.edu.au/taglib"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <anu:header id="1998" title="Search" description="description" subject="subject" respOfficer="Doug Moncur" respOfficerContact="mailto:doug.moncur@anu.edu.au"
 	ssl="true">
@@ -26,7 +27,8 @@
 	<jsp:include page="search_results.jsp" />
 	
 	<c:if test="${not empty it.numItems}">
-		<fmt:formatNumber var="numPages" value="${it.numItems / it.rows}" maxFractionDigits="0" />
+		<fmt:formatNumber var="numPages" value="${it.numItems / it.rows }" groupingUsed="false" />
+		<c:set var="numPages" value="${fn:substringBefore(numPages, '.')}" />
 		<c:url var="startURL" value="${searchURLPart}">
 			<c:param name="rows">${it.rows}</c:param>
 			<c:param name="page">0</c:param>

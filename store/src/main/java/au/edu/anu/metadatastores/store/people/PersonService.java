@@ -40,6 +40,7 @@ import org.slf4j.LoggerFactory;
 
 import au.edu.anu.metadatastores.datamodel.store.Item;
 import au.edu.anu.metadatastores.datamodel.store.annotations.ItemTraitParser;
+import au.edu.anu.metadatastores.datamodel.store.ext.StoreAttributes;
 import au.edu.anu.metadatastores.ldap.LdapPerson;
 import au.edu.anu.metadatastores.services.aries.ANUStaff;
 import au.edu.anu.metadatastores.services.aries.AriesService;
@@ -144,18 +145,18 @@ public class PersonService extends AbstractItemService {
 			}
 			person.setAriesId(Integer.valueOf(staff.getAriesId()).toString());
 			
-			if (staff.getFORCode1() != null && !staff.getFORCode1().trim().equals("")) {
-				Subject subject = new Subject(staff.getFORCode1(), null, staff.getFORPercentage1());
+			if (staff.getForSubject1() != null) {
+				Subject subject = new Subject(staff.getForSubject1().getCode(), staff.getForSubject1().getDescription(), staff.getForSubject1().getPercentage());
 				person.getAnzforSubjects().add(subject);
 			}
 			
-			if (staff.getFORCode2() != null && !staff.getFORCode2().trim().equals("")) {
-				Subject subject = new Subject(staff.getFORCode2(), null, staff.getFORPercentage2());
+			if (staff.getForSubject2() != null) {
+				Subject subject = new Subject(staff.getForSubject2().getCode(), staff.getForSubject2().getDescription(), staff.getForSubject2().getPercentage());
 				person.getAnzforSubjects().add(subject);
 			}
-
-			if (staff.getFORCode3() != null && !staff.getFORCode3().trim().equals("")) {
-				Subject subject = new Subject(staff.getFORCode3(), null, staff.getFORPercentage3());
+			
+			if (staff.getForSubject3() != null) {
+				Subject subject = new Subject(staff.getForSubject3().getCode(), staff.getForSubject3().getDescription(), staff.getForSubject3().getPercentage());
 				person.getAnzforSubjects().add(subject);
 			}
 			
@@ -289,18 +290,18 @@ public class PersonService extends AbstractItemService {
 		person.setEmail(staff.getEmail());
 		person.setAriesId(Integer.valueOf(staff.getAriesId()).toString());
 		
-		if (staff.getFORCode1() != null && !staff.getFORCode1().trim().equals("")) {
-			Subject subject = new Subject(staff.getFORCode1(), null, staff.getFORPercentage1());
+		if (staff.getForSubject1() != null) {
+			Subject subject = new Subject(staff.getForSubject1().getCode(), staff.getForSubject1().getDescription(), staff.getForSubject1().getPercentage());
 			person.getAnzforSubjects().add(subject);
 		}
 		
-		if (staff.getFORCode2() != null && !staff.getFORCode2().trim().equals("")) {
-			Subject subject = new Subject(staff.getFORCode2(), null, staff.getFORPercentage2());
+		if (staff.getForSubject2() != null) {
+			Subject subject = new Subject(staff.getForSubject2().getCode(), staff.getForSubject2().getDescription(), staff.getForSubject2().getPercentage());
 			person.getAnzforSubjects().add(subject);
 		}
-
-		if (staff.getFORCode3() != null && !staff.getFORCode3().trim().equals("")) {
-			Subject subject = new Subject(staff.getFORCode3(), null, staff.getFORPercentage3());
+		
+		if (staff.getForSubject3() != null) {
+			Subject subject = new Subject(staff.getForSubject3().getCode(), staff.getForSubject3().getDescription(), staff.getForSubject3().getPercentage());
 			person.getAnzforSubjects().add(subject);
 		}
 		
@@ -551,7 +552,7 @@ public class PersonService extends AbstractItemService {
 			query.setParameter("extId", person.getExtId());
 			
 			PersonItem item = (PersonItem) query.uniqueResult();
-			String title = person.getGivenName() + " " + person.getSurname();
+			String title = person.getFullName();
 			
 			Date lastModified = new Date();
 			ItemTraitParser parser = new ItemTraitParser();
@@ -740,6 +741,8 @@ public class PersonService extends AbstractItemService {
 		ItemTraitParser parser = new ItemTraitParser();
 		try {
 			person = (Person) parser.getItemObject(item, Person.class, level);
+			//Set the ext id
+			person.setExtId(item.getExtId());
 		}
 		catch (Exception e) {
 			LOGGER.error("Exception retrieving information about people", e);

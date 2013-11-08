@@ -43,11 +43,13 @@ public class StoreCommand {
 		,@SubCommand(name="grant", impl=GrantOption.class)
 		,@SubCommand(name="epress", impl=EpressOption.class)
 		,@SubCommand(name="person", impl=PersonOption.class)
+		,@SubCommand(name="rdf", impl=RDFOption.class)
 	})
 	StoreSubCommand cmd;
 	
 	@Option(name="-h", aliases="--help", usage="Displays this")
 	private boolean help = false;
+	
 	public StoreSubCommand getCmd() {
 		return cmd;
 	}

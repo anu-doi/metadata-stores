@@ -482,31 +482,30 @@ public class DataCommonsService extends DublinCoreService {
 		return relationType;
 	}
 	
-	public DublinCore getDataCommonsObject(String id) {
+	public DataCommonsObject getDataCommonsObject(String id) {
 		Session session = StoreHibernateUtil.getSessionFactory().openSession();
 		session.enableFilter("attributes");
-		DublinCore dataCommonsObject = null;
+		//DublinCore dataCommonsObject = null;
 		try {
 			Query query = session.createQuery("FROM DataCommonsItem WHERE extId = :extId");
 			query.setParameter("extId", id);
 			
 			DataCommonsItem item = (DataCommonsItem) query.uniqueResult();
-			dataCommonsObject = getDataCommonsObject(item);
+			DataCommonsObject dataCommonsObject = getDataCommonsObject(item);
+			return dataCommonsObject;
 		}
 		finally {
 			session.close();
 		}
-		
-		return dataCommonsObject;
 	}
 	
-	public DublinCore getDataCommonsObject(DataCommonsItem item) {
-		DublinCore dataCommonsObject = new DublinCore();
+	public DataCommonsObject getDataCommonsObject(DataCommonsItem item) {
+		DataCommonsObject dataCommonsObject = null;
 		
 		ItemTraitParser traitParser = new ItemTraitParser();
 		
 		try {
-			dataCommonsObject = (DublinCore) traitParser.getItemObject(item, DublinCore.class);
+			dataCommonsObject = (DataCommonsObject) traitParser.getItemObject(item, DataCommonsObject.class);
 		}
 		catch (Exception e) {
 			LOGGER.error("Exception getting data commons object", e);

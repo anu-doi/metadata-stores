@@ -31,6 +31,10 @@ import au.edu.anu.metadatastores.datamodel.store.annotations.ItemAttributeTrait;
 import au.edu.anu.metadatastores.datamodel.store.annotations.ItemTrait;
 import au.edu.anu.metadatastores.datamodel.store.annotations.TraitType;
 import au.edu.anu.metadatastores.datamodel.store.ext.StoreAttributes;
+import au.edu.anu.metadatastores.rdf.annotation.RDFSubject;
+import au.edu.anu.metadatastores.rdf.annotation.RDFType;
+import au.edu.anu.metadatastores.rdf.annotation.RDFUri;
+import au.edu.anu.metadatastores.rdf.namespace.StoreNS;
 import au.edu.anu.metadatastores.store.misc.Subject;
 import au.edu.anu.metadatastores.store.people.Person;
 
@@ -46,6 +50,7 @@ import au.edu.anu.metadatastores.store.people.Person;
  */
 @ItemTrait(extId="contractCode", title="title")
 @XmlRootElement(name="grant")
+@RDFType("GRANT")
 public class Grant {
 	private String contractCode;
 	private String title;
@@ -66,6 +71,8 @@ public class Grant {
 	 */
 	@ItemAttributeTrait(attrType=StoreAttributes.CONTRACT_CODE, traitType=TraitType.STRING)
 	@XmlElement(name="contract-code")
+	@RDFUri(uri=StoreNS.CONTRACT_CODE)
+	@RDFSubject
 	public String getContractCode() {
 		return contractCode;
 	}
@@ -86,6 +93,8 @@ public class Grant {
 	 */
 	@ItemAttributeTrait(attrType=StoreAttributes.TITLE, traitType=TraitType.STRING)
 	@XmlElement(name="title")
+	@RDFUri(uri=StoreNS.TITLE)
+	@RDFSubject
 	public String getTitle() {
 		return title;
 	}
@@ -107,6 +116,7 @@ public class Grant {
 	//@ItemAttributeTrait(attrType=StoreAttributes.F)
 	//TODO figure out how to place the uid of the person for this field
 	@XmlElement(name="first-investigator")
+	//TODO
 	public Person getFirstInvestigator() {
 		return firstInvestigator;
 	}
@@ -126,6 +136,7 @@ public class Grant {
 	 * @return The people associated with the grant
 	 */
 	@XmlElement(name="associate")
+	//TODO
 	public List<Person> getAssociatedPeople() {
 		return associatedPeople;
 	}
@@ -146,6 +157,8 @@ public class Grant {
 	 */
 	@ItemAttributeTrait(attrType=StoreAttributes.START_DATE, traitType=TraitType.STRING)
 	@XmlElement(name="start-date")
+	@RDFUri(uri=StoreNS.START_DATE)
+	@RDFSubject
 	public String getStartDate() {
 		return startDate;
 	}
@@ -166,6 +179,8 @@ public class Grant {
 	 */
 	@ItemAttributeTrait(attrType=StoreAttributes.END_DATE, traitType=TraitType.STRING)
 	@XmlElement(name="end-date")
+	@RDFUri(uri=StoreNS.END_DATE)
+	@RDFSubject
 	public String getEndDate() {
 		return endDate;
 	}
@@ -186,6 +201,8 @@ public class Grant {
 	 */
 	@ItemAttributeTrait(attrType=StoreAttributes.STATUS, traitType=TraitType.STRING)
 	@XmlElement(name="status")
+	@RDFUri(uri=StoreNS.STATUS)
+	@RDFSubject
 	public String getStatus() {
 		return status;
 	}
@@ -206,6 +223,8 @@ public class Grant {
 	 */
 	@ItemAttributeTrait(attrType=StoreAttributes.FUNDS_PROVIDER, traitType=TraitType.STRING)
 	@XmlElement(name="funds-provider")
+	@RDFUri(uri=StoreNS.FUNDS_PROVIDER)
+	@RDFSubject
 	public String getFundsProvider() {
 		return fundsProvider;
 	}
@@ -226,6 +245,8 @@ public class Grant {
 	 */
 	@ItemAttributeTrait(attrType=StoreAttributes.REFERENCE_NUMBER, traitType=TraitType.STRING)
 	@XmlElement(name="reference-number")
+	@RDFUri(uri=StoreNS.REFERENCE_NUMBER)
+	@RDFSubject
 	public String getReferenceNumber() {
 		return referenceNumber;
 	}
@@ -246,6 +267,8 @@ public class Grant {
 	 */
 	@ItemAttributeTrait(attrType=StoreAttributes.DESCRIPTION, traitType=TraitType.STRING)
 	@XmlElement(name="description")
+	@RDFUri(uri=StoreNS.DESCRIPTION)
+	@RDFSubject
 	public String getDescription() {
 		return description;
 	}
@@ -266,6 +289,8 @@ public class Grant {
 	 */
 	@ItemAttributeTrait(attrType=StoreAttributes.FOR_SUBJECT, traitType=TraitType.SUBJECT_LIST)
 	@XmlElement(name="for-subject")
+	@RDFUri(uri=StoreNS.SUBJECT)
+	@RDFSubject
 	public List<Subject> getAnzforSubjects() {
 		return anzforSubjects;
 	}

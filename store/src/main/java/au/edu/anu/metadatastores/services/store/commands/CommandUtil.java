@@ -38,6 +38,7 @@ public class CommandUtil {
 	public static final String PUB = "publication";
 	public static final String PERSON = "person";
 	public static final String EPRESS = "epress";
+	public static final String RDF = "rdf";
 	
 	public static void printUsage(String command, Class<?> clazz) {
 		try {
