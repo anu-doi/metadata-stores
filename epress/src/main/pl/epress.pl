@@ -87,7 +87,6 @@ while (my $record = $batch->next()) {
 		foreach $content (@contents) {
 			my $contentElem = $doc->createElement("content");
 			$contentText = $content->as_string();
-#			$contentText =~ s/\x{2018}|\x{2019}/'/g;
 			$contentElem->appendTextNode($contentText);
 			$recElem->appendChild($contentElem);
 		}
@@ -119,5 +118,3 @@ close (XMLOUT);
 if (my @warnings = $batch->warnings()) {
 	print "\nWarnings were detected!\n", @warnings;
 }
-
-print "Hello World\n";
