@@ -23,6 +23,7 @@ package au.edu.anu.metadatastores.service.search;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -35,6 +36,8 @@ import org.glassfish.jersey.server.mvc.Template;
 import org.glassfish.jersey.server.mvc.Viewable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import au.edu.anu.metadatastores.datamodel.store.AttributeType;
 
@@ -43,16 +46,21 @@ import au.edu.anu.metadatastores.datamodel.store.AttributeType;
  * 
  * <p>The Australian National University</p>
  * 
- * <p></p>
+ * <p>Resource for searching i.e. which types and attributes can you search on and the search pages</p>
  * 
  * @author Genevieve Turner
  *
  */
+@Component
+@Scope("request")
 @Path("/search")
 @Template
 public class SearchResource {
 	static final Logger LOGGER = LoggerFactory.getLogger(SearchResource.class);
-	//TODO add pagination
+	
+	@Resource(name="searchOptions")
+	SearchOptions searchOptions;
+	
 	/**
 	 * Get the basic search page
 	 * 
@@ -64,7 +72,9 @@ public class SearchResource {
 	@GET
 	@Produces(MediaType.TEXT_HTML)
 	public Viewable getSearchPage(@QueryParam("search-val") String value, @QueryParam("rows") int rows, @QueryParam("page") int page) {
-		Map<String, Object> model = new SearchOptions().search(value, getOffset(rows, page), rows);
+		LOGGER.debug("In getSearchPage");
+		LOGGER.info("Search Value: {}, Number of Rows: {}, Page: {}", value, rows, page);
+		Map<String, Object> model = searchOptions.search(value, getOffset(rows, page), rows);
 		
 		return new Viewable("index.jsp", model);
 	}
@@ -81,11 +91,19 @@ public class SearchResource {
 	@Path("/advanced")
 	@Produces(MediaType.TEXT_HTML)
 	public Viewable advancedSearch(@QueryParam("search-val[]") List<String> values, @QueryParam("system") String system, @QueryParam("field[]") List<String> fields, @QueryParam("rows") int rows, @QueryParam("page") int page) {
-		Map<String, Object> model = new SearchOptions().advancedSearch(values, system, fields, getOffset(rows, page), rows);
-		
+		LOGGER.debug("In advancedSearch");
+		LOGGER.info("Search Value: {}, fields, Number of Rows: {}, Page: {}", values, fields, rows, page);
+		Map<String, Object> model = searchOptions.advancedSearch(values, system, fields, getOffset(rows, page), rows);
+		LOGGER.debug("Performed search and returning model");
 		return new Viewable("advanced_search.jsp", model);
 	}
 	
+	/**
+	 * Calculate the offset start point
+	 * @param rows The number of rows per page
+	 * @param page The page number
+	 * @return The offset
+	 */
 	private int getOffset(int rows, int page) {
 		int offset = rows * page;
 		return offset;
@@ -101,7 +119,8 @@ public class SearchResource {
 	@Path("/attributes")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getAttributeTypes(@QueryParam("system") String system) {
-		List<AttributeType> attributeTypes = new SearchOptions().getAttributeTypes(system);
+		LOGGER.debug("In getAttributeTypes");
+		List<AttributeType> attributeTypes = searchOptions.getAttributeTypes(system);
 		
 		GenericEntity<List<AttributeType>> entity = new GenericEntity<List<AttributeType>>(attributeTypes){};
 		return Response.ok(entity).build();

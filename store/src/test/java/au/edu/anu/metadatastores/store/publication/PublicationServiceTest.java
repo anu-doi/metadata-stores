@@ -138,7 +138,8 @@ public class PublicationServiceTest {
 		}
 		System.out.println("Done");
 	}
-	
+
+	@Ignore
 	@Test
 	public void testGetPublicationsByYear() {
 		PublicationService publicationService = PublicationService.getSingleton();
@@ -155,15 +156,16 @@ public class PublicationServiceTest {
 		LOGGER.info("Number of Records: {}, Time Taken Millis: {}, Seconds: {}, Minutes: {}", new Object[] {publications.size(), difference, seconds, minutes});
 	}
 	
-	@Ignore
+//	@Ignore
 	@Test
 	public void updatePublicationsByYear() {
 		LOGGER.info("Starting Publications Update");
 		Date startDate = new Date();
 		PublicationService publicationService = PublicationService.getSingleton();
-		publicationService.updatePublicationsByYear("2011");
+		//publicationService.updatePublicationsByYear("2011");
+		publicationService.updatePublicationsByYear("1997");
 		Date endDate = new Date();
 		long difference = endDate.getTime() - startDate.getTime();
-		LOGGER.info("Publications Updated, {}", difference);
+		LOGGER.info("Publications Updated, Time Taken: {}", difference);
 	}
 }

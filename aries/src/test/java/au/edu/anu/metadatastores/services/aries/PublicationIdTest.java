@@ -18,6 +18,7 @@ public class PublicationIdTest {
 	public void setUp() throws Exception {
 	}
 
+	@Ignore
 	@Test
 	public void test() {
 		PublicationId publicationService = PublicationId.getSingleton();
@@ -30,7 +31,7 @@ public class PublicationIdTest {
 		LOGGER.info("Title: {}, Name: {}, Year: {}, ISBN: {}, ISSN: {}", new Object[] {pub.getPublicationTitle(), pub.getPublicationName(), pub.getPublicationDate(), pub.getISBN(), pub.getISSN()});
 	}
 
-	@Ignore
+	//@Ignore
 	@Test
 	public void multiplePublicationsTest() {
 		PublicationId publicationService = PublicationId.getSingleton();
@@ -43,7 +44,7 @@ public class PublicationIdTest {
 		}
 	}
 
-	@Ignore
+	//@Ignore
 	@Test
 	public void publicationsByYearTest() {
 		PublicationId publicationService = PublicationId.getSingleton();

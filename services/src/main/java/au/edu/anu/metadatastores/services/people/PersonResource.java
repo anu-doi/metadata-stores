@@ -135,6 +135,18 @@ public class PersonResource {
 		return Response.ok(person).build();
 	}
 	
+	@GET
+	@Path("/aries/current")
+	@Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+	public Response getCurrentPeopleFromAries() {
+		StoreService storeService = StoreService.getSingleton();
+		
+		List<Person> people = storeService.getCurrentAriesPeople();
+
+		GenericEntity<List<Person>> entity = new GenericEntity<List<Person>>(people){};
+		return Response.ok(entity).build();
+	}
+	
 	/**
 	 * Retrieves a list of people given the attributes
 	 * 

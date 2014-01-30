@@ -159,9 +159,20 @@ public abstract class AbstractItemService {
 		}
 		
 		for (ItemAttribute attr : removeAttrs) {
-			 addAttributeHistory(oldItem, attr, lastModified);
-			 oldItem.getItemAttributes().remove(attr);
-			 session.delete(attr);
+			//TODO figure out when to know that user updated fields should be deleted.  User updated information should be able to be dleted...
+			LOGGER.info("Remove: {}, {}", attr.getAttrType(), attr.getAttrValue());
+			if (!Boolean.TRUE.equals(attr.getUserUpdated())) {
+				LOGGER.info("Removing Value");
+				addAttributeHistory(oldItem, attr, lastModified);
+				if (attr.getItemAttributes() != null && attr.getItemAttributes().size() > 0) {
+					for (ItemAttribute subAttr : attr.getItemAttributes()) {
+						oldItem.getItemAttributes().remove(subAttr);
+						session.delete(subAttr);
+					}
+				}
+				oldItem.getItemAttributes().remove(attr);
+				session.delete(attr);
+			}
 		}
 		
 		oldItem.getItemAttributes().addAll(getNewAttributes(oldItem, null, newAttrs));
@@ -179,7 +190,7 @@ public abstract class AbstractItemService {
 		List<ItemAttribute> attributes = new ArrayList<ItemAttribute>();
 		
 		for (ItemAttribute attr : newAttributes) {
-			ItemAttribute newAttr = new ItemAttribute(item, attr.getAttrType(), attr.getAttrValue(), attr.getLastModified());
+			ItemAttribute newAttr = new ItemAttribute(item, attr.getAttrType(), attr.getAttrValue(), attr.getUserUpdated(), attr.getLastModified());
 			newAttr.setItemAttribute(parentAttribute);
 			newAttr.setUserUpdated(attr.getUserUpdated());
 			if (attr.getItemAttributes().size() > 0) {
@@ -230,7 +241,6 @@ public abstract class AbstractItemService {
 					}
 				}
 				if (!foundSubAttr) {
-					LOGGER.info("Adding to remove list: {}, {}", oldSubAttr.getAttrType(), oldSubAttr.getAttrValue());
 					removeAttrList.add(oldSubAttr);
 				}
 				foundSubAttr = false;
@@ -238,7 +248,7 @@ public abstract class AbstractItemService {
 			oldAttr.getItemAttributes().removeAll(removeAttrList);
 			newAttr.getItemAttributes().removeAll(foundNewSubAttrList);
 			for (ItemAttribute newSubAttr : newAttr.getItemAttributes()) {
-				ItemAttribute attr = new ItemAttribute(item, newSubAttr.getAttrType(), newSubAttr.getAttrValue(), newSubAttr.getLastModified());
+				ItemAttribute attr = new ItemAttribute(item, newSubAttr.getAttrType(), newSubAttr.getAttrValue(), newSubAttr.getUserUpdated(), newSubAttr.getLastModified());
 				attr.setItemAttribute(oldAttr);
 				oldAttr.getItemAttributes().add(attr);
 			}

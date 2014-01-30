@@ -57,9 +57,7 @@ public class StoreHibernateUtil {
 			String password = configuration.getProperty("hibernate.connection.password");
 			String decryptedValue = EncryptUtil.decrypt(password);
 			configuration.setProperty("hibernate.connection.password", decryptedValue);
-			
 			ServiceRegistryBuilder serviceRegistryBuilder = new ServiceRegistryBuilder().applySettings(configuration.getProperties());
-			
 			return configuration.buildSessionFactory(serviceRegistryBuilder.buildServiceRegistry());
 		}
 		catch (Exception e) {

@@ -25,12 +25,14 @@ import javax.ws.rs.ApplicationPath;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.mvc.jsp.JspMvcFeature;
 
+import au.edu.anu.metadatastores.exception.AccessDeniedExceptionMapper;
+
 /**
  * <p>ApplicationConfig<p>
  * 
  * <p>The Australian National University</p>
  * 
- * <p></p>
+ * <p>Configures classes for initialisation and discovery</p>
  * 
  * @author Genevieve Turner
  *
@@ -38,13 +40,12 @@ import org.glassfish.jersey.server.mvc.jsp.JspMvcFeature;
 @ApplicationPath("/rest")
 public class ApplicationConfig extends ResourceConfig {
 	public ApplicationConfig() {
-		//super(SearchResource.class);
-
         // Resources.
-        packages(SearchResource.class.getPackage().getName(),DisplayResource.class.getPackage().getName());
+        packages(SearchResource.class.getPackage().getName(),DisplayResource.class.getPackage().getName(),AccessDeniedExceptionMapper.class.getPackage().getName());
 
         // MVC.
         register(JspMvcFeature.class);
+        register(new ApplicationBinder());
 
         // Logging.
         //register(LoggingFilter.class);

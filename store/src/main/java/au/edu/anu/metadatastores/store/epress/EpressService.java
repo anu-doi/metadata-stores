@@ -128,6 +128,10 @@ public class EpressService extends AbstractItemService {
 		
 		return epressItems;
 	}
+
+	public EpressItem saveEpress(Epress epress) {
+		return saveEpress(epress, Boolean.FALSE);
+	}
 	
 	/**
 	 * Save a single E Press record
@@ -135,7 +139,7 @@ public class EpressService extends AbstractItemService {
 	 * @param epress The E Press record t osave
 	 * @return The E Press record item
 	 */
-	public EpressItem saveEpress(Epress epress) {
+	public EpressItem saveEpress(Epress epress, Boolean userUpdated) {
 		Session session = StoreHibernateUtil.getSessionFactory().openSession();
 		
 		try {
@@ -149,7 +153,7 @@ public class EpressService extends AbstractItemService {
 			
 			ItemTraitParser parser = new ItemTraitParser();
 			Item newItem = null;
-			newItem = parser.getItem(epress, lastModified);
+			newItem = parser.getItem(epress, Boolean.FALSE, lastModified);
 			
 			if (item == null) {
 				item = new EpressItem();

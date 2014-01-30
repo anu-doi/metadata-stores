@@ -93,6 +93,8 @@ public class Person {
 	public static final String INSTITUTION = "institution";
 	public static final String DESCRIPTION = "description";
 	public static final String FOR_SUBJECT = "for-subject";
+	public static final String ORCID = "orcid";
+	public static final String IS_ACTIVIE = "is-active";
 	
 	private String extId_;
 	private String uid_;
@@ -111,6 +113,8 @@ public class Person {
 	private String country_;
 	private String institution_;
 	private String description_;
+	private String orcid_;
+	private String isActive_;
 	private List<Subject> anzforSubjects_ = new ArrayList<Subject>();
 	
 	/**
@@ -482,6 +486,45 @@ public class Person {
 	 */
 	public void setDescription(String description) {
 		this.description_ = description;
+	}
+
+	/**
+	 * Get the persons orcid
+	 * 
+	 * @return The orcid
+	 */
+	@ItemAttributeTrait(attrType=StoreAttributes.ORCID, traitType=TraitType.STRING, level=2)
+	@XmlElement(name=ORCID)
+	public String getOrcid() {
+		return orcid_;
+	}
+
+	/**
+	 * Set the persons orcid
+	 * 
+	 * @param orcid The orcid
+	 */
+	public void setOrcid(String orcid) {
+		this.orcid_ = orcid;
+	}
+
+	/**
+	 * Get whether the person is active (i.e. whether they are in LDAP)
+	 * @return Whether they are active
+	 */
+	@ItemAttributeTrait(attrType=StoreAttributes.ACTIVE, traitType=TraitType.STRING, level=2)
+	@XmlTransient
+	public String getIsActive() {
+		return isActive_;
+	}
+
+	/**
+	 * Set whether the person is active (i.e. whether they are in LDAP)
+	 * 
+	 * @param isActive Whether they are active
+	 */
+	public void setIsActive(String isActive) {
+		this.isActive_ = isActive;
 	}
 
 	/**

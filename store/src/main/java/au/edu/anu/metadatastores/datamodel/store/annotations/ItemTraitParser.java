@@ -60,7 +60,7 @@ public class ItemTraitParser {
 	 * @throws InvocationTargetException
 	 * @throws IllegalAccessException
 	 */
-	public Item getItem(Object object, Date lastModified) throws InvocationTargetException, IllegalAccessException {
+	public Item getItem(Object object, Boolean userUpdated, Date lastModified) throws InvocationTargetException, IllegalAccessException {
 		Method[] methods = object.getClass().getMethods();
 		Item item = new Item();
 		if (object.getClass().isAnnotationPresent(ItemTrait.class)) {
@@ -94,29 +94,29 @@ public class ItemTraitParser {
 					case STRING:
 						String strValue = (String) value;
 						if (strValue.length() > 0) {
-							item.getItemAttributes().add(new ItemAttribute(item, attrType, strValue, lastModified));
+							item.getItemAttributes().add(new ItemAttribute(item, attrType, strValue, userUpdated, lastModified));
 						}
 						break;
 					case STRING_LIST:
 						@SuppressWarnings("unchecked")
 						Collection<String> collection = (Collection<String>) value;
 						for (String collValue : collection) {
-							item.getItemAttributes().add(new ItemAttribute(item, attrType, collValue, lastModified));
+							item.getItemAttributes().add(new ItemAttribute(item, attrType, collValue, userUpdated, lastModified));
 						}
 						break;
 					case SUBJECT_LIST:
 						@SuppressWarnings("unchecked")
 						Collection<Subject> subjects = (Collection<Subject>) value;
 						for (Subject subject : subjects) {
-							ItemAttribute subjAttr = new ItemAttribute(item, attrType, subject.getCode(), lastModified);
-							setItemAttributeChildren(item, subjAttr, subject, lastModified);
+							ItemAttribute subjAttr = new ItemAttribute(item, attrType, subject.getCode(), userUpdated, lastModified);
+							setItemAttributeChildren(item, subjAttr, subject, userUpdated, lastModified);
 							item.getItemAttributes().add(subjAttr);
 						}
 						break;
 					case RELATION_LIST:
 						@SuppressWarnings("unchecked")
 						Collection<String> relations = (Collection<String>) value;
-						fillItemAttributeRelations(item, relations, method, lastModified);
+						fillItemAttributeRelations(item, relations, method, userUpdated, lastModified);
 						break;
 					default:
 						break;
@@ -171,7 +171,7 @@ public class ItemTraitParser {
 	 * @param method The method
 	 * @param lastModified The last modified date
 	 */
-	private void fillItemAttributeRelations(Item item, Collection<String> relations, Method method, Date lastModified) {
+	private void fillItemAttributeRelations(Item item, Collection<String> relations, Method method, Boolean userUpdated, Date lastModified) {
 		ItemAttribute attr = null;
 
 		ItemAttributeTrait trait = method.getAnnotation(ItemAttributeTrait.class);
@@ -186,11 +186,11 @@ public class ItemTraitParser {
 		
 		for (String value : relations) {
 			trait.attrType();
-			attr = new ItemAttribute(item, trait.attrType(), value, lastModified);
+			attr = new ItemAttribute(item, trait.attrType(), value, userUpdated, lastModified);
 			if (relationTrait != null) {
 				String[] parts = getRelationParts(value, delimiter);
 				for (int i = 0; i < partTypes.length && i < parts.length; i++) {
-					ItemAttribute subAttr = new ItemAttribute(item, partTypes[i], parts[i], lastModified);
+					ItemAttribute subAttr = new ItemAttribute(item, partTypes[i], parts[i], userUpdated, lastModified);
 					subAttr.setItemAttribute(attr);
 					attr.getItemAttributes().add(subAttr);
 				}
@@ -237,7 +237,7 @@ public class ItemTraitParser {
 	 * @throws InvocationTargetException
 	 * @throws IllegalAccessException
 	 */
-	private void setItemAttributeChildren(Item item, ItemAttribute attr, Object object, Date lastModified)
+	private void setItemAttributeChildren(Item item, ItemAttribute attr, Object object, Boolean userUpdated, Date lastModified)
 			throws InvocationTargetException, IllegalAccessException {
 		Method[] methods = object.getClass().getMethods();
 		
@@ -252,7 +252,7 @@ public class ItemTraitParser {
 					case STRING:
 						String strValue = (String) value;
 						if (strValue.length() > 0) {
-							ItemAttribute subAttr = new ItemAttribute(item, attrType, strValue, lastModified);
+							ItemAttribute subAttr = new ItemAttribute(item, attrType, strValue, userUpdated, lastModified);
 							subAttr.setItemAttribute(attr);
 							attr.getItemAttributes().add(subAttr);
 						}
@@ -261,7 +261,7 @@ public class ItemTraitParser {
 						@SuppressWarnings("unchecked")
 						Collection<String> collection = (Collection<String>) value;
 						for (String collValue : collection) {
-							ItemAttribute subAttr = new ItemAttribute(item, attrType, collValue, lastModified);
+							ItemAttribute subAttr = new ItemAttribute(item, attrType, collValue, userUpdated, lastModified);
 							subAttr.setItemAttribute(attr);
 							attr.getItemAttributes().add(subAttr);
 						}
@@ -271,9 +271,9 @@ public class ItemTraitParser {
 						Collection<Subject> subjects = (Collection<Subject>) value;
 
 						for (Subject subject : subjects) {
-							ItemAttribute subjAttr = new ItemAttribute(item, attrType, subject.getCode(), lastModified);
+							ItemAttribute subjAttr = new ItemAttribute(item, attrType, subject.getCode(), userUpdated, lastModified);
 							subjAttr.setItemAttribute(attr);
-							setItemAttributeChildren(item, subjAttr, subject, lastModified);
+							setItemAttributeChildren(item, subjAttr, subject, userUpdated, lastModified);
 							attr.getItemAttributes().add(subjAttr);
 						}
 						break;

@@ -27,11 +27,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 import au.edu.anu.metadatastores.datamodel.store.AttributeType;
 import au.edu.anu.metadatastores.datamodel.store.SystemType;
+import au.edu.anu.metadatastores.security.PermissionService;
 import au.edu.anu.metadatastores.store.search.ItemDTO;
 import au.edu.anu.metadatastores.store.search.SearchService;
 import au.edu.anu.metadatastores.store.search.SearchTerm;
@@ -42,13 +46,19 @@ import au.edu.anu.metadatastores.store.util.ItemResolver;
  * 
  * <p>The Australian National University</p>
  * 
- * <p></p>
+ * <p>Executes the various searches needed</p>
  * 
  * @author Genevieve Turner
  *
  */
+@Service("searchOptions")
 public class SearchOptions {
 	static final Logger LOGGER = LoggerFactory.getLogger(SearchOptions.class);
+	
+	//@Inject
+	@Resource(name="permissionServiceImpl")
+	PermissionService permissionService;
+	
 	/**
 	 * Search metadata stores for the value
 	 * 
@@ -61,6 +71,7 @@ public class SearchOptions {
 		if (searchValue != null && searchValue.length() > 0) {
 			SearchService itemService = SearchService.getSingleton();
 			List<ItemDTO> items = itemService.queryItems(searchValue);
+			items = permissionService.filterItems(items);
 			model.put("numItems", items.size());
 			if (rows > 0) {
 				items = items.subList(offset, Math.min(items.size(), offset + rows));
@@ -108,6 +119,7 @@ public class SearchOptions {
 	 */
 	public Map<String, Object> advancedSearch(List<String> values, String system, List<String> fields, int offset, int rows) {
 		List<SearchTerm> searchTerms = new ArrayList<SearchTerm>();
+		LOGGER.info("Number of values: {}, Number of fields: {}", values.size(), fields.size());
 		for (int i = 0; i < values.size(); i++) {
 			if (values.get(i) != null && values.get(i).length() > 0) {
 				SearchTerm searchTerm = new SearchTerm(fields.get(i), values.get(i));
@@ -128,9 +140,9 @@ public class SearchOptions {
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("rows", getRows(rows));
 		SearchService searchService = SearchService.getSingleton();
-		
 		if (searchTerms != null && searchTerms.size() > 0) {
 			List<ItemDTO> items = searchService.queryItems(system, searchTerms);
+			items = permissionService.filterItems(items);
 			model.put("numItems", items.size());
 			if (rows > 0) {
 				items = items.subList(offset, Math.min(items.size(), offset + rows));
@@ -140,7 +152,6 @@ public class SearchOptions {
 		
 		model.put("systemTypes", getSystemTypes());
 		model.put("attrTypes", getAttributeTypes(system));
-		
 		return model;
 	}
 	
@@ -150,8 +161,10 @@ public class SearchOptions {
 	 * @return  The system types
 	 */
 	public List<SystemType> getSystemTypes() {
+		LOGGER.debug("In getSystemTypes");
 		SearchService searchService = SearchService.getSingleton();
 		List<SystemType> systemTypes = searchService.getSystemTypes();
+		permissionService.filterSystemTypes(systemTypes);
 		Collections.sort(systemTypes, new Comparator<SystemType>() {
 			@Override
 			public int compare(SystemType o1, SystemType o2) {

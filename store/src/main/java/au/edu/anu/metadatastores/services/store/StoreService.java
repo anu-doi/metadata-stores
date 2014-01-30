@@ -221,4 +221,8 @@ public class StoreService {
 	public List<Relation> getRelations(Long iid) {
 		return relationService_.getRelatedItems(iid);
 	}
+	
+	public List<Person> getCurrentAriesPeople() {
+		return personService_.getCurrentAriesPeople();
+	}
 }

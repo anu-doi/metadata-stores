@@ -113,7 +113,8 @@ public class PersonServiceTest {
 	@Test
 	public void updatePersonTest() {
 		
-		Person person = personService_.fetchPersonInformation("u9909577");
+		//Person person = personService_.fetchPersonInformation("u9909577");
+		Person person = personService_.fetchPersonInformation("u9613353");
 		//Person person = personService_.fetchPersonInformation("u5125986");
 		//Person person = personService_.fetchPersonInformation("u4034284");
 		//Person person = personService_.fetchPersonInformation("u3882913");
@@ -246,6 +247,37 @@ public class PersonServiceTest {
 			for (Person person : people) {
 				LOGGER.info("Name: {}, Email: {}, Given Name: {}, Surname: {}, UID: {}", new Object[]{person.getDisplayName(), person.getEmail(), person.getGivenName(), person.getSurname(), person.getUid()});
 			}
+		}
+	}
+	
+	@Ignore
+	@Test
+	public void getAriesPeople() {
+		Date startDate = new Date();
+		List<Person> people = personService_.getCurrentAriesPeople();
+		printPersonInfo(people);
+		Date endDate = new Date();
+		long diff = endDate.getTime() - startDate.getTime();
+		double sec = diff / 1000;
+		double min = sec/60;
+		LOGGER.info("Milliseconds: {}, Seconds: {}, Minutes: {}", diff, sec, min);
+		LOGGER.info("Done");
+	}
+	
+	@Ignore
+	@Test
+	public void updateKnownPeopleByName() {
+		Session session = StoreHibernateUtil.getSessionFactory().openSession();
+		
+		try {
+			Query query = session.createQuery("from PersonItem");
+			List<PersonItem> items = query.list();
+			for (PersonItem item : items) {
+				personService_.createPersonForAries(item.getExtId());
+			}
+		}
+		finally {
+			session.close();
 		}
 	}
 }

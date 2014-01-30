@@ -130,6 +130,10 @@ public class PersonService extends AbstractItemService {
 				person.setPreferredName(ldapPerson.getPreferredName());
 				person.setDisplayName(ldapPerson.getDisplayName());
 				person.setStaffType(ldapPerson.getStaffType());
+				person.setIsActive(Boolean.TRUE.toString());
+			}
+			else {
+				person.setIsActive(Boolean.FALSE.toString());
 			}
 		}
 		catch (NamingException e) {
@@ -559,7 +563,7 @@ public class PersonService extends AbstractItemService {
 			Item newItem = null;
 			
 			try {
-				newItem = parser.getItem(person, lastModified);
+				newItem = parser.getItem(person, userUpdated, lastModified);
 			}
 			catch (Exception e) {
 				LOGGER.error("Exception transforming person to an item", e);
@@ -614,6 +618,18 @@ public class PersonService extends AbstractItemService {
 		finally {
 			session.close();
 		}
+	}
+	
+	public List<Person> getPeople(List<PersonItem> items, boolean showUid) {
+		List<Person> people = new ArrayList<Person>();
+		for (PersonItem personItem : items) {
+			Person person = getPerson(personItem, showUid);
+			if (!people.contains(person)) {
+				people.add(person);
+			}
+		}
+		
+		return people;
 	}
 	
 	/**
@@ -920,5 +936,32 @@ public class PersonService extends AbstractItemService {
 		}
 		
 		return currentSubjects;
+	}
+	
+	public List<Person> getCurrentAriesPeople() {
+		Session session = StoreHibernateUtil.getSessionFactory().openSession();
+		try {
+			//TODO limit this by current people?
+			Query query = session.createQuery("FROM PersonItem item WHERE EXISTS (SELECT 1 FROM item.itemAttributes ia "
+					+ "WHERE ia.attrType = :ariesAttrType) "
+					+ "AND EXISTS (SELECT 1 FROM item.itemAttributes ia "
+					+ "WHERE ia.attrType = :uidAttrType) "
+					+ "AND EXISTS (SELECT 1 FROM item.itemAttributes ia "
+					+ "WHERE ia.attrType = :activeAttr "
+					+ "AND ia.attrValue = :activeValue) ");
+			query.setParameter("ariesAttrType", StoreAttributes.ARIES_ID);
+			query.setParameter("uidAttrType", StoreAttributes.UNIVERSITY_ID);
+			query.setParameter("activeAttr", StoreAttributes.ACTIVE);
+			query.setParameter("activeValue", Boolean.TRUE.toString());
+			@SuppressWarnings("unchecked")
+			List<PersonItem> peopleItems = query.list();
+			LOGGER.info("Number of people: {}", peopleItems.size());
+			List<Person> people = getPeople(peopleItems.subList(0, Math.min(peopleItems.size(), 100)), true);
+			//List<Person> people = getPeople(peopleItems, true);
+			return people;
+		}
+		finally {
+			session.close();
+		}
 	}
 }

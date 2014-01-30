@@ -34,3 +34,7 @@ ul.removebullet li:before {
 .show-text:after {
 	content: " [Hide Relations]";
 }
+form label {
+	width: 80px;
+	display: inline-block;
+}

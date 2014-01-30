@@ -241,7 +241,7 @@ public class GrantService extends AbstractItemService {
 			Date lastModified = new Date();
 			ItemTraitParser parser = new ItemTraitParser();
 			Item newItem = null;
-			newItem = parser.getItem(grant, lastModified);
+			newItem = parser.getItem(grant, userUpdated, lastModified);
 			
 			if (item == null) {
 				item = new GrantItem();

@@ -263,7 +263,7 @@ public class PublicationService extends AbstractItemService {
 			ItemTraitParser parser = new ItemTraitParser();
 			Item newItem = null;
 			try {
-				newItem = parser.getItem(publication, lastModified);
+				newItem = parser.getItem(publication, userUpdated, lastModified);
 			}
 			catch (Exception e) {
 				LOGGER.error("Exception transforming grant to an item", e);

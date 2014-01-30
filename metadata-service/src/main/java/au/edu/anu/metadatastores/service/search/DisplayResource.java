@@ -22,16 +22,24 @@ package au.edu.anu.metadatastores.service.search;
 
 import java.util.List;
 
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.glassfish.jersey.server.mvc.Template;
+import org.glassfish.jersey.server.mvc.Viewable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import au.edu.anu.metadatastores.store.search.ItemDTO;
 
@@ -40,14 +48,21 @@ import au.edu.anu.metadatastores.store.search.ItemDTO;
  * 
  * <p>The Australian National University</p>
  * 
- * <p></p>
+ * <p>Class to configures the display of objects</p>
  * 
  * @author Genevieve Turner
  *
  */
+@Component
+@Scope("request")
 @Path("/display")
 @Template
 public class DisplayResource {
+	static final Logger LOGGER = LoggerFactory.getLogger(DisplayResource.class);
+	
+	@Resource(name="displayPage")
+	DisplayPage displayPage;
+	
 	/**
 	 * Display the object that is obtained from the given id
 	 * 
@@ -57,11 +72,9 @@ public class DisplayResource {
 	@Path("/{id}")
 	@GET
 	@Produces(MediaType.TEXT_HTML + ";charset=utf-8")
-	public Response displayObject(@PathParam("id") Long id) {
-		//TODO show related objects via an expandable thing on the web page
-		
-		DisplayPage displayPage = new DisplayPage();
-		return Response.ok(displayPage.getPage(id)).encoding("utf-8").build();
+	public Response displayObject(@PathParam("id") Long id, @Context HttpServletResponse response) throws Exception {
+		Viewable viewable = displayPage.getPage(id);
+		return Response.ok(viewable).encoding("utf-8").build();
 	}
 	
 	/**

@@ -20,20 +20,25 @@
  ******************************************************************************/
 package au.edu.anu.metadatastores.service.search;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 import org.glassfish.jersey.server.mvc.Viewable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.stereotype.Service;
 
+import au.edu.anu.metadatastores.security.PermissionService;
 import au.edu.anu.metadatastores.store.datacommons.DataCommonsObject;
 import au.edu.anu.metadatastores.store.digitalcollections.DigitalCollection;
 import au.edu.anu.metadatastores.store.dublincore.xml.DublinCore;
 import au.edu.anu.metadatastores.store.epress.Epress;
 import au.edu.anu.metadatastores.store.grants.Grant;
-import au.edu.anu.metadatastores.store.misc.Subject;
 import au.edu.anu.metadatastores.store.people.Person;
 import au.edu.anu.metadatastores.store.publication.Publication;
 import au.edu.anu.metadatastores.store.search.SearchService;
@@ -43,15 +48,20 @@ import au.edu.anu.metadatastores.store.search.SearchService;
  * 
  * <p>The Australian National University</p>
  * 
- * <p></p>
+ * <p>Generates the viewables to return the page in</p>
  * 
  * @author Genevieve Turner
  *
  */
+@Service("displayPage")
 public class DisplayPage {
 	static final Logger LOGGER = LoggerFactory.getLogger(DisplayPage.class);
 	
 	SearchService itemService_ = SearchService.getSingleton();
+	
+	//@Inject
+	@Resource(name="permissionServiceImpl")
+	PermissionService permissionService;
 	
 	/**
 	 * Get the page from the id.
@@ -59,7 +69,7 @@ public class DisplayPage {
 	 * @param id
 	 * @return
 	 */
-	public Viewable getPage(Long id) {
+	public Viewable getPage(Long id) throws Exception {
 		// Get the object associated with the id
 		Object object = itemService_.getItemById(id);
 		// Get the viewable for the object
@@ -72,15 +82,21 @@ public class DisplayPage {
 	 * @param obj The object
 	 * @return The viewable
 	 */
-	public Viewable getPage(Object obj) {
+	public Viewable getPage(Object obj) throws Exception {
 		for (Method method: DisplayPage.class.getMethods()) {
 			if (method.getName().equals("getPage") && method.getParameterTypes()[0] == obj.getClass()) {
 				try {
 					Viewable returnObj = (Viewable) method.invoke(this, obj);
 					return returnObj;
 				}
-				catch (Exception e) {
-					throw new RuntimeException(e);
+				catch (InvocationTargetException e) {
+					if (e.getCause() instanceof AccessDeniedException) {
+						throw new AccessDeniedException(e.getCause().getMessage());
+					}
+					else {
+						LOGGER.info("Error invoking method");
+						throw e;
+					}
 				}
 			}
 		}
@@ -94,7 +110,8 @@ public class DisplayPage {
 	 * @param grant The grant to create a web page for
 	 * @return The viewable
 	 */
-	public Viewable getPage(Grant grant) {
+	public Viewable getPage(Grant grant) throws AccessDeniedException {
+		permissionService.checkGrant();
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("grant", grant);
 		
@@ -107,12 +124,10 @@ public class DisplayPage {
 	 * @param publication The publication to create a web page for
 	 * @return The viewable
 	 */
-	public Viewable getPage(Publication publication) {
+	public Viewable getPage(Publication publication) throws AccessDeniedException {
+		permissionService.checkPublication();
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("publication", publication);
-		for (Subject subj : publication.getAnzforSubjects()) {
-			LOGGER.info("Code: {}, Value: {}, Percentage: {}", subj.getCode(), subj.getValue(), subj.getPercentage());
-		}
 		
 		return new Viewable("publication.jsp", model);
 	}
@@ -123,7 +138,8 @@ public class DisplayPage {
 	 * @param person The person to create a web page for
 	 * @return The viewable
 	 */
-	public Viewable getPage(Person person) {
+	public Viewable getPage(Person person) throws AccessDeniedException {
+		permissionService.checkPerson();
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("person", person);
 		
@@ -136,18 +152,34 @@ public class DisplayPage {
 	 * @param dublinCore The dublin core object to create a web page for
 	 * @return The viewable
 	 */
-	public Viewable getPage(DublinCore dublinCore) {
+	public Viewable getPage(DublinCore dublinCore) throws AccessDeniedException {
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("dublinCore", dublinCore);
 		
 		return new Viewable("dublin_core.jsp", model);
 	}
 	
-	public Viewable getPage(DataCommonsObject dataCommons) {
+	/**
+	 * Get the viewable for a Data Commons object
+	 * 
+	 * @param dataCommons The Data Commons object to create a web page for
+	 * @return The viewable
+	 * @throws AccessDeniedException
+	 */
+	public Viewable getPage(DataCommonsObject dataCommons) throws AccessDeniedException {
+		permissionService.checkDataCommonsObject();
 		return getPage((DublinCore) dataCommons);
 	}
 	
-	public Viewable getPage(DigitalCollection digitalCollection) {
+	/**
+	 * Get the viewable for the Digital Collections object
+	 * 
+	 * @param digitalCollection The Digital Collections object to create a web page for
+	 * @return The viewable
+	 * @throws AccessDeniedException
+	 */
+	public Viewable getPage(DigitalCollection digitalCollection) throws AccessDeniedException {
+		permissionService.checkDigitalCollection();
 		return getPage((DublinCore) digitalCollection);
 	}
 	
@@ -157,7 +189,8 @@ public class DisplayPage {
 	 * @param epress The E Press object to create a web page for
 	 * @return The viewable
 	 */
-	public Viewable getPage(Epress epress) {
+	public Viewable getPage(Epress epress) throws AccessDeniedException {
+		permissionService.checkEpress();
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("epress", epress);
 		

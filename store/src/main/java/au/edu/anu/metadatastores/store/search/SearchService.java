@@ -161,7 +161,6 @@ public class SearchService {
 	 */
 	public List<SystemType> getSystemTypes() {
 		Session session = StoreHibernateUtil.getSessionFactory().openSession();
-		
 		try {
 			Query query = session.createQuery("FROM SystemType");
 			@SuppressWarnings("unchecked")

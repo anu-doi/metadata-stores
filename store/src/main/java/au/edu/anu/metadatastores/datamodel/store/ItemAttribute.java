@@ -79,10 +79,18 @@ public class ItemAttribute implements java.io.Serializable {
 	 * @param attrValue The attribute value
 	 * @param lastModified The last modified date
 	 */
-	public ItemAttribute(Item item, String attrType, String attrValue, Date lastModified) {
+	/*public ItemAttribute(Item item, String attrType, String attrValue, Date lastModified) {
 		this.item = item;
 		this.attrType = attrType;
 		this.attrValue = attrValue;
+		this.lastModified = lastModified;
+	}*/
+
+	public ItemAttribute(Item item, String attrType, String attrValue, Boolean userUpdated, Date lastModified) {
+		this.item = item;
+		this.attrType = attrType;
+		this.attrValue = attrValue;
+		this.userUpdated = userUpdated;
 		this.lastModified = lastModified;
 	}
 

@@ -400,11 +400,11 @@ public class StaffId {
 			staff.setForSubject1(forSubject);
 		}
 		if (userAccount.getForCodes2() != null) {
-			Subject forSubject = new FORSubjectImpl(userAccount.getForCodes2().getChrForObjectiveCode(),userAccount.getForCodes2().getChrForDescription(),userAccount.getChrForpercentage1());
+			Subject forSubject = new FORSubjectImpl(userAccount.getForCodes2().getChrForObjectiveCode(),userAccount.getForCodes2().getChrForDescription(),userAccount.getChrForpercentage2());
 			staff.setForSubject2(forSubject);
 		}
 		if (userAccount.getForCodes3() != null) {
-			Subject forSubject = new FORSubjectImpl(userAccount.getForCodes3().getChrForObjectiveCode(),userAccount.getForCodes3().getChrForDescription(),userAccount.getChrForpercentage1());
+			Subject forSubject = new FORSubjectImpl(userAccount.getForCodes3().getChrForObjectiveCode(),userAccount.getForCodes3().getChrForDescription(),userAccount.getChrForpercentage3());
 			staff.setForSubject3(forSubject);
 		}
 		

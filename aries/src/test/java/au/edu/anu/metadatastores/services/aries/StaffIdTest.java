@@ -13,9 +13,13 @@ public class StaffIdTest {
 	public void test() {
 		StaffId staffService = StaffId.getSingleton();
 		
-		ANUStaff[] staff = staffService.findStaffBySurname("Corsi");
+		//ANUStaff[] staff = staffService.findStaffBySurname("Corsi");
+		ANUStaff[] staff = staffService.findStaffBySurname("Roderick");
 		for (ANUStaff member : staff) {
 			LOGGER.info("Staff: {} {}", member.getGivenName(), member.getSurname());
+			LOGGER.info("{}, {}", member.getForSubject1().getCode(), member.getForSubject1().getPercentage());
+			LOGGER.info("{}, {}", member.getForSubject2().getCode(), member.getForSubject2().getPercentage());
+			LOGGER.info("{}, {}", member.getForSubject3().getCode(), member.getForSubject3().getPercentage());
 		}
 		System.out.println("Done");
 	}

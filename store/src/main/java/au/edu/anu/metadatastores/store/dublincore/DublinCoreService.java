@@ -52,6 +52,11 @@ public abstract class DublinCoreService extends AbstractItemService {
 	 * Process the harvested content
 	 */
 	public abstract void processHarvestContent();
+
+	protected void processRecord(DublinCoreItem item, DublinCore dublinCore, Session session, Date lastModified) 
+			throws JAXBException, InvocationTargetException, IllegalAccessException {
+		processRecord(item, dublinCore, session, Boolean.FALSE, lastModified);
+	}
 	
 	/**
 	 * Process the dublin core record
@@ -64,7 +69,7 @@ public abstract class DublinCoreService extends AbstractItemService {
 	 * @throws InvocationTargetException
 	 * @throws IllegalAccessException
 	 */
-	protected void processRecord(DublinCoreItem item, DublinCore dublinCore, Session session, Date lastModified) 
+	protected void processRecord(DublinCoreItem item, DublinCore dublinCore, Session session, Boolean userUpdated, Date lastModified) 
 			throws JAXBException, InvocationTargetException, IllegalAccessException {
 		if (dublinCore.getTitles().size() > 0) {
 			item.setTitle(dublinCore.getTitles().get(0));
@@ -72,7 +77,7 @@ public abstract class DublinCoreService extends AbstractItemService {
 		
 		ItemTraitParser parser = new ItemTraitParser();
 		Item newItem = null;
-		newItem = parser.getItem(dublinCore, lastModified);
+		newItem = parser.getItem(dublinCore, userUpdated, lastModified);
 		
 		updateAttributesFromItem(item, newItem, session, lastModified);
 		

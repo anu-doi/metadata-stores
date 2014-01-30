@@ -52,6 +52,8 @@ public class StoreAttributes {
 	public static final String COMMON_NAME = "COMMON_NAME";
 	public static final String COUNTRY = "COUNTRY";
 	public static final String INSTITUTION = "INSTITUTION";
+	public static final String ORCID = "ORCID";
+	public static final String ACTIVE = "ACTIVE";
 	
 	public static final String TYPE = "TYPE";
 	public static final String TITLE = "TITLE";
