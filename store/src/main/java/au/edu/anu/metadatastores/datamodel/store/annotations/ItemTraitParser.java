@@ -80,7 +80,7 @@ public class ItemTraitParser {
 				}
 			}
 			catch (NoSuchFieldException e) {
-				LOGGER.error("Could not find field", e);
+				LOGGER.debug("Could not find field", e);
 			}
 		}
 		for (Method method : methods) {

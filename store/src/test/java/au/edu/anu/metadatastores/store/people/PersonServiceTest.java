@@ -280,4 +280,79 @@ public class PersonServiceTest {
 			session.close();
 		}
 	}
+	
+	@Test
+	public void createNewPeople() {
+		Person person = new Person();
+		String uid = "t1111111";
+		person.setExtId(uid);
+		person.setUid(uid);
+		person.setDescription("This is the biography for Random Person");
+		person.setEmail(uid + "@mailinator.com");
+		person.setDisplayName("Random A Person");
+		person.setGivenName("Random");
+		person.setSurname("Person");
+		person.setOrganisationalUnit("Information Technology Services");
+		person.setStaffType("staff");
+		person.setPreferredName("Random Person");
+		person.setJobTitle("Test Analyst");
+		LOGGER.info("Saving: {}", uid);
+		personService_.savePerson(person);
+		LOGGER.info("After saving: {}", uid);
+		
+
+		uid = "t1111112";
+		person = new Person();
+		person.setExtId(uid);
+		person.setUid(uid);
+		person.setDescription("This is the biography for Homer Simpson");
+		person.setEmail(uid + "@mailinator.com");
+		person.setDisplayName("Homer Simpon");
+		person.setGivenName("Homer");
+		person.setSurname("Simpson");
+		person.setOrganisationalUnit("Information Technology Services");
+		person.setStaffType("staff");
+		person.setPreferredName("Homer Simpson");
+		person.setJobTitle("Test Lead");
+		LOGGER.info("Saving: {}", uid);
+		personService_.savePerson(person);
+		LOGGER.info("After saving: {}", uid);
+		
+		uid = "t1111113";
+		person = new Person();
+		person.setExtId(uid);
+		person.setUid(uid);
+		person.setDescription("This is the biography for Lisa Simpson");
+		person.setEmail(uid + "@mailinator.com");
+		person.setDisplayName("Lisa Simpson");
+		person.setGivenName("Lisa");
+		person.setSurname("Simpson");
+		person.setOrganisationalUnit("Information Technology Services");
+		person.setStaffType("staff");
+		person.setPreferredName("Lisa Simpson");
+		person.setJobTitle("Software Developer");
+		LOGGER.info("Saving: {}", uid);
+		personService_.savePerson(person);
+		LOGGER.info("After saving: {}", uid);
+		
+		uid = "t1111114";
+		person = new Person();
+		person.setExtId(uid);
+		person.setUid(uid);
+		person.setDescription("This is the biography for Marge Simpson");
+		person.setEmail(uid + "@mailinator.com");
+		person.setDisplayName("Marge Simpson");
+		person.setGivenName("Marge");
+		person.setSurname("Simpson");
+		person.setOrganisationalUnit("Information Technology Services");
+		person.setStaffType("staff");
+		person.setPreferredName("Marge Simpson");
+		person.setJobTitle("Development Team Lead");
+		LOGGER.info("Saving: {}", uid);
+		personService_.savePerson(person);
+		LOGGER.info("After saving: {}", uid);
+		
+	}
+	
+	
 }

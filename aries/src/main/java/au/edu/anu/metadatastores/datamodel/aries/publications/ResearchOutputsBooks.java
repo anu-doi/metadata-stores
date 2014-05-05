@@ -164,7 +164,7 @@ public class ResearchOutputsBooks {
 	 * 
 	 * @return The research output
 	 */
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "researchOutputsConferences")
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "researchOutputsBooks")
 	public Set<ResearchOutputsData1> getResearchOutputsData1s() {
 		return researchOutputsData1s;
 	}

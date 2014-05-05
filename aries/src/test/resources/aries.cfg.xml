@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+		"-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+		"http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+	<session-factory>
+		<property name="hibernate.connection.driver_class">org.hsqldb.jdbcDriver</property>
+		<!-- 
+		<property name="hibernate.connection.url">jdbc:jtds:sqlserver://UDSSQL99/dbsAries_devl;instance=GS01;domain=uds.anu.edu.au</property>
+		<property name="hibernate.connection.username"></property>
+		<property name="hibernate.connection.password">ENC()</property>
+		<property name="hibernate.connection.url">jdbc:jtds:sqlserver://UDSSQL99/dbsAries_devl;instance=GS01</property>
+		<property name="hibernate.dialect">org.hibernate.dialect.SQLServerDialect</property>
+		 -->
+		<property name="hibernate.connection.url">jdbc:hsqldb:mem:testdb;shutdown=false</property>
+		<property name="hibernate.dialect">org.hibernate.dialect.HSQLDialect</property>
+		<property name="hibernate.connection.username">sa</property>
+		<property name="hibernate.connection.password"/>
+		<property name="hibernate.connection.autocommit">true</property>
+		<property name="hibernate.cache.provider_class">org.hibernate.cache.HashtableCacheProvider</property>
+		<property name="hibernate.hbm2ddl.auto">create-drop</property>
+		<property name="hibernate.hbm2ddl.import_files">sql/import-data.sql</property>
+		<!-- <property name="show_sql">true</property> -->
+		
+		<mapping class="au.edu.anu.metadatastores.datamodel.aries.grants.ContractsGrantsCountries" />
+		<mapping class="au.edu.anu.metadatastores.datamodel.aries.grants.ContractsGrantsDepartments" />
+		<mapping class="au.edu.anu.metadatastores.datamodel.aries.grants.ContractsGrantsInvestigators" />
+		<mapping class="au.edu.anu.metadatastores.datamodel.aries.grants.ContractsGrantsMain" />
+		<mapping class="au.edu.anu.metadatastores.datamodel.aries.grants.ContractsGrantsStatus" />
+		<mapping class="au.edu.anu.metadatastores.datamodel.aries.grants.Departments" />
+		<mapping class="au.edu.anu.metadatastores.datamodel.aries.grants.Facultyschoolcentre" />
+		<mapping class="au.edu.anu.metadatastores.datamodel.aries.grants.PicklistChrrouteChrstatus" />
+		<mapping class="au.edu.anu.metadatastores.datamodel.aries.grants.Useraccounts" />
+		<mapping class="au.edu.anu.metadatastores.datamodel.aries.grants.ExternalUsers" />
+		<mapping class="au.edu.anu.metadatastores.datamodel.aries.grants.ForCodes" />
+		
+		<mapping class="au.edu.anu.metadatastores.datamodel.aries.publications.ResearchOutputsConferences" />
+		<mapping class="au.edu.anu.metadatastores.datamodel.aries.publications.ResearchOutputsData1" />
+		<mapping class="au.edu.anu.metadatastores.datamodel.aries.publications.ResearchOutputsDataAuthors" />
+		<mapping class="au.edu.anu.metadatastores.datamodel.aries.publications.ResearchOutputsJournals" />
+		<mapping class="au.edu.anu.metadatastores.datamodel.aries.publications.ResearchOutputsBooks" />
+		<mapping class="au.edu.anu.metadatastores.datamodel.aries.publications.ResearchOutputsLevel2" />
+		
+	</session-factory>
+</hibernate-configuration>

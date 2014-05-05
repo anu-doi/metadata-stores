@@ -366,6 +366,7 @@ public class PersonService extends AbstractItemService {
 	 * @return Get the Item of the person with the given uid
 	 */
 	private PersonItem queryPersonByUid(String uid) {
+		LOGGER.info("uid: {}", uid);
 		Session session = StoreHibernateUtil.getSessionFactory().openSession();
 		try {
 			session.enableFilter("attributes");
@@ -730,6 +731,7 @@ public class PersonService extends AbstractItemService {
 		ItemTraitParser parser = new ItemTraitParser();
 		try {
 			person = (Person) parser.getItemObject(item, Person.class, level);
+			person.setExtId(item.getExtId());
 		}
 		catch (Exception e) {
 			LOGGER.error("Exception retrieving information about people", e);

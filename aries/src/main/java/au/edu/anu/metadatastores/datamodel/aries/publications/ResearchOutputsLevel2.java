@@ -77,7 +77,7 @@ public class ResearchOutputsLevel2 implements java.io.Serializable {
 	 * 
 	 * @return The category description
 	 */
-	@Column(name = "chrOutput2Description", length = 45)
+	@Column(name = "chrOutput2Description"/*, length = 45*/)
 	public String getChrOutput2Description() {
 		return chrOutput2Description;
 	}
@@ -96,7 +96,7 @@ public class ResearchOutputsLevel2 implements java.io.Serializable {
 	 * 
 	 * @return the research output information
 	 */
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "researchOutputsConferences")
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "researchOutputsLevel2")
 	public Set<ResearchOutputsData1> getResearchOutputsData1s() {
 		return researchOutputsData1s;
 	}

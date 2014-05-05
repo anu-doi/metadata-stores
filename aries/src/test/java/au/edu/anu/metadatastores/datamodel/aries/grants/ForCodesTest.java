@@ -21,8 +21,11 @@
 
 package au.edu.anu.metadatastores.datamodel.aries.grants;
 
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import java.util.List;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -67,6 +70,24 @@ public class ForCodesTest {
 		finally {
 			session.close();
 		}
+	}
+	
+	@Test
+	public void test2() {
+		Session session = AriesHibernateUtil.getSessionFactory().openSession();
+		try {
+			
+			Query query = session.createQuery("FROM ForCodes");
+		//	query.setParameter("code", "111706");
+			
+			List<ForCodes> forCodes = query.list();
+			assertNotNull("No Fields of Research Found", forCodes);
+			assertTrue("No field of research codes found", forCodes.size() > 0);
+		}
+		finally {
+			session.close();
+		}
+		
 	}
 
 }

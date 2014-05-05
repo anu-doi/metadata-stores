@@ -260,7 +260,6 @@ public class PublicationId {
 			List<String> firstAuthors = new ArrayList<String>();
 			for (ResearchOutputsData1 researchOutput : researchOutputs) {
 				if (researchOutput != null && researchOutput.getChrFirstNamedAuthor() != null) {
-					System.out.println("chrOutput6code: " + researchOutput.getChrOutput6code());
 					firstAuthors.add(researchOutput.getChrFirstNamedAuthor());
 				}
 			}

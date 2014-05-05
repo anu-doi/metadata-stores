@@ -21,6 +21,9 @@
 
 package au.edu.anu.metadatastores.store.people;
 
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,7 +31,11 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import au.edu.anu.metadatastores.datamodel.store.annotations.ItemAttributeTrait;
+import au.edu.anu.metadatastores.datamodel.store.annotations.ItemTrait;
 import au.edu.anu.metadatastores.datamodel.store.annotations.TraitType;
 import au.edu.anu.metadatastores.datamodel.store.ext.StoreAttributes;
 import au.edu.anu.metadatastores.rdf.annotation.RDFDefaultTriple;
@@ -75,7 +82,11 @@ import au.edu.anu.metadatastores.store.misc.Subject;
 		}
 )
 @RDFType("PERSON")
+@ItemTrait(extId="extId")
 public class Person {
+	static final Logger LOGGER = LoggerFactory.getLogger(Person.class);
+
+	public static final String HASHED_EXT_ID = "external-identifier";
 	public static final String UID = "uid";
 	public static final String GIVEN_NAME = "given-name";
 	public static final String SURNAME = "surname";
@@ -97,6 +108,7 @@ public class Person {
 	public static final String IS_ACTIVIE = "is-active";
 	
 	private String extId_;
+	private String hashedExtId_;
 	private String uid_;
 	private String givenName_;
 	private String surname_;
@@ -140,6 +152,29 @@ public class Person {
 	 */
 	public void setExtId(String extId) {
 		this.extId_ = extId;
+	}
+	
+	@XmlElement(name=HASHED_EXT_ID)
+	public String getHashedExtId() {
+		if (hashedExtId_ == null && extId_ != null) {
+			try {
+				MessageDigest md = MessageDigest.getInstance("SHA1");
+				md.update(extId_.getBytes("UTF-8"));
+				byte[] bytes = md.digest();
+				StringBuilder sb = new StringBuilder();
+				for (byte b : bytes) {
+					sb.append(Integer.toString((b & 0xff) + 0x100, 16).substring(1));
+				}
+				hashedExtId_ = sb.toString();
+			}
+			catch (NoSuchAlgorithmException e) {
+				LOGGER.error("Error hashing extId", e);
+			}
+			catch (UnsupportedEncodingException e) {
+				LOGGER.error("Error hashing extId", e);
+			}
+		}
+		return hashedExtId_;
 	}
 	
 	@RDFUri(uri=VCardNS.FN)

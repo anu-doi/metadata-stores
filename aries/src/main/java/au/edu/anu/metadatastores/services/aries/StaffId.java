@@ -330,7 +330,7 @@ public class StaffId {
 		Session session = AriesHibernateUtil.getSessionFactory().openSession();
 		try {
 			Query query = session.createQuery("from Useraccounts where lower(chrSurname) = :surname");
-			query.setParameter("surname", surname);
+			query.setParameter("surname", surname.toLowerCase());
 	
 			@SuppressWarnings("unchecked")
 			List<Useraccounts> users = query.list();
@@ -358,7 +358,7 @@ public class StaffId {
 		Session session = AriesHibernateUtil.getSessionFactory().openSession();
 		try {
 			Query query = session.createQuery("from Useraccounts where lower(chrFirstname) = :firstname");
-			query.setParameter("firstname", givenName);
+			query.setParameter("firstname", givenName.toLowerCase());
 	
 			@SuppressWarnings("unchecked")
 			List<Useraccounts> users = query.list();
@@ -462,7 +462,7 @@ public class StaffId {
 		try {
 			List<ExternalStaff> externalStaff = new ArrayList<ExternalStaff>();
 			Query query = session.createQuery("from ExternalUsers where lower(chrSurname) = :surname");
-			query.setParameter("surname", surname);
+			query.setParameter("surname", surname.toLowerCase());
 	
 			@SuppressWarnings("unchecked")
 			List<ExternalUsers> users = query.list();
@@ -491,7 +491,7 @@ public class StaffId {
 		try {
 			List<ExternalStaff> externalStaff = new ArrayList<ExternalStaff>();
 			Query query = session.createQuery("from ExternalUsers where lower(chrFirstname) = :firstname");
-			query.setParameter("firstname", givenName);
+			query.setParameter("firstname", givenName.toLowerCase());
 	
 			@SuppressWarnings("unchecked")
 			List<ExternalUsers> users = query.list();

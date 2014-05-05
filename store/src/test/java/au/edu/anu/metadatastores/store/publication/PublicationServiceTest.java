@@ -156,7 +156,7 @@ public class PublicationServiceTest {
 		LOGGER.info("Number of Records: {}, Time Taken Millis: {}, Seconds: {}, Minutes: {}", new Object[] {publications.size(), difference, seconds, minutes});
 	}
 	
-//	@Ignore
+	@Ignore
 	@Test
 	public void updatePublicationsByYear() {
 		LOGGER.info("Starting Publications Update");
@@ -167,5 +167,115 @@ public class PublicationServiceTest {
 		Date endDate = new Date();
 		long difference = endDate.getTime() - startDate.getTime();
 		LOGGER.info("Publications Updated, Time Taken: {}", difference);
+	}
+	
+	@Test
+	public void createNewPublications() {
+		PublicationService publicationService = PublicationService.getSingleton();
+		
+		Publication publication = new Publication();
+		publication.setAriesId("1234567");
+		publication.setCategory("C1: journal article meeting HERDC requirements");
+		//publication.setISBN(iSBN);
+		publication.setISSN("1234-5671");
+		publication.setPublicationName("Journal of Everything");
+		publication.setTitle("Testing methods for Orcid");
+		publication.setType("Journal");
+		publication.setYear("2014");
+
+		List<String> uids = new ArrayList<String>();
+		uids.add("t1111111");
+		uids.add("t1111112");
+		uids.add("t1111113");
+		publication.setAuthors(createPeopleFromStuff(uids));
+		
+		Subject subject = new Subject("080306", "Open Software", "100%");
+		publication.getAnzforSubjects().add(subject);
+		publicationService.savePublication(publication);
+		
+		publication = new Publication();
+		publication.setAriesId("1234568");
+		publication.setCategory("C1: journal article meeting HERDC requirements");
+		//publication.setISBN(iSBN);
+		publication.setISSN("1234-5672");
+		publication.setPublicationName("Journal of Something");
+		publication.setTitle("Basic testing methods");
+		publication.setType("Journal");
+		publication.setYear("2014");
+
+		uids = new ArrayList<String>();
+		uids.add("t1111111");
+		publication.setAuthors(createPeopleFromStuff(uids));
+		
+		subject = new Subject("080306", "Open Software", "100%");
+		publication.getAnzforSubjects().add(subject);
+		publicationService.savePublication(publication);
+		
+		publication = new Publication();
+		publication.setAriesId("1234569");
+		publication.setCategory("C1: journal article meeting HERDC requirements");
+		publication.setISSN("1234-5673");
+		publication.setPublicationName("Testing Journal");
+		publication.setTitle("Advanced test methods");
+		publication.setType("Journal");
+		publication.setYear("2014");
+
+		uids = new ArrayList<String>();
+		uids.add("t1111112");
+		publication.setAuthors(createPeopleFromStuff(uids));
+		
+		subject = new Subject("080306", "Open Software", "100%");
+		publication.getAnzforSubjects().add(subject);
+		publicationService.savePublication(publication);
+		
+		publication = new Publication();
+		publication.setAriesId("1234561");
+		publication.setCategory("C1: journal article meeting HERDC requirements");
+		//publication.setISBN(iSBN);
+		publication.setISSN("1234-5674");
+		publication.setPublicationName("Journal of Everything");
+		publication.setTitle("Further testing methods");
+		publication.setType("Journal");
+		publication.setYear("2012");
+
+		uids = new ArrayList<String>();
+		uids.add("t1111111");
+		uids.add("t1111112");
+		uids.add("t1111113");
+		publication.setAuthors(createPeopleFromStuff(uids));
+		
+		subject = new Subject("080306", "Open Software", "100%");
+		publication.getAnzforSubjects().add(subject);
+		publicationService.savePublication(publication);
+		
+		publication = new Publication();
+		publication.setAriesId("1234562");
+		publication.setCategory("C1: journal article meeting HERDC requirements");
+		//publication.setISBN(iSBN);
+		publication.setISSN("1234-5675");
+		publication.setPublicationName("Journal of Everything");
+		publication.setTitle("Ensuring that updates are made to testing");
+		publication.setType("Journal");
+		publication.setYear("2013");
+
+		uids = new ArrayList<String>();
+		uids.add("t1111111");
+		publication.setAuthors(createPeopleFromStuff(uids));
+		
+		subject = new Subject("080306", "Open Software", "100%");
+		publication.getAnzforSubjects().add(subject);
+		publicationService.savePublication(publication);
+	}
+	
+	private List<Person> createPeopleFromStuff(List<String> uids) {
+		List<Person> people = new ArrayList<Person>();
+		Person person = null;
+		for (String uid : uids) {
+			person = new Person();
+			person.setExtId(uid);
+			person.setUid(uid);
+			people.add(person);
+		}
+		return people;
 	}
 }

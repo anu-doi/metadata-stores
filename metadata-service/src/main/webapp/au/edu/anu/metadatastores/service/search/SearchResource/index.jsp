@@ -28,7 +28,9 @@
 	
 	<c:if test="${not empty it.numItems}">
 		<fmt:formatNumber var="numPages" value="${it.numItems / it.rows }" groupingUsed="false" />
-		<c:set var="numPages" value="${fn:substringBefore(numPages, '.')}" />
+		<c:if test="${fn:contains(numPages, '.')}">
+			<c:set var="numPages" value="${fn:substringBefore(numPages, '.')}" />
+		</c:if>
 		<c:url var="startURL" value="${searchURLPart}">
 			<c:param name="rows">${it.rows}</c:param>
 			<c:param name="page">0</c:param>
